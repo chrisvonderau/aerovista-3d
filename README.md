@@ -40,9 +40,18 @@ The original free-flight sightseeing mode is still on the menu: autopilot landma
 - **Xbox:** A confirms and can start a 1P tour from the menu. Each pad flies one plane in split-screen (any controller index, even if they are not 0 and 1). Left stick steers, LT/RT or stick Y climb and dive, X drops a bomb, Y opens the Tour Director, Menu toggles Cinema Mode. Rumble fires on rings, hits, and tags.
 - **Touch (1P or take-turns):** a left-hand stick plus the bottom-right BOMB button. The Scenic Tour still lets you tap the terrain or radar to divert.
 
-The version mark **v5** is visible in the location pill. Pull to refresh if you still see an older version.
+- **Restart:** hold R or Backspace (keyboard) or View/Back on an Xbox pad for about 0.7 seconds to restart the current event. A short hold keeps it from firing by accident. In split-screen both players must hold (P2 uses Shift or View).
+- **Invert Pitch:** a per-player (P1/P2) toggle in the Tour Director and the Grand Tour setup. It is saved and applies to the stick, keys, and touch.
+- **Stick sensitivity:** Low, Normal, or High, with a fixed deadzone.
+- **Reduce Motion:** turns off speed/dive FOV widening and the micro camera shake on bomb blasts and near-misses.
+
+The version mark **v5.1** is visible in the location pill. Pull to refresh if you still see an older version.
 
 ## Version history
+
+### v5.1
+
+Off-screen chevrons point to the next ring, gate, target, or tag opponent when it leaves the view (per viewport in split-screen). Split-screen now has a mini HUD in each viewport. Ghost split deltas compare each ring, gate, or target against your best run (green if you are ahead, red if behind). Invert Pitch and stick sensitivity are saved per browser. Biome particles (snow in the Alps and Everest, dust in the Canyon, mist in the Fjords) scale with the High/Med/Low quality tiers and are off in split-screen. Normal and Ace add stunt and near-miss multipliers; Easy stays forgiving. Reduce Motion disables the subtle FOV widening and camera shake.
 
 ### v5
 

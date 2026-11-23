@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>AeroVista 3D — Grand Tour v5</title>
+  <title>AeroVista 3D — Grand Tour v5.1</title>
   <script>
     (function () {
       if (!('serviceWorker' in navigator)) return;
@@ -513,6 +513,154 @@
       #welcome-overlay .diff-row { margin: 4px 0; }
     }
 
+    /* ===== v5.1 ===== */
+    .gt-chevron {
+      position: absolute;
+      width: 0;
+      height: 0;
+      pointer-events: none;
+      z-index: 34;
+      margin-left: -14px;
+      margin-top: -14px;
+    }
+    .gt-chevron-arrow {
+      width: 0;
+      height: 0;
+      border-left: 11px solid transparent;
+      border-right: 11px solid transparent;
+      border-bottom: 18px solid #fde68a;
+      filter: drop-shadow(0 1px 4px rgba(0,0,0,0.65));
+    }
+    .gt-chevron-label {
+      position: absolute;
+      left: 50%;
+      top: 20px;
+      transform: translateX(-50%);
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #fde68a;
+      text-shadow: 0 1px 4px #000;
+      white-space: nowrap;
+    }
+    .gt-mini {
+      position: absolute;
+      min-width: 108px;
+      max-width: 46%;
+      padding: 6px 8px;
+      border-radius: 12px;
+      background: rgba(8,15,30,0.55);
+      border: 1px solid rgba(255,255,255,0.16);
+      color: #f8fafc;
+      font-size: 11px;
+      line-height: 1.25;
+      pointer-events: none;
+      z-index: 34;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    }
+    .gt-mini .gt-mini-name { font-size: 9px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 2px; }
+    .gt-mini.p1 { border-color: rgba(125,211,252,0.55); }
+    .gt-mini.p1 .gt-mini-name { color: #7dd3fc; }
+    .gt-mini.p2 { border-color: rgba(251,191,36,0.55); }
+    .gt-mini.p2 .gt-mini-name { color: #fbbf24; }
+    .gt-mini .score { font-weight: 800; font-variant-numeric: tabular-nums; font-size: 14px; }
+    .gt-mini .combo { color: #fde68a; font-weight: 700; margin-left: 6px; }
+    .gt-mini-metric { font-size: 10px; color: #cbd5e1; margin-top: 1px; }
+    .gt-delta {
+      position: absolute;
+      left: 50%;
+      top: 42%;
+      transform: translate(-50%, -50%);
+      font-size: 28px;
+      font-weight: 800;
+      pointer-events: none;
+      z-index: 36;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.6);
+      opacity: 0;
+      transition: opacity 0.12s ease;
+    }
+    .gt-delta.show { opacity: 1; }
+    .gt-delta.ahead { color: #4ade80; }
+    .gt-delta.behind { color: #f87171; }
+    #gt-restart-bar {
+      position: absolute;
+      left: 50%;
+      bottom: calc(var(--safe-bottom, 0px) + 78px);
+      transform: translateX(-50%);
+      width: min(280px, 70vw);
+      pointer-events: none;
+      z-index: 36;
+      text-align: center;
+    }
+    #gt-restart-bar .rb-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #e2e8f0;
+      text-shadow: 0 1px 4px #000;
+      margin-bottom: 4px;
+    }
+    #gt-restart-track {
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(15,23,42,0.55);
+      border: 1px solid rgba(255,255,255,0.2);
+      overflow: hidden;
+    }
+    #gt-restart-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #38bdf8, #fde68a);
+    }
+    .set-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+      justify-content: center;
+      margin: 6px 0 2px;
+    }
+    .set-row .set-lab {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #94a3b8;
+      font-weight: 600;
+    }
+    .set-btn, #tour-drawer .set-btn {
+      padding: 4px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.05);
+      color: #e2e8f0;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .set-btn.active {
+      background: rgba(56,189,248,0.22);
+      border-color: rgba(56,189,248,0.55);
+      color: #e0f2fe;
+    }
+    .gt-stunt-toast {
+      position: absolute;
+      left: 50%;
+      top: calc(var(--safe-top, 0px) + 96px);
+      transform: translateX(-50%);
+      font-size: 12px;
+      font-weight: 800;
+      color: #fde68a;
+      text-shadow: 0 2px 8px #000;
+      pointer-events: none;
+      z-index: 35;
+    }
+    @media (max-height: 430px) {
+      #welcome-overlay .set-row .set-lab { display: none; }
+      #welcome-overlay .set-btn { padding: 3px 7px; font-size: 10px; }
+      .gt-mini { padding: 4px 6px; font-size: 10px; }
+      .gt-mini .score { font-size: 12px; }
+    }
+
   </style>
 </head>
 <body>
@@ -562,7 +710,18 @@
           <span class="mode-sub">Free-flight sightseeing with Sky Rings, bombs, and a cockpit HUD</span>
         </button>
       </div>
-      <p class="text-[11px] text-slate-400 mt-1">v5 · Offline · Six events · About 12 minutes</p>
+            <div class="set-row" id="setup-settings">
+        <span class="set-lab">P1 pitch</span>
+        <button type="button" class="set-btn invert-btn" data-seat="0">Invert P1</button>
+        <span class="set-lab">P2 pitch</span>
+        <button type="button" class="set-btn invert-btn" data-seat="1">Invert P2</button>
+        <span class="set-lab">Stick</span>
+        <button type="button" class="set-btn sens-btn" data-sens="low">Low</button>
+        <button type="button" class="set-btn sens-btn active" data-sens="normal">Normal</button>
+        <button type="button" class="set-btn sens-btn" data-sens="high">High</button>
+        <button type="button" class="set-btn" id="reduce-motion-btn">Reduce Motion</button>
+      </div>
+      <p class="text-[11px] text-slate-400 mt-1">v5.1 · Offline · Six events · About 12 minutes</p>
       <p class="howto text-[10px] text-slate-400 mt-2 leading-relaxed">P1: WASD steer &amp; altitude, Space bomb. P2: arrows + Enter bomb. Xbox: left stick fly, LT/RT climb &amp; dive, X bomb, A confirm. Touch: left stick + bomb button (1P or take-turns). Easy includes auto-level assist.</p>
     </div>
   </div>
@@ -625,6 +784,26 @@
         <button type="button" class="gt-next-btn" id="gt-champ-btn">Back to Menu</button>
       </div>
     </div>
+
+    <div id="gt-chevron-0" class="gt-chevron hidden"><div class="gt-chevron-arrow"></div><div class="gt-chevron-label">Next</div></div>
+    <div id="gt-chevron-1" class="gt-chevron hidden"><div class="gt-chevron-arrow"></div><div class="gt-chevron-label">Next</div></div>
+    <div id="gt-mini-0" class="gt-mini p1 hidden">
+      <div class="gt-mini-name">P1</div>
+      <div><span class="score" id="gt-mini-0-score">0</span><span class="combo" id="gt-mini-0-combo"></span></div>
+      <div class="gt-mini-metric" id="gt-mini-0-metric"></div>
+    </div>
+    <div id="gt-mini-1" class="gt-mini p2 hidden">
+      <div class="gt-mini-name">P2</div>
+      <div><span class="score" id="gt-mini-1-score">0</span><span class="combo" id="gt-mini-1-combo"></span></div>
+      <div class="gt-mini-metric" id="gt-mini-1-metric"></div>
+    </div>
+    <div id="gt-delta-0" class="gt-delta hidden"></div>
+    <div id="gt-delta-1" class="gt-delta hidden"></div>
+    <div id="gt-stunt" class="gt-stunt-toast hidden"></div>
+    <div id="gt-restart-bar" class="hidden">
+      <div class="rb-label" id="gt-restart-label">Hold to restart event</div>
+      <div id="gt-restart-track"><div id="gt-restart-fill"></div></div>
+    </div>
     <div id="gt-stick-wrap" class="hidden">
       <div id="gt-stick-base">
         <div id="gt-stick-knob"></div>
@@ -645,14 +824,14 @@
     <div class="glass rounded-3xl max-w-md w-full p-5 text-left border border-white/20 max-h-[80vh] overflow-y-auto no-scrollbar">
       <div class="flex items-start justify-between gap-2 mb-3">
         <div>
-          <div class="text-[11px] uppercase tracking-wider text-sky-300 font-semibold">AeroVista 3D v5</div>
+          <div class="text-[11px] uppercase tracking-wider text-sky-300 font-semibold">AeroVista 3D v5.1</div>
           <div class="text-sm font-semibold text-white">Controls &amp; Help</div>
         </div>
         <button id="help-close-btn" type="button" class="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-slate-300 text-sm cursor-pointer shrink-0">&times;</button>
       </div>
       <div class="text-[11px] text-slate-300 leading-relaxed flex flex-col gap-2">
         <div><strong class="text-white">Touch / Mouse:</strong> Tap terrain or radar to divert · Drag in Orbit · Pinch or wheel zooms</div>
-        <div><strong class="text-white">Keyboard:</strong> Scenic: WASD or arrows steer · Grand Tour P1 WASD + Space bomb · P2 arrows + Enter · Q/E altitude · C camera · M menu · H cinema · R Sky Rings</div>
+        <div><strong class="text-white">Keyboard:</strong> Scenic: WASD or arrows steer · Grand Tour P1 WASD + Space bomb · P2 arrows + Enter · Hold R or Backspace to restart · Q/E altitude · C camera · M menu · H cinema · R Sky Rings in Scenic Tour</div>
         <div><strong class="text-white">Xbox:</strong> A confirm / start 1P tour · each pad flies one plane in split-screen (any index) · left stick steer · LT/RT or stick Y climb &amp; dive · X bomb · Y menu · Menu cinema</div>
         <div class="text-slate-400">Grand Tour: 1P, 2P split-screen, or take-turns, plus the Scenic Tour. Easy includes auto-level assist. This game runs fully offline.</div>
       </div>
@@ -666,7 +845,7 @@
       <!-- Compact Location & Tour Pill (Opens Tour Drawer) -->
       <button id="drawer-toggle-btn" class="hud-interactive glass slim-dock rounded-full px-2.5 py-1.5 flex items-center gap-1.5 cursor-pointer text-left">
         <span class="w-2 h-2 rounded-full bg-sky-400 shrink-0 pulse-dot"></span>
-        <span id="version-label" class="version-label">v5</span>
+        <span id="version-label" class="version-label">v5.1</span>
         <span class="text-xs font-medium text-white truncate">
           <span id="banner-region-label">Swiss Alps</span>
           <span class="text-white/40 mx-1">·</span>
@@ -763,6 +942,15 @@
       </div>
 
       <div>
+        <div class="text-[10px] uppercase tracking-wider text-slate-400 font-medium mb-1.5">Flight Feel</div>
+        <div class="flex flex-wrap gap-1 mb-3">
+          <button type="button" class="set-btn invert-btn" data-seat="0">Invert P1</button>
+          <button type="button" class="set-btn invert-btn" data-seat="1">Invert P2</button>
+          <button type="button" class="set-btn sens-btn" data-sens="low">Stick Low</button>
+          <button type="button" class="set-btn sens-btn active" data-sens="normal">Stick Normal</button>
+          <button type="button" class="set-btn sens-btn" data-sens="high">Stick High</button>
+          <button type="button" class="set-btn reduce-motion-btn" id="reduce-motion-drawer">Reduce Motion</button>
+        </div>
         <div class="text-[10px] uppercase tracking-wider text-slate-400 font-medium mb-1.5">Quality</div>
         <div class="flex flex-wrap gap-1">
           <button data-quality="high" class="quality-btn glass-pill px-2 py-1 rounded-lg text-[11px] font-medium cursor-pointer">High</button>
@@ -793,7 +981,7 @@
         </div>
         <canvas id="radar-canvas" width="112" height="112" class="rounded-xl bg-slate-950/70 border border-white/10 cursor-crosshair shrink-0"></canvas>
       </div>
-      <div class="pt-1 border-t border-white/10 text-[10px] text-slate-400 leading-relaxed">v5 · Grand Tour or Scenic Tour · R Sky Rings · X bomb · RS next landmark · B closes menu</div>
+      <div class="pt-1 border-t border-white/10 text-[10px] text-slate-400 leading-relaxed">v5.1 · Hold R / Backspace / View to restart · Invert Pitch and Reduce Motion in Tour Director</div>
     </div>
 
     <!-- Ultra-Slim Centered Bottom Dock -->
@@ -3852,7 +4040,11 @@
         if (e.code === 'KeyQ' || e.code === 'PageDown') cycleAltitude(-1);
         if (e.code === 'KeyE' || e.code === 'PageUp') cycleAltitude(1);
         if (e.code === 'KeyB' || e.code === 'KeyF') { e.preventDefault(); dropBomb(); }
-        if (e.code === 'KeyR') setRingsEnabled(!state.ringsEnabled);
+        if (e.code === 'Backspace' && typeof GT !== 'undefined' && GT.active) e.preventDefault();
+        if (e.code === 'KeyR') {
+          if (typeof GT !== 'undefined' && GT.active && (GT.phase === 'play' || GT.phase === 'countdown')) e.preventDefault();
+          else setRingsEnabled(!state.ringsEnabled);
+        }
         if (e.code === 'KeyN') cycleLandmark();
         if (e.code === 'Escape') { toggleDrawer(false); setHelpOpen(false); }
       });
@@ -4148,7 +4340,13 @@
         }
 
         updateBombs(Math.min(rawDt, 0.1), elapsed);
-        if (state.shakeAmp > 0.01) {
+        if (typeof gtApplyCameraFeel === 'function' && !(typeof GT !== 'undefined' && GT.isSplitRender && GT.isSplitRender())) {
+          const flFeel = (typeof GT !== 'undefined' && GT.active && GT.flights && GT.flights[GT.activeSeat || 0]) ? GT.flights[GT.activeSeat || 0] : flight;
+          gtApplyCameraFeel(camera, flFeel, dt, false);
+        }
+        if (typeof gtUpdateParticles === 'function') gtUpdateParticles(dt);
+        if (typeof gtUpdateChevrons === 'function' && !(typeof GT !== 'undefined' && GT.isSplitRender && GT.isSplitRender())) gtUpdateChevrons();
+        if (state.shakeAmp > 0.01 && !(typeof GT !== 'undefined' && GT.settings && GT.settings.reduceMotion)) {
           const s = state.shakeAmp;
           camera.position.x += (Math.random() - 0.5) * s;
           camera.position.y += (Math.random() - 0.5) * s * 0.55;
@@ -4249,7 +4447,20 @@
         gtConfirm() { return GT.confirm(); },
         placePoints() { return GT.placePoints.apply(null, arguments); },
         bonusPoints() { return GT.bonusPoints.apply(null, arguments); },
-        get gtEvents() { return GT.events; }
+        get gtEvents() { return GT.events; },
+        getSettings() { return GT.getSettings(); },
+        setInvert(seat, on) { return GT.setInvert(seat, on); },
+        setSensitivity(level) { return GT.setSensitivity(level); },
+        setReduceMotion(on) { return GT.setReduceMotion(on); },
+        restartEvent() { return GT.restartEvent(); },
+        getChevrons() { return GT.getChevrons(); },
+        getParticles() { return GT.getParticles(); },
+        getMotion() { return GT.getMotion(); },
+        getLastDeltas() { return GT.getLastDeltas(); },
+        debugSplit(seat, index, elapsed) { return GT.debugSplit(seat, index, elapsed); },
+        setGhostSplits(arr) { return GT.setGhostSplits(arr); },
+        debugPlace(seat, x, y, z, yaw) { return GT.debugPlace(seat, x, y, z, yaw); },
+        bumpShake(amt) { return GT.bumpShake(amt); }
       };
       window.__av = window.__avDebug;
 
@@ -4777,7 +4988,7 @@
           raw: 0, place: 0, bonus: 0, collected: 0, missed: 0, maxCombo: 0,
           dropped: 0, hits: 0, hikers: 0, accuracy: 0, gates: 0, crashes: 0,
           altBonus: 0, tags: 0, survival: 0, underPar: false, bombsLeft: ammo,
-          cooldown: 0, finished: false, finishTime: 0
+          cooldown: 0, finished: false, finishTime: 0, stuntPts: 0
         }));
         GT.combo = [0, 0];
         GT.comboT = [0, 0];
@@ -4949,6 +5160,10 @@
         const gKey = ev.id + "_" + GT.difficulty;
         GT.ghost = (gtSolo() && bests.ghosts[gKey] && bests.ghosts[gKey].path) ? bests.ghosts[gKey] : null;
         if (GT.ghostGroup) GT.ghostGroup.visible = !!(GT.ghost && GT.ghost.path && GT.ghost.path.length);
+        GT.ghostSplits = (bests.ghosts[gKey] && bests.ghosts[gKey].splits) ? bests.ghosts[gKey].splits.slice() : [];
+        GT.splitTimes = [[], []];
+        GT.lastDeltas = [];
+        GT.stuntMul = [1, 1];
         const kicker = gtEl("gt-brief-kicker");
         if (kicker) kicker.textContent = "Event " + (GT.eventIndex + 1) + " of " + GT_EVENTS.length + " · " + REGIONS[ev.region].name;
         if (gtEl("gt-brief-title")) gtEl("gt-brief-title").textContent = ev.name;
@@ -5093,11 +5308,14 @@
       function gtCollectInputs(dt) {
         GT.inputs[0] = { yaw: 0, alt: 0, bomb: false };
         GT.inputs[1] = { yaw: 0, alt: 0, bomb: false };
+        const sens = (GT.settings && GT.settings.sensitivity) || "normal";
+        function inv(seat) { return !!(GT.settings && GT.settings.invertPitch && GT.settings.invertPitch[seat]); }
         function keySeat(seat, left, right, up, down, bomb) {
           if (keysDown[left]) GT.inputs[seat].yaw -= 1;
           if (keysDown[right]) GT.inputs[seat].yaw += 1;
-          if (keysDown[up]) GT.inputs[seat].alt += 1;
-          if (keysDown[down]) GT.inputs[seat].alt -= 1;
+          const climb = inv(seat) ? -1 : 1;
+          if (keysDown[up]) GT.inputs[seat].alt += climb;
+          if (keysDown[down]) GT.inputs[seat].alt -= climb;
           if (keysDown[bomb]) GT.inputs[seat].bomb = true;
         }
         if (GT.format === "split") {
@@ -5111,19 +5329,20 @@
         if (GT.touch.active && GT.format !== "split") {
           const seat = GT.activeSeat;
           GT.inputs[seat].yaw += GT.touch.x;
-          GT.inputs[seat].alt += -GT.touch.y;
+          GT.inputs[seat].alt += (inv(seat) ? 1 : -1) * GT.touch.y;
         }
         const pads = gtConnectedPads();
-        const dead = 0.18;
         function fromPad(gp, seat) {
           if (!gp) return;
-          const lx = Math.abs(gp.axes[0]) > dead ? gp.axes[0] : 0;
-          const ly = Math.abs(gp.axes[1]) > dead ? gp.axes[1] : 0;
+          const mul = (typeof gtApplyStickAxis === "function") ? null : null;
+          const lx = (typeof gtApplyStickAxis === "function") ? gtApplyStickAxis(gp.axes[0], sens) : (Math.abs(gp.axes[0]) > 0.18 ? gp.axes[0] : 0);
+          const ly = (typeof gtApplyStickAxis === "function") ? gtApplyStickAxis(gp.axes[1], sens) : (Math.abs(gp.axes[1]) > 0.18 ? gp.axes[1] : 0);
           GT.inputs[seat].yaw += lx;
           const lt = (gp.buttons[6] && gp.buttons[6].value) || 0;
           const rt = (gp.buttons[7] && gp.buttons[7].value) || 0;
-          GT.inputs[seat].alt += rt - lt;
-          if (Math.abs(ly) > dead) GT.inputs[seat].alt += -ly;
+          let pitch = rt - lt - ly;
+          if (inv(seat)) pitch = -pitch;
+          GT.inputs[seat].alt += pitch;
           const xb = gp.buttons[2];
           if (xb && (xb.pressed || xb.value > 0.5)) GT.inputs[seat].bomb = true;
         }
@@ -5209,9 +5428,12 @@
             GT.comboT[owner] = 3;
             GT.stats[owner].maxCombo = Math.max(GT.stats[owner].maxCombo, GT.combo[owner]);
             GT.stats[owner].hits += 1;
-            const gain = t.points * (1 + (GT.combo[owner] - 1) * 0.15);
+            let gain = t.points * (1 + (GT.combo[owner] - 1) * 0.15);
+            if (typeof gtStuntMul === "function") gain *= gtStuntMul(owner);
             GT.stats[owner].raw += gain;
             t.mesh.visible = false;
+            if (typeof gtRecordSplit === "function") gtRecordSplit(owner, GT.stats[owner].hits - 1);
+            if (typeof gtBumpShake === "function") gtBumpShake(1.6);
             gtRumbleSeat(owner, 220, 0.4, 0.7);
             showToast((t.kind === "sheep" ? "Woolly bonus! +" : "Hit! +") + Math.round(gain));
           }
@@ -5271,6 +5493,9 @@
             if (GT.combo[seat] >= 3) GT.boostT[seat] = 1.6;
             if (typeof AudioEngine.playRingChime === "function") AudioEngine.playRingChime(GT.combo[seat]);
             gtRumbleSeat(seat, 140, 0.25, 0.4);
+            const ridx = (GT.format === "split" ? GT.ringProgress[seat] : GT.nextRing) - 1;
+            if (typeof gtRecordSplit === "function") gtRecordSplit(seat, Math.max(0, ridx));
+            if (typeof gtStuntMul === "function" && gtStuntMul(seat) > 1) GT.stats[seat].stuntPts = (GT.stats[seat].stuntPts || 0) + Math.round(24 * (gtStuntMul(seat) - 1));
           } else {
             const toRing = (r.x - fl.pos.x) * ringFwdX + (r.z - fl.pos.z) * ringFwdZ;
             if (toRing < -12) {
@@ -5316,6 +5541,9 @@
             GT.stats[seat].maxCombo = Math.max(GT.stats[seat].maxCombo, GT.combo[seat]);
             if (typeof AudioEngine.playRingChime === "function") AudioEngine.playRingChime(GT.combo[seat]);
             gtRumbleSeat(seat, 140, 0.3, 0.45);
+            const gidx = (GT.format === "split" ? GT.gateProgress[seat] : GT.nextGate) - 1;
+            if (typeof gtRecordSplit === "function") gtRecordSplit(seat, Math.max(0, gidx));
+            if (typeof gtStuntMul === "function" && gtStuntMul(seat) > 1) GT.stats[seat].stuntPts = (GT.stats[seat].stuntPts || 0) + Math.round(24 * (gtStuntMul(seat) - 1));
             const done = GT.format === "split" ? GT.gateProgress[seat] : GT.nextGate;
             if (done >= GT.gates.length) GT.stats[seat].finished = true;
           } else if (fl.pos.z - g.z > 18 && distH > 4) {
@@ -5403,7 +5631,7 @@
         } else if (ev.type === "tag") {
           st.raw = st.tags * 120 + st.survival * 8 + timeLeft * 1;
         }
-        st.raw = Math.max(0, Math.round(st.raw));
+        st.raw = Math.max(0, Math.round(st.raw + (st.stuntPts || 0)));
         return st.raw;
       }
 
@@ -5537,7 +5765,12 @@
         if (!prev || raw0 > prev.raw) {
           bests.events[ev.id][d] = { raw: raw0, total: GT.totals[0] };
           if (GT.pendingGhost && GT.pendingGhost.length) {
-            bests.ghosts[ev.id + "_" + d] = { path: GT.pendingGhost.slice(0, 600), raw: raw0 };
+            bests.ghosts[ev.id + "_" + d] = { path: GT.pendingGhost.slice(0, 600), raw: raw0, splits: (GT.splitTimes[0] || []).slice() };
+          } else if (GT.splitTimes[0] && GT.splitTimes[0].length) {
+            const g = bests.ghosts[ev.id + "_" + d] || { raw: raw0 };
+            g.splits = (GT.splitTimes[0] || []).slice();
+            g.raw = raw0;
+            bests.ghosts[ev.id + "_" + d] = g;
           }
         }
         gtSaveBests(bests);
@@ -5729,10 +5962,12 @@
           gtRecordGhost(scaled);
           gtUpdateGhost();
           if (Math.floor(GT.phaseT * 8) !== Math.floor((GT.phaseT - scaled) * 8)) gtSyncHud();
+          if (typeof gtTickFeel === "function") gtTickFeel(scaled);
           gtMaybeEndPlay();
           return true;
         }
         gtHoldPlanes();
+        if (typeof gtTickFeel === "function") gtTickFeel(scaled);
         if (GT.phase === "champion") gtTickConfetti(scaled);
         return true;
       }
@@ -5752,6 +5987,8 @@
         cam.position.copy(smoothPos);
         cam.lookAt(smoothLook);
         clampPosAboveTerrain(cam.position, 8);
+        const flFeel = (group === planeGroup) ? (GT.flights && GT.flights[0]) : (GT.flights && GT.flights[1]);
+        if (typeof gtApplyCameraFeel === "function") gtApplyCameraFeel(cam, flFeel, dt, true);
       }
       function gtRenderSplit(dt) {
         if (!GT.camera2) gtEnsureSecondPlane();
@@ -5840,6 +6077,24 @@
           base.addEventListener("pointercancel", clear);
         }
         gtRefreshBestLine();
+        if (typeof gtSyncSettingsUI === "function") {
+          document.querySelectorAll(".invert-btn").forEach((btn) => {
+            if (btn.dataset.bound) return;
+            btn.dataset.bound = "1";
+            btn.addEventListener("click", (e) => { e.stopPropagation(); gtSetInvert(parseInt(btn.dataset.seat, 10)); });
+          });
+          document.querySelectorAll(".sens-btn").forEach((btn) => {
+            if (btn.dataset.bound) return;
+            btn.dataset.bound = "1";
+            btn.addEventListener("click", (e) => { e.stopPropagation(); gtSetSensitivity(btn.dataset.sens); });
+          });
+          document.querySelectorAll("#reduce-motion-btn, .reduce-motion-btn").forEach((btn) => {
+            if (btn.dataset.bound) return;
+            btn.dataset.bound = "1";
+            btn.addEventListener("click", (e) => { e.stopPropagation(); gtSetReduceMotion(); });
+          });
+          gtSyncSettingsUI();
+        }
       }
 
       GT.isActive = function () { return !!GT.active; };
@@ -5899,6 +6154,673 @@
         gtAfterBothPlayed();
         return GT.getState();
       };
+
+
+      // =========================================================================
+      // v5.1 helpers — chevrons, restart, settings, splits, particles, feel
+      // =========================================================================
+      const GT_SET_KEY = "aerovista.v51.settings";
+      const GT_STORAGE_KEY_V51 = "aerovista.v51.bests";
+      const GT_SENS = { low: 0.65, normal: 1, high: 1.4 };
+      const GT_DEADZONE = 0.16;
+      const GT_RESTART_HOLD = 0.7;
+      const GT_BASE_FOV = 54;
+
+      function gtDefaultSettings() {
+        return { invertPitch: [false, false], sensitivity: "normal", reduceMotion: false };
+      }
+      function gtLoadSettings() {
+        try {
+          const raw = localStorage.getItem(GT_SET_KEY);
+          if (!raw) return gtDefaultSettings();
+          const d = JSON.parse(raw);
+          const base = gtDefaultSettings();
+          if (Array.isArray(d.invertPitch) && d.invertPitch.length >= 2) base.invertPitch = [!!d.invertPitch[0], !!d.invertPitch[1]];
+          if (d.sensitivity === "low" || d.sensitivity === "high" || d.sensitivity === "normal") base.sensitivity = d.sensitivity;
+          base.reduceMotion = !!d.reduceMotion;
+          return base;
+        } catch (err) { return gtDefaultSettings(); }
+      }
+      function gtSaveSettings() {
+        try { localStorage.setItem(GT_SET_KEY, JSON.stringify(GT.settings)); } catch (err) { /* quota */ }
+      }
+      GT.settings = gtLoadSettings();
+      GT.restartHold = [0, 0];
+      GT.splitTimes = [[], []];
+      GT.ghostSplits = [];
+      GT.lastDeltas = [];
+      GT.stuntMul = [1, 1];
+      GT.stuntT = [0, 0];
+      GT.camFeel = { fov: GT_BASE_FOV, shake: 0 };
+      GT.particles = { group: null, kind: "none", count: 0, data: null };
+      GT.pendingSplits = [];
+      GT._deltaHide = [0, 0];
+      GT._nearShakeCool = 0;
+      GT._stuntCool = [0, 0];
+      GT._skimAcc = [0, 0];
+
+      // Prefer v5.1 bests; fall back to v5 so prior totals are not lost.
+      function gtLoadBests() {
+        try {
+          const raw = localStorage.getItem(GT_STORAGE_KEY_V51) || localStorage.getItem("aerovista.v5.bests");
+          if (!raw) return { totals: {}, events: {}, ghosts: {} };
+          const data = JSON.parse(raw);
+          data.totals = data.totals || {};
+          data.events = data.events || {};
+          data.ghosts = data.ghosts || {};
+          return data;
+        } catch (err) {
+          return { totals: {}, events: {}, ghosts: {} };
+        }
+      }
+      function gtSaveBests(data) {
+        try { localStorage.setItem(GT_STORAGE_KEY_V51, JSON.stringify(data)); } catch (err) { /* quota */ }
+      }
+
+      function gtApplyStickAxis(v, sens) {
+        const dead = GT_DEADZONE;
+        if (Math.abs(v) <= dead) return 0;
+        const s = (v - dead * Math.sign(v)) / (1 - dead);
+        return s * (GT_SENS[sens] || 1);
+      }
+
+      function gtSyncSettingsUI() {
+        const s = GT.settings;
+        document.querySelectorAll(".invert-btn").forEach((b) => {
+          const seat = parseInt(b.dataset.seat, 10);
+          b.classList.toggle("active", !!s.invertPitch[seat]);
+        });
+        document.querySelectorAll(".sens-btn").forEach((b) => {
+          b.classList.toggle("active", b.dataset.sens === s.sensitivity);
+        });
+        const rm = document.getElementById("reduce-motion-btn");
+        if (rm) rm.classList.toggle("active", !!s.reduceMotion);
+        document.querySelectorAll(".reduce-motion-btn").forEach((b) => b.classList.toggle("active", !!s.reduceMotion));
+      }
+
+      function gtSetInvert(seat, on) {
+        GT.settings.invertPitch[seat] = on == null ? !GT.settings.invertPitch[seat] : !!on;
+        gtSaveSettings();
+        gtSyncSettingsUI();
+      }
+      function gtSetSensitivity(level) {
+        if (GT_SENS[level] == null) return;
+        GT.settings.sensitivity = level;
+        gtSaveSettings();
+        gtSyncSettingsUI();
+      }
+      function gtSetReduceMotion(on) {
+        GT.settings.reduceMotion = on == null ? !GT.settings.reduceMotion : !!on;
+        gtSaveSettings();
+        gtSyncSettingsUI();
+        if (GT.settings.reduceMotion) {
+          GT.camFeel.shake = 0;
+          state.shakeAmp = 0;
+          if (typeof camera !== "undefined") {
+            camera.fov = GT_BASE_FOV;
+            camera.updateProjectionMatrix();
+          }
+        }
+      }
+
+      function gtShowDelta(seat, deltaSec) {
+        const el = gtEl(seat === 1 && gtIsSplit() ? "gt-delta-1" : "gt-delta-0");
+        if (!el) return;
+        const ahead = deltaSec < 0;
+        const abs = Math.abs(deltaSec);
+        const txt = (ahead ? "−" : "+") + abs.toFixed(1) + "s";
+        el.textContent = txt;
+        el.classList.remove("hidden", "ahead", "behind");
+        el.classList.add("show", ahead ? "ahead" : "behind");
+        if (gtIsSplit()) {
+          const wide = gtWideSplit();
+          if (seat === 0) {
+            el.style.left = wide ? "25%" : "50%";
+            el.style.top = wide ? "48%" : "25%";
+          } else {
+            el.style.left = wide ? "75%" : "50%";
+            el.style.top = wide ? "48%" : "75%";
+          }
+        } else {
+          el.style.left = "50%";
+          el.style.top = "42%";
+        }
+        GT._deltaHide[seat] = 1.15;
+        GT.lastDeltas.push({ seat: seat, delta: deltaSec, text: txt, ahead: ahead, t: GT.duration - GT.clock });
+        if (GT.lastDeltas.length > 24) GT.lastDeltas.shift();
+      }
+
+      function gtRecordSplit(seat, index) {
+        if (seat == null) seat = GT.activeSeat || 0;
+        const elapsed = Math.max(0, GT.duration - GT.clock);
+        if (!GT.splitTimes[seat]) GT.splitTimes[seat] = [];
+        GT.splitTimes[seat][index] = elapsed;
+        const ghost = GT.ghostSplits;
+        if (ghost && ghost[index] != null && (gtSolo() || GT.format === "turns")) {
+          const delta = elapsed - ghost[index];
+          gtShowDelta(seat, delta);
+        }
+      }
+
+      function gtBumpShake(amt) {
+        if (GT.settings.reduceMotion) return;
+        GT.camFeel.shake = Math.max(GT.camFeel.shake, amt);
+        if (typeof state !== "undefined") state.shakeAmp = Math.max(state.shakeAmp || 0, amt);
+      }
+
+      function gtUpdateStunts(dt) {
+        if (!gtPlaying()) return;
+        const ev = gtEvent();
+        const diff = GT.difficulty;
+        if (diff === "easy") {
+          GT.stuntMul = [1, 1];
+          return;
+        }
+        const reg = REGIONS[state.regionKey];
+        gtSeatsThisPhase().forEach((seat) => {
+          const fl = GT.flights[seat];
+          if (!fl) return;
+          if (GT.stuntT[seat] > 0) GT.stuntT[seat] -= dt;
+          else GT.stuntMul[seat] = 1;
+          if (GT._stuntCool[seat] > 0) GT._stuntCool[seat] -= dt;
+          const gnd = Math.max(reg.heightFn(fl.pos.x, fl.pos.z), reg.waterLevel);
+          const agl = fl.pos.y - gnd;
+          // terrain skim
+          if (agl > 8 && agl < 16) {
+            GT._skimAcc[seat] += dt;
+            if (GT._skimAcc[seat] >= 0.85 && GT._stuntCool[seat] <= 0) {
+              GT._skimAcc[seat] = 0;
+              GT.stuntMul[seat] = Math.min(2, (GT.stuntMul[seat] || 1) + 0.25);
+              GT.stuntT[seat] = 2.4;
+              GT._stuntCool[seat] = 1.6;
+              GT.stats[seat].raw += 12;
+              gtStuntToast("Skim ×" + GT.stuntMul[seat].toFixed(2));
+              if (agl < 11) gtBumpShake(0.45);
+            }
+          } else {
+            GT._skimAcc[seat] *= Math.max(0, 1 - dt * 2);
+          }
+          // tight bank near a peak: high terrain nearby + bank
+          const peak = Math.max(
+            reg.heightFn(fl.pos.x + 28, fl.pos.z),
+            reg.heightFn(fl.pos.x - 28, fl.pos.z),
+            reg.heightFn(fl.pos.x, fl.pos.z + 28),
+            reg.heightFn(fl.pos.x, fl.pos.z - 28)
+          );
+          const nearPeak = peak - gnd > 22 && (peak + 10 - fl.pos.y) > 0 && (fl.pos.y - peak) < 36;
+          if (nearPeak && Math.abs(fl.bank) > 0.32 && GT._stuntCool[seat] <= 0) {
+            GT.stuntMul[seat] = Math.min(2, (GT.stuntMul[seat] || 1) + 0.2);
+            GT.stuntT[seat] = 2.2;
+            GT._stuntCool[seat] = 1.8;
+            GT.stats[seat].raw += 10;
+            gtStuntToast("Tight bank ×" + GT.stuntMul[seat].toFixed(2));
+            gtBumpShake(0.35);
+          }
+          // near-miss shake when barely clearing terrain
+          if (agl < 12 && agl > 7 && GT._nearShakeCool <= 0) {
+            gtBumpShake(0.28);
+            GT._nearShakeCool = 0.4;
+          }
+        });
+        if (GT._nearShakeCool > 0) GT._nearShakeCool -= dt;
+      }
+
+      function gtStuntToast(msg) {
+        const el = gtEl("gt-stunt");
+        if (!el) return;
+        el.textContent = msg;
+        el.classList.remove("hidden");
+        GT._stuntMsgT = 1.3;
+      }
+
+      function gtStuntMul(seat) {
+        if (GT.difficulty === "easy") return 1;
+        return GT.stuntMul[seat] || 1;
+      }
+
+      function gtObjectiveForSeat(seat) {
+        const ev = gtEvent && gtEvent();
+        if (!ev) return null;
+        if (ev.type === "rings") {
+          const idx = GT.format === "split" ? (GT.ringProgress[seat] || 0) : GT.nextRing;
+          const r = GT.rings[idx];
+          if (r) return { x: r.x, y: r.y, z: r.z, label: "Ring" };
+        } else if (ev.type === "canyon") {
+          const idx = GT.format === "split" ? (GT.gateProgress[seat] || 0) : GT.nextGate;
+          const g = GT.gates[idx];
+          if (g) return { x: g.x, y: g.y, z: g.z, label: "Gate" };
+        } else if (ev.type === "bomb") {
+          const t = GT.targets.find((o) => !o.hit);
+          if (t) return { x: t.x, y: t.y + 8, z: t.z, label: "Target" };
+        } else if (ev.type === "tag") {
+          if (gtSolo() && GT.drone && GT.drone.visible) {
+            const p = GT.drone.position;
+            return { x: p.x, y: p.y, z: p.z, label: "Drone" };
+          }
+          const other = GT.flights[seat ^ 1];
+          if (other) return { x: other.pos.x, y: other.pos.y, z: other.pos.z, label: "Rival" };
+        }
+        return null;
+      }
+
+      function gtPlaceChevron(el, cam, world, viewport) {
+        if (!el || !cam || !world) { if (el) el.classList.add("hidden"); return { visible: false }; }
+        const v = new THREE.Vector3(world.x, world.y, world.z).project(cam);
+        let x = v.x, y = v.y;
+        const behind = v.z > 1;
+        if (behind) { x = -x; y = -y; }
+        const onScreen = !behind && x >= -0.92 && x <= 0.92 && y >= -0.88 && y <= 0.88;
+        if (onScreen) {
+          el.classList.add("hidden");
+          return { visible: false, x: x, y: y, ndc: true };
+        }
+        // clamp to edge
+        const ax = Math.abs(x), ay = Math.abs(y);
+        const limitX = 0.9, limitY = 0.82;
+        let nx = x, ny = y;
+        if (ax < 0.001 && ay < 0.001) { nx = 0; ny = 1; }
+        else if (ax / limitX > ay / limitY) {
+          nx = limitX * Math.sign(x || 1);
+          ny = (x === 0) ? 0 : Math.max(-limitY, Math.min(limitY, y * (limitX / ax)));
+        } else {
+          ny = limitY * Math.sign(y || 1);
+          nx = (y === 0) ? 0 : Math.max(-limitX, Math.min(limitX, x * (limitY / ay)));
+        }
+        const px = viewport.x + (nx * 0.5 + 0.5) * viewport.w;
+        const py = viewport.y + (-ny * 0.5 + 0.5) * viewport.h;
+        const ang = Math.atan2(-ny, nx); // screen y up in ndc, down in css
+        // arrow points up by default; rotate so it points outward toward target
+        const rot = Math.atan2(ny, nx) - Math.PI / 2;
+        el.classList.remove("hidden");
+        el.style.left = px + "px";
+        el.style.top = py + "px";
+        el.style.transform = "rotate(" + rot + "rad)";
+        const lab = el.querySelector(".gt-chevron-label");
+        if (lab) {
+          lab.style.transform = "translateX(-50%) rotate(" + (-rot) + "rad)";
+          lab.textContent = world.label || "Next";
+        }
+        return { visible: true, x: px, y: py, rot: rot, label: world.label };
+      }
+
+      function gtUpdateChevrons() {
+        const playing = GT.active && (GT.phase === "play" || GT.phase === "countdown");
+        const c0 = gtEl("gt-chevron-0");
+        const c1 = gtEl("gt-chevron-1");
+        if (!playing) {
+          if (c0) c0.classList.add("hidden");
+          if (c1) c1.classList.add("hidden");
+          return;
+        }
+        const w = window.innerWidth, h = window.innerHeight;
+        if (gtIsSplit() && GT.camera2) {
+          const wide = w >= h;
+          const views = wide
+            ? [{ x: 0, y: 0, w: Math.floor(w / 2), h: h, cam: camera, seat: 0, el: c0 },
+               { x: Math.floor(w / 2), y: 0, w: w - Math.floor(w / 2), h: h, cam: GT.camera2, seat: 1, el: c1 }]
+            : [{ x: 0, y: 0, w: w, h: Math.floor(h / 2), cam: camera, seat: 0, el: c0 },
+               { x: 0, y: Math.floor(h / 2), w: w, h: h - Math.floor(h / 2), cam: GT.camera2, seat: 1, el: c1 }];
+          // CSS y is from top; WebGL viewport y is from bottom for split stacked.
+          // Our DOM overlay uses top-origin. For stacked: P1 is top half (y=0), P2 bottom.
+          if (!wide) {
+            views[0].y = 0;
+            views[1].y = Math.floor(h / 2);
+          }
+          GT._chevronState = views.map((v) => gtPlaceChevron(v.el, v.cam, gtObjectiveForSeat(v.seat), v));
+        } else {
+          if (c1) c1.classList.add("hidden");
+          const seat = GT.format === "turns" ? GT.activeSeat : 0;
+          GT._chevronState = [gtPlaceChevron(c0, camera, gtObjectiveForSeat(seat), { x: 0, y: 0, w: w, h: h })];
+        }
+      }
+
+      function gtLayoutMiniHuds() {
+        const split = gtIsSplit() && (GT.phase === "play" || GT.phase === "countdown");
+        const m0 = gtEl("gt-mini-0");
+        const m1 = gtEl("gt-mini-1");
+        if (m0) m0.classList.toggle("hidden", !split);
+        if (m1) m1.classList.toggle("hidden", !split);
+        if (!split) return;
+        const wide = gtWideSplit();
+        const top = 36;
+        if (m0) {
+          m0.style.left = "12px";
+          m0.style.top = top + "px";
+          m0.style.right = "auto";
+        }
+        if (m1) {
+          if (wide) { m1.style.left = "calc(50% + 12px)"; m1.style.top = top + "px"; }
+          else { m1.style.left = "12px"; m1.style.top = "calc(50% + 32px)"; }
+        }
+        // hide shared score in split; keep timer
+        const sc = gtEl("gt-event-score");
+        if (sc) sc.style.display = "none";
+      }
+
+      function gtUpdateMiniHuds() {
+        const ev = gtEvent();
+        if (!ev) return;
+        if (!gtIsSplit()) {
+          const sc = gtEl("gt-event-score");
+          if (sc) sc.style.display = "";
+          const m0 = gtEl("gt-mini-0"); const m1 = gtEl("gt-mini-1");
+          if (m0) m0.classList.add("hidden");
+          if (m1) m1.classList.add("hidden");
+          return;
+        }
+        gtLayoutMiniHuds();
+        [0, 1].forEach((seat) => {
+          const st = GT.stats[seat];
+          if (!st) return;
+          const score = gtEl("gt-mini-" + seat + "-score");
+          const combo = gtEl("gt-mini-" + seat + "-combo");
+          const metric = gtEl("gt-mini-" + seat + "-metric");
+          if (score) score.textContent = String(Math.round(st.raw));
+          if (combo) combo.textContent = (GT.combo[seat] > 1) ? ("x" + GT.combo[seat]) : "";
+          let line = "";
+          if (ev.type === "rings") {
+            const n = GT.format === "split" ? (GT.ringProgress[seat] || 0) : st.collected;
+            line = "Rings " + n + "/" + (GT.rings.length || 0);
+          } else if (ev.type === "canyon") {
+            const n = GT.format === "split" ? (GT.gateProgress[seat] || 0) : st.gates;
+            line = "Gates " + n + "/" + (GT.gates.length || 0);
+          } else if (ev.type === "bomb") {
+            line = "Bombs " + st.bombsLeft + " · Hits " + st.hits;
+          } else if (ev.type === "tag") {
+            line = "Tags " + st.tags + " · Surv " + Math.floor(st.survival) + "s";
+          }
+          if (GT.stuntMul[seat] > 1.01 && GT.difficulty !== "easy") line += " · ×" + GT.stuntMul[seat].toFixed(2);
+          if (metric) metric.textContent = line;
+        });
+      }
+
+      function gtRestartWanted(seat) {
+        const pads = gtConnectedPads();
+        function padView(gp) {
+          if (!gp || !gp.buttons || !gp.buttons[8]) return false;
+          const b = gp.buttons[8];
+          return !!(b.pressed || b.value > 0.5);
+        }
+        if (GT.format === "split") {
+          if (seat === 0) return !!(keysDown.KeyR || keysDown.Backspace || padView(pads[0]));
+          return !!(keysDown.ShiftRight || keysDown.ShiftLeft || padView(pads[1]));
+        }
+        const active = GT.format === "turns" ? GT.activeSeat : 0;
+        if (seat !== active) return false;
+        return !!(keysDown.KeyR || keysDown.Backspace || padView(pads[0]));
+      }
+
+      function gtUpdateRestart(dt) {
+        const bar = gtEl("gt-restart-bar");
+        const fill = gtEl("gt-restart-fill");
+        const lab = gtEl("gt-restart-label");
+        if (!gtPlaying()) {
+          GT.restartHold = [0, 0];
+          if (bar) bar.classList.add("hidden");
+          return;
+        }
+        const seats = gtSeatsThisPhase();
+        seats.forEach((s) => {
+          if (gtRestartWanted(s)) GT.restartHold[s] = (GT.restartHold[s] || 0) + dt;
+          else GT.restartHold[s] = 0;
+        });
+        let progress = 0;
+        let ready = false;
+        let label = "Hold to restart event";
+        if (GT.format === "split") {
+          const p1 = Math.min(1, (GT.restartHold[0] || 0) / GT_RESTART_HOLD);
+          const p2 = Math.min(1, (GT.restartHold[1] || 0) / GT_RESTART_HOLD);
+          progress = Math.min(p1, p2);
+          if (p1 > 0 || p2 > 0) {
+            if (p1 < 1 && p2 < 1) label = (p1 > 0 && p2 > 0) ? "Both holding…" : (p1 > 0 ? "P1 holding — P2 press View / Shift" : "P2 holding — P1 press View / R");
+            else if (p1 >= 1 && p2 < 1) label = "Waiting for P2…";
+            else if (p2 >= 1 && p1 < 1) label = "Waiting for P1…";
+            else label = "Restarting…";
+          }
+          ready = p1 >= 1 && p2 >= 1;
+        } else {
+          const s = GT.format === "turns" ? GT.activeSeat : 0;
+          progress = Math.min(1, (GT.restartHold[s] || 0) / GT_RESTART_HOLD);
+          label = "Hold to restart event";
+          ready = progress >= 1;
+        }
+        if (progress > 0.02) {
+          if (bar) bar.classList.remove("hidden");
+          if (fill) fill.style.width = Math.round(progress * 100) + "%";
+          if (lab) lab.textContent = label;
+        } else if (bar) bar.classList.add("hidden");
+        if (ready) {
+          GT.restartHold = [0, 0];
+          if (bar) bar.classList.add("hidden");
+          gtRestartCurrentEvent();
+        }
+      }
+
+      function gtRestartCurrentEvent() {
+        if (!GT.active || !gtEvent()) return false;
+        // Keep tour totals and event index; reset this event attempt.
+        const ev = gtEvent();
+        const seats = (GT.format === "turns") ? [GT.activeSeat] : (GT.format === "split" ? [0, 1] : [0]);
+        const keptTotals = GT.totals.slice();
+        const keptLog = GT.eventLog.slice();
+        const keptSeat = GT.activeSeat;
+        gtResetStats();
+        if (GT.format === "turns") {
+          // preserve the other player's already-finished result
+          if (keptSeat === 1 && GT.results[0]) {
+            // stats 0 already zeroed; restore done flag after rebuild
+          }
+        }
+        gtBuildCourse();
+        seats.forEach((i) => {
+          const sp = gtSpawnPos(i, ev);
+          GT.flights[i] = gtNewFlight(sp.x, sp.y, sp.z, sp.yaw);
+        });
+        if (GT.format !== "turns" || keptSeat === 0) gtCopyFlight(GT.flights[0], flight);
+        else gtCopyFlight(GT.flights[keptSeat], flight);
+        if (ev.type === "bomb") {
+          setBombsEnabled(true);
+          state.bombAmmo = gtDiff().bombs;
+          state.bombCooldown = 0;
+          updateBombUI();
+        }
+        if (ev.type === "tag") {
+          GT.chaser = (GT.format === "turns") ? keptSeat : 0;
+          GT.invuln = 1.2;
+        }
+        GT.splitTimes = [[], []];
+        GT.ghostRec = [];
+        GT.pendingGhost = null;
+        GT.pendingSplits = [];
+        GT.clock = (GT.eventDurationOverride != null) ? GT.eventDurationOverride : Math.round(ev.duration * gtDiff().timeMul);
+        GT.duration = GT.clock;
+        GT.totals = keptTotals;
+        GT.eventLog = keptLog;
+        GT.activeSeat = keptSeat;
+        if (GT.format === "turns" && keptSeat === 1 && GT.results[0]) {
+          GT.turnDone[0] = true;
+          GT.turnDone[1] = false;
+        } else {
+          GT.turnDone = [false, false];
+          GT.results = [null, null];
+        }
+        showToast("Event restarted");
+        if (GT.skipCountdown) gtEnterPlay();
+        else {
+          GT.phase = "countdown";
+          GT.phaseT = 0;
+          gtHideAllModals();
+          gtShow("gt-goal", true);
+          gtShow("gt-play-hud", true);
+          gtShow("gt-countdown", true);
+          const el = gtEl("gt-countdown");
+          if (el) { el.textContent = "3"; el.classList.remove("go"); }
+        }
+        gtSyncHud();
+        return true;
+      }
+
+      function gtParticleBudget() {
+        if (gtIsSplit()) return 0;
+        const q = (state && state.quality) || "medium";
+        if (q === "high") return 420;
+        if (q === "low") return 80;
+        return 200;
+      }
+
+      function gtParticleKindForRegion(regionKey) {
+        if (regionKey === "alps" || regionKey === "everest") return "snow";
+        if (regionKey === "canyon") return "dust";
+        if (regionKey === "fjords") return "mist";
+        return "none";
+      }
+
+      function gtEnsureParticles() {
+        const kind = gtParticleKindForRegion(state.regionKey);
+        const count = kind === "none" ? 0 : gtParticleBudget();
+        if (GT.particles.kind === kind && GT.particles.count === count && GT.particles.group) return;
+        if (GT.particles.group) {
+          scene.remove(GT.particles.group);
+          if (typeof disposeObject3D === "function") disposeObject3D(GT.particles.group);
+          GT.particles.group = null;
+          GT.particles.data = null;
+        }
+        GT.particles.kind = kind;
+        GT.particles.count = count;
+        if (!count) return;
+        const geo = new THREE.BufferGeometry();
+        const pos = new Float32Array(count * 3);
+        const vel = new Float32Array(count * 3);
+        const cam = (typeof camera !== "undefined" && camera.position) ? camera.position : { x: 0, y: 80, z: 0 };
+        for (let i = 0; i < count; i++) {
+          pos[i * 3] = cam.x + (Math.random() - 0.5) * 280;
+          pos[i * 3 + 1] = cam.y + (Math.random() - 0.3) * 140;
+          pos[i * 3 + 2] = cam.z + (Math.random() - 0.5) * 280;
+          if (kind === "snow") { vel[i * 3] = (Math.random() - 0.5) * 3; vel[i * 3 + 1] = -8 - Math.random() * 10; vel[i * 3 + 2] = (Math.random() - 0.5) * 3; }
+          else if (kind === "dust") { vel[i * 3] = 4 + Math.random() * 8; vel[i * 3 + 1] = (Math.random() - 0.5) * 2; vel[i * 3 + 2] = (Math.random() - 0.5) * 6; }
+          else { vel[i * 3] = (Math.random() - 0.5) * 2; vel[i * 3 + 1] = (Math.random() - 0.4) * 1.4; vel[i * 3 + 2] = (Math.random() - 0.5) * 2; }
+        }
+        geo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+        const color = kind === "snow" ? 0xf8fafc : (kind === "dust" ? 0xd2b48c : 0xcce7ee);
+        const size = kind === "mist" ? 4.2 : (kind === "dust" ? 1.8 : 1.4);
+        const mat = new THREE.PointsMaterial({
+          color: color,
+          size: size,
+          transparent: true,
+          opacity: kind === "mist" ? 0.28 : 0.7,
+          depthWrite: false,
+          sizeAttenuation: true
+        });
+        mat.userData.shared = true;
+        const pts = new THREE.Points(geo, mat);
+        pts.frustumCulled = false;
+        scene.add(pts);
+        GT.particles.group = pts;
+        GT.particles.data = { pos: pos, vel: vel, geo: geo };
+      }
+
+      function gtUpdateParticles(dt) {
+        gtEnsureParticles();
+        const P = GT.particles;
+        if (!P.group || !P.data || !P.count) return;
+        const cam = camera.position;
+        const pos = P.data.pos, vel = P.data.vel;
+        const span = 150;
+        for (let i = 0; i < P.count; i++) {
+          const i3 = i * 3;
+          pos[i3] += vel[i3] * dt;
+          pos[i3 + 1] += vel[i3 + 1] * dt;
+          pos[i3 + 2] += vel[i3 + 2] * dt;
+          const dx = pos[i3] - cam.x, dy = pos[i3 + 1] - cam.y, dz = pos[i3 + 2] - cam.z;
+          if (Math.abs(dx) > span || dy < -80 || dy > 140 || Math.abs(dz) > span) {
+            pos[i3] = cam.x + (Math.random() - 0.5) * span * 2;
+            pos[i3 + 1] = cam.y + 40 + Math.random() * 80;
+            pos[i3 + 2] = cam.z + (Math.random() - 0.5) * span * 2;
+          }
+        }
+        P.data.geo.attributes.position.needsUpdate = true;
+      }
+
+      function gtApplyCameraFeel(cam, fl, dt, isSplitCam) {
+        if (!cam) return;
+        let fov = GT_BASE_FOV;
+        if (!GT.settings.reduceMotion && fl) {
+          const boost = (GT.active && GT.boostT && GT.boostT[0] > 0) ? 1.35 : 1;
+          const spd = (state.speedMult || 1) * boost;
+          const dive = Math.max(0, -(fl.pitch || 0));
+          fov = GT_BASE_FOV + Math.min(8, Math.max(0, (spd - 0.85) * 5) + dive * 9);
+        }
+        if (Math.abs((cam.fov || 54) - fov) > 0.05) {
+          cam.fov = fov;
+          cam.updateProjectionMatrix();
+        }
+        GT.camFeel.fov = fov;
+        if (GT.settings.reduceMotion) {
+          GT.camFeel.shake = 0;
+          state.shakeAmp = 0;
+          return;
+        }
+        let s = Math.max(GT.camFeel.shake, state.shakeAmp || 0);
+        if (s > 0.01) {
+          cam.position.x += (Math.random() - 0.5) * s * 0.35;
+          cam.position.y += (Math.random() - 0.5) * s * 0.22;
+          cam.position.z += (Math.random() - 0.5) * s * 0.35;
+          s *= Math.exp(-dt * 7.5);
+          GT.camFeel.shake = s;
+          if (!isSplitCam) state.shakeAmp = s;
+        } else {
+          GT.camFeel.shake = 0;
+        }
+      }
+
+      function gtTickFeel(dt) {
+        [0, 1].forEach((s) => {
+          if (GT._deltaHide[s] > 0) {
+            GT._deltaHide[s] -= dt;
+            if (GT._deltaHide[s] <= 0) {
+              const el = gtEl("gt-delta-" + s);
+              if (el) { el.classList.remove("show"); el.classList.add("hidden"); }
+            }
+          }
+        });
+        if (GT._stuntMsgT > 0) {
+          GT._stuntMsgT -= dt;
+          if (GT._stuntMsgT <= 0 && gtEl("gt-stunt")) gtEl("gt-stunt").classList.add("hidden");
+        }
+        gtUpdateRestart(dt);
+        if (gtPlaying()) gtUpdateStunts(dt);
+        gtUpdateChevrons();
+        gtUpdateMiniHuds();
+        // particles are stepped in the main animate loop (once per frame)
+      }
+
+      // Public
+      GT.getSettings = function () { return JSON.parse(JSON.stringify(GT.settings)); };
+      GT.setInvert = gtSetInvert;
+      GT.setSensitivity = gtSetSensitivity;
+      GT.setReduceMotion = gtSetReduceMotion;
+      GT.restartEvent = gtRestartCurrentEvent;
+      GT.getChevrons = function () { return GT._chevronState || []; };
+      GT.getParticles = function () { return { kind: GT.particles.kind, count: GT.particles.count, split: gtIsSplit() }; };
+      GT.getMotion = function () { return { fov: GT.camFeel.fov, shake: GT.camFeel.shake, reduceMotion: !!GT.settings.reduceMotion, base: GT_BASE_FOV }; };
+      GT.getLastDeltas = function () { return GT.lastDeltas.slice(); };
+      GT.debugSplit = function (seat, index, elapsed) {
+        if (elapsed != null) {
+          GT.clock = GT.duration - elapsed;
+        }
+        gtRecordSplit(seat || 0, index || 0);
+        return GT.lastDeltas[GT.lastDeltas.length - 1];
+      };
+      GT.setGhostSplits = function (arr) { GT.ghostSplits = arr.slice(); };
+      GT.debugPlace = function (seat, x, y, z, yaw) {
+        const fl = GT.flights[seat || 0];
+        if (!fl) return false;
+        fl.pos.set(x, y, z);
+        if (yaw != null) fl.yaw = yaw;
+        return true;
+      };
+      GT.bumpShake = function (amt) { gtBumpShake(amt); return GT.camFeel.shake; };
+
 
       gtBindUI();
 
