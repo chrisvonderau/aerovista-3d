@@ -1,6 +1,6 @@
 # AeroVista 3D
 
-A scenic autopilot flight tour over six alpine regions: the Swiss Alps, Grand Canyon, Mount Everest, the Norwegian Fjords, Yosemite, and the Cascades.
+A Grand Tour competitive flight game — and the original Scenic Tour — over six regions: the Swiss Alps, Grand Canyon, Mount Everest, the Norwegian Fjords, Yosemite, and the Cascades.
 
 Open it here: [chrisvonderau.github.io/aerovista-3d](https://chrisvonderau.github.io/aerovista-3d/)
 
@@ -8,31 +8,58 @@ This is a single offline HTML file. It does not need a network connection after 
 
 ## Play
 
-Tap **Begin Scenic Flight** (or press A / Space). Audio starts only after that.
+Choose a mode on the title screen. **Easy** is the default and includes auto-level assist. **Normal** and **Ace** tighten the courses.
 
-- **Touch or mouse:** tap the terrain or the radar to divert. Drag to orbit in Orbit view. Scroll or pinch to zoom. The **?** button opens Controls & Help.
-- **Xbox controller:** A begins and confirms, Y opens the Tour Director, D-pad moves the focus ring, B closes it, LB/RB change cameras, LT/RT change altitude, left stick steers, right stick orbits, X drops a bomb, right-stick click goes to the next landmark, and Menu toggles Cinema Mode.
-- **Keyboard:** Space begins, WASD or arrows steer, Q/E or PageUp/PageDown set altitude, C cycles cameras, Tab or M opens the menu, H toggles Cinema Mode, R toggles Sky Rings, B or F drops a bomb.
-- **Touch:** a large round BOMB button at the bottom-right thumb position shows the remaining payload count.
-- **Sky Rings:** optional. Turn them on in the Tour Director (or press R) and fly through the golden rings for combo points.
-- **Bombs:** optional. The Tour Director has a Bombs On/Off toggle (default On) so the peaceful scenic mode still exists. Bombs inherit the plane's velocity, fall with gravity, and bloom into fire, smoke, splash, or powder depending on the surface. People and animals are never harmed; they scatter out of the way.
+### Grand Tour
 
-Quality defaults to High on desktop and Medium on touch devices. You can switch High / Medium / Low in the Tour Director drawer.
+Six events, one in each region, about two minutes each (around 12 minutes for a standard run):
 
-The version mark **v4.2** is visible in the location pill. Pull to refresh if you still see an older version.
+1. **Matterhorn Circuit** (Swiss Alps) — ring race. Missed rings add a time penalty; a ring chain grants a speed boost.
+2. **Rim to River** (Grand Canyon) — fly low through gates. Hitting terrain recovers you (it is not game over) but costs time; staying low scores an altitude bonus.
+3. **Khumbu Chain** (Mount Everest) — a second, tighter ring race.
+4. **Bridge & Barn** (Norwegian Fjords) — limited bombs, shared cartoon targets (barns, bridges, haystacks, the odd sheep). Hitting hikers costs points.
+5. **Valley Chase** (Yosemite) — Sky Tag. In 2P the chaser tags inside a radius and roles swap; survival time scores for the evader. In 1P you chase (and are chased by) an AI drone.
+6. **Volcano Hayfields** (Cascade Range) — a second bomb run over Cascade meadows.
 
-## v4
+Events convert to tour points: **1st place 10**, **2nd place 6** (a tie is 8). In 1P you are scored against par and your best (a ghost of your record run appears when you have one). A small bonus (up to 4) is added for clean or stylish play. Standings appear between events; a champion screen with fanfare and confetti closes the tour. Best totals and event bests are saved in the browser.
 
-Offline, encoding fixes, safer low flybys, cheaper clouds that stay above the terrain, Cinema Mode that no longer blocks taps, Xbox and keyboard control, a Quality setting, and a leak-free region switch.
+- **1 Player** — race your best scores and ghost.
+- **2P Split-Screen** — two planes, two viewports (side by side on wide screens, stacked in portrait). Quality is lowered automatically and the pixel ratio is capped.
+- **2P Take Turns** — pass-and-play with a “Player 2, get ready” handoff.
 
-## v4.1
+A 3-second countdown and an on-screen goal line start every event.
 
-Optional bombing runs: real-ish ballistics, an aiming reticle, a short cooldown and a 6-bomb payload that slowly reloads, pooled fire/smoke/debris/splash FX, trees that stay down until you change regions, and a Bombs Off toggle for a purely scenic flight.
+### Scenic Tour
 
-## v4.1.1
+The original free-flight sightseeing mode is still on the menu: autopilot landmarks, four cameras, a cockpit HUD, optional Sky Rings, and optional bombing runs.
 
-On iPhone, the BOMB control is a large round button at the bottom-right thumb position, so it is no longer clipped off the end of the bottom dock in portrait.
+### Controls
 
-## v4.2
+- **Keyboard P1:** WASD to steer and climb or dive, Space to drop a bomb. In Scenic Tour, arrows also steer, and B or F also bombs.
+- **Keyboard P2:** arrow keys to fly, Enter to bomb.
+- **Xbox:** A confirms and can start a 1P tour from the menu. Each pad flies one plane in split-screen (any controller index, even if they are not 0 and 1). Left stick steers, LT/RT or stick Y climb and dive, X drops a bomb, Y opens the Tour Director, Menu toggles Cinema Mode. Rumble fires on rings, hits, and tags.
+- **Touch (1P or take-turns):** a left-hand stick plus the bottom-right BOMB button. The Scenic Tour still lets you tap the terrain or radar to divert.
 
-Sky Rings with combo scoring, a cockpit avionics HUD, wingtip contrails and a twilight landing light, a Help modal, baked radar terrain, and a compact dock so Help and Cinema both fit on iPhone 390-wide screens. Still a single offline file, with the same Xbox rumble, D-pad menu focus, and cloud-lift behavior as v4.1.1.
+The version mark **v5** is visible in the location pill. Pull to refresh if you still see an older version.
+
+## Version history
+
+### v5
+
+Grand Tour competitive mode (1P, 2P split-screen, 2P take-turns), six mixed events, standings and a champion screen, saved bests and ghosts, Easy/Normal/Ace, and the Scenic Tour kept as its own menu option. Still a single offline file.
+
+### v4.2
+
+Sky Rings with combo scoring, a cockpit avionics HUD, wingtip contrails and a twilight landing light, a Help modal, baked radar terrain, and a compact dock so Help and Cinema both fit on iPhone 390-wide screens.
+
+### v4.1.1
+
+On iPhone, the BOMB control is a large round button at the bottom-right thumb position.
+
+### v4.1
+
+Optional bombing runs with an aiming reticle, cooldown, and pooled FX. People and animals are never harmed.
+
+### v4
+
+Offline single file, Xbox and keyboard control, Quality settings, Cinema Mode, and leak-free region switching.

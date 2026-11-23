@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>AeroVista 3D — Scenic Flight Tour v4.2</title>
+  <title>AeroVista 3D — Grand Tour v5</title>
   <script>
     (function () {
       if (!('serviceWorker' in navigator)) return;
@@ -250,6 +250,269 @@
       transform: translateY(-8px) scale(0.98);
       pointer-events: none;
     }
+    /* ===== Grand Tour v5 ===== */
+    #welcome-overlay .mode-grid {
+      display: grid;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    #welcome-overlay .mode-btn {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.06);
+      color: #fff;
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      text-align: left;
+      line-height: 1.25;
+      transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease;
+    }
+    #welcome-overlay .mode-btn:hover, #welcome-overlay .mode-btn:focus {
+      background: rgba(14,165,233,0.22);
+      border-color: rgba(125,211,252,0.5);
+      outline: none;
+    }
+    #welcome-overlay .mode-btn.primary {
+      background: rgba(14,165,233,0.32);
+      border-color: rgba(56,189,248,0.55);
+    }
+    #welcome-overlay .mode-btn .mode-sub {
+      display: block;
+      font-weight: 500;
+      font-size: 10px;
+      color: #94a3b8;
+      margin-top: 2px;
+    }
+    #welcome-overlay .diff-row, #welcome-overlay .best-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+      justify-content: center;
+      margin: 8px 0 4px;
+    }
+    #welcome-overlay .diff-btn {
+      padding: 5px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.05);
+      color: #e2e8f0;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    #welcome-overlay .diff-btn.active {
+      background: rgba(251,191,36,0.22);
+      border-color: rgba(251,191,36,0.55);
+      color: #fde68a;
+    }
+    #welcome-overlay .scenic-btn {
+      background: transparent;
+      border: 1px dashed rgba(255,255,255,0.2);
+    }
+    .gt-layer {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 35;
+    }
+    .gt-layer .hit {
+      pointer-events: auto;
+    }
+    .gt-countdown {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(64px, 18vw, 140px);
+      font-weight: 800;
+      color: #fff;
+      text-shadow: 0 8px 40px rgba(14,165,233,0.55), 0 2px 0 rgba(0,0,0,0.35);
+      letter-spacing: -0.04em;
+    }
+    .gt-countdown.go { color: #fde68a; }
+    .gt-goal {
+      position: absolute;
+      left: 50%;
+      top: calc(var(--safe-top, 0px) + 52px);
+      transform: translateX(-50%);
+      max-width: min(640px, 92vw);
+      text-align: center;
+      pointer-events: none;
+    }
+    .gt-goal-line {
+      font-size: 13px;
+      font-weight: 700;
+      color: #f8fafc;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.55);
+    }
+    .gt-goal-meta {
+      font-size: 11px;
+      color: #bae6fd;
+      margin-top: 2px;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+    }
+    .gt-play-hud {
+      position: absolute;
+      right: calc(var(--safe-right, 0px) + 12px);
+      top: calc(var(--safe-top, 0px) + 54px);
+      text-align: right;
+      color: #fff;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+    }
+    .gt-timer {
+      font-size: 22px;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.02em;
+    }
+    .gt-event-score { font-size: 11px; color: #fde68a; font-weight: 600; }
+    .gt-split-labels {
+      position: absolute;
+      inset: 0;
+    }
+    .gt-split-lab {
+      position: absolute;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 999px;
+      color: #0f172a;
+    }
+    .gt-split-lab.p1 { background: #7dd3fc; }
+    .gt-split-lab.p2 { background: #fbbf24; }
+    .gt-modal {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      background: rgba(2,6,23,0.55);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      pointer-events: auto;
+    }
+    .gt-card {
+      width: min(440px, 94vw);
+      max-height: min(90vh, 720px);
+      overflow: auto;
+      border-radius: 22px;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(15,23,42,0.86);
+      color: #e2e8f0;
+      padding: 20px 20px 16px;
+      text-align: center;
+    }
+    .gt-card h2 {
+      font-size: 22px;
+      font-weight: 800;
+      color: #fff;
+      margin: 0 0 6px;
+    }
+    .gt-card p { font-size: 13px; color: #cbd5e1; margin: 0 0 12px; line-height: 1.45; }
+    .gt-card table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin: 8px 0 14px;
+    }
+    .gt-card th, .gt-card td {
+      text-align: left;
+      padding: 6px 4px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .gt-card th { color: #94a3b8; font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; }
+    .gt-card td.num { text-align: right; font-variant-numeric: tabular-nums; font-weight: 700; color: #fff; }
+    .gt-card .lead { color: #fde68a; }
+    .gt-next-btn, .gt-ready-btn {
+      display: inline-block;
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 14px;
+      border: 0;
+      background: #0ea5e9;
+      color: #fff;
+      font-weight: 700;
+      font-size: 15px;
+      cursor: pointer;
+    }
+    .gt-next-btn:hover, .gt-ready-btn:hover { background: #38bdf8; }
+    #gt-champion .gt-card { position: relative; z-index: 2; }
+    #gt-confetti {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+    #gt-champion .champ-name {
+      font-size: 28px;
+      font-weight: 800;
+      color: #fde68a;
+      margin: 4px 0 10px;
+    }
+    #gt-stick-wrap {
+      position: absolute;
+      left: calc(var(--safe-left, 0px) + 18px);
+      bottom: calc(var(--safe-bottom, 0px) + 86px);
+      width: 116px;
+      height: 116px;
+      pointer-events: auto;
+      z-index: 36;
+    }
+    #gt-stick-base {
+      width: 116px;
+      height: 116px;
+      border-radius: 50%;
+      background: rgba(15,23,42,0.35);
+      border: 2px solid rgba(255,255,255,0.25);
+      position: relative;
+      touch-action: none;
+    }
+    #gt-stick-knob {
+      position: absolute;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.85);
+      left: 34px;
+      top: 34px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    .gt-pcolor-1 { color: #7dd3fc; }
+    .gt-pcolor-2 { color: #fbbf24; }
+    @media (max-width: 430px), (max-height: 500px) {
+      #welcome-overlay .glass { padding: 16px 14px !important; }
+      #welcome-overlay h1 { font-size: 1.25rem !important; margin-bottom: 6px !important; }
+      #welcome-overlay .mode-btn { padding: 8px 10px; font-size: 12px; }
+      .gt-card { padding: 14px 12px; }
+      .gt-card h2 { font-size: 18px; }
+      .gt-goal { top: calc(var(--safe-top, 0px) + 46px); }
+      .gt-play-hud { top: calc(var(--safe-top, 0px) + 46px); }
+      .gt-timer { font-size: 18px; }
+    }
+
+    @media (max-height: 430px) {
+      #welcome-overlay { padding: 8px !important; }
+      #welcome-overlay .glass { padding: 10px 12px !important; max-height: 96vh; overflow: auto; }
+      #welcome-overlay h1 { font-size: 1.15rem !important; margin-bottom: 0 !important; }
+      #welcome-overlay .intro-copy { display: none; }
+      #welcome-overlay .howto { display: none; }
+      #welcome-overlay .w-14 { display: none; }
+      #welcome-overlay .mode-grid { grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px; }
+      #welcome-overlay .mode-btn { padding: 8px 10px; font-size: 12px; }
+      #welcome-overlay .mode-btn .mode-sub { display: none; }
+      #welcome-overlay .diff-row { margin: 4px 0; }
+    }
+
   </style>
 </head>
 <body>
@@ -263,31 +526,109 @@
 
   <!-- Welcome / Audio Unlock Overlay (Apple Safari Web Audio compliant) -->
   <div id="welcome-overlay" class="fixed inset-0 z-40 flex items-center justify-center p-5 bg-slate-950/65 backdrop-blur-xl" style="-webkit-backdrop-filter: blur(22px);">
-    <div class="glass rounded-3xl max-w-md w-full p-7 text-center border border-white/20">
-      <div class="w-14 h-14 mx-auto mb-4 rounded-2xl bg-sky-500/20 border border-sky-400/40 flex items-center justify-center">
+    <div class="glass rounded-3xl max-w-md w-full p-7 text-center border border-white/20" style="max-height:90vh;overflow:auto;">
+      <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-sky-500/20 border border-sky-400/40 flex items-center justify-center">
         <svg class="w-7 h-7 text-sky-300" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/>
         </svg>
       </div>
-      <h1 class="text-2xl font-semibold tracking-tight text-white mb-2">AeroVista Scenic Tour</h1>
-      <p class="text-sm text-slate-300 leading-relaxed mb-5">
-        An autonomous 3D aerial tour with low-altitude flybys, a cockpit HUD, optional Sky Rings, and bombing runs. Choose a landmark, skim the trees to spot wildlife, hikers, and cars, or tap the terrain or radar to divert.
+      <h1 class="text-2xl font-semibold tracking-tight text-white mb-1">AeroVista 3D</h1>
+      <p class="text-sm text-sky-200 font-semibold mb-2">Grand Tour</p>
+      <p class="intro-copy text-sm text-slate-300 leading-relaxed mb-3">
+        A competitive six-event tour across every region — race rings, dive canyons, bomb cartoon targets, and play Sky Tag. Or take the original Scenic Tour and just fly.
       </p>
-      <div class="grid grid-cols-2 gap-2.5 text-left text-xs text-slate-300 mb-6">
-        <div class="bg-white/5 rounded-xl p-3 border border-white/10">
-          <div class="font-medium text-white mb-0.5">6 Iconic Regions</div>
-          <div class="text-slate-400">Alps, Grand Canyon, Everest, Fjords, Yosemite &amp; Cascades</div>
-        </div>
-        <div class="bg-white/5 rounded-xl p-3 border border-white/10">
-          <div class="font-medium text-white mb-0.5">Tour &amp; Challenges</div>
-          <div class="text-slate-400">4 cameras, cockpit HUD, optional Sky Rings &amp; bombs</div>
-        </div>
+      <div class="diff-row" id="diff-row">
+        <span class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Difficulty</span>
+        <button type="button" class="diff-btn active" data-diff="easy">Easy</button>
+        <button type="button" class="diff-btn" data-diff="normal">Normal</button>
+        <button type="button" class="diff-btn" data-diff="ace">Ace</button>
       </div>
-      <button id="start-flight-btn" class="w-full py-3.5 px-6 rounded-2xl bg-sky-500 hover:bg-sky-400 active:scale-[0.98] text-white font-semibold text-base shadow-lg shadow-sky-500/30 transition cursor-pointer">
-        Begin Scenic Flight
-      </button>
-      <p class="text-[11px] text-slate-400 mt-3">v4.2 · Offline scenic tour · Sky Rings · Cockpit HUD</p>
-      <p class="text-[10px] text-slate-400 mt-2 leading-relaxed">Xbox: A begin · Y menu · D-pad move · A select · B close · LB/RB camera · LT/RT altitude · Left stick steer · Right stick orbit · X drop bomb · RS next landmark · Menu cinema. Keyboard: Space begin · WASD or arrows steer · Q/E or PageUp/PageDown altitude · C camera · Tab or M menu · H cinema · R Sky Rings · B or F drop bomb · wheel or pinch zoom. Rings and bombs can be switched in the Tour Director.</p>
+      <div class="best-row text-[11px] text-slate-400" id="gt-best-line">Best total: —</div>
+      <div class="mode-grid">
+        <button type="button" id="mode-1p-btn" class="mode-btn primary">
+          Grand Tour — 1 Player
+          <span class="mode-sub">Race your best scores and a ghost of your record run</span>
+        </button>
+        <button type="button" id="mode-split-btn" class="mode-btn">
+          Grand Tour — 2P Split-Screen
+          <span class="mode-sub">Two planes, two viewports · each Xbox pad drives one</span>
+        </button>
+        <button type="button" id="mode-turns-btn" class="mode-btn">
+          Grand Tour — 2P Take Turns
+          <span class="mode-sub">Pass-and-play with a “Player 2, get ready” handoff</span>
+        </button>
+        <button type="button" id="mode-scenic-btn" class="mode-btn scenic-btn">
+          Scenic Tour
+          <span class="mode-sub">Free-flight sightseeing with Sky Rings, bombs, and a cockpit HUD</span>
+        </button>
+      </div>
+      <p class="text-[11px] text-slate-400 mt-1">v5 · Offline · Six events · About 12 minutes</p>
+      <p class="howto text-[10px] text-slate-400 mt-2 leading-relaxed">P1: WASD steer &amp; altitude, Space bomb. P2: arrows + Enter bomb. Xbox: left stick fly, LT/RT climb &amp; dive, X bomb, A confirm. Touch: left stick + bomb button (1P or take-turns). Easy includes auto-level assist.</p>
+    </div>
+  </div>
+
+  <div id="gt-layer" class="gt-layer hidden">
+    <div id="gt-countdown" class="gt-countdown hidden"></div>
+    <div id="gt-goal" class="gt-goal hidden">
+      <div class="gt-goal-line" id="gt-goal-line"></div>
+      <div class="gt-goal-meta" id="gt-goal-meta"></div>
+    </div>
+    <div id="gt-play-hud" class="gt-play-hud hidden">
+      <div class="gt-timer" id="gt-timer">2:00</div>
+      <div class="gt-event-score" id="gt-event-score"></div>
+    </div>
+    <div id="gt-split-labels" class="gt-split-labels hidden">
+      <div class="gt-split-lab p1" id="gt-lab-p1">P1</div>
+      <div class="gt-split-lab p2" id="gt-lab-p2">P2</div>
+    </div>
+    <div id="gt-brief" class="gt-modal hidden">
+      <div class="gt-card hit">
+        <div class="text-[11px] uppercase tracking-wider text-sky-300 font-semibold" id="gt-brief-kicker">Event 1 of 6</div>
+        <h2 id="gt-brief-title">Matterhorn Circuit</h2>
+        <p id="gt-brief-body"></p>
+        <button type="button" class="gt-next-btn" id="gt-brief-btn">I'm Ready</button>
+      </div>
+    </div>
+    <div id="gt-ready" class="gt-modal hidden">
+      <div class="gt-card hit">
+        <h2>Player 2, get ready</h2>
+        <p>Hand the controls over. You will fly the same event with a fresh clock. Press the button, A, or Enter when you are set.</p>
+        <button type="button" class="gt-ready-btn" id="gt-ready-btn">Player 2 is ready</button>
+      </div>
+    </div>
+    <div id="gt-standings" class="gt-modal hidden">
+      <div class="gt-card hit">
+        <div class="text-[11px] uppercase tracking-wider text-sky-300 font-semibold">Standings</div>
+        <h2 id="gt-standings-title">After Event 1</h2>
+        <table>
+          <thead>
+            <tr><th>Pilot</th><th class="num">Event</th><th class="num">Bonus</th><th class="num">Total</th></tr>
+          </thead>
+          <tbody id="gt-standings-body"></tbody>
+        </table>
+        <p id="gt-standings-note" class="text-[11px] text-slate-400"></p>
+        <button type="button" class="gt-next-btn" id="gt-standings-btn">Next Event</button>
+      </div>
+    </div>
+    <div id="gt-champion" class="gt-modal hidden">
+      <canvas id="gt-confetti"></canvas>
+      <div class="gt-card hit">
+        <div class="text-[11px] uppercase tracking-wider text-amber-300 font-semibold">Grand Tour Champion</div>
+        <div class="champ-name" id="gt-champ-name">Player 1</div>
+        <table>
+          <thead>
+            <tr><th>Pilot</th><th class="num">Total</th></tr>
+          </thead>
+          <tbody id="gt-champ-body"></tbody>
+        </table>
+        <p id="gt-champ-best" class="text-[11px] text-slate-400"></p>
+        <button type="button" class="gt-next-btn" id="gt-champ-btn">Back to Menu</button>
+      </div>
+    </div>
+    <div id="gt-stick-wrap" class="hidden">
+      <div id="gt-stick-base">
+        <div id="gt-stick-knob"></div>
+      </div>
     </div>
   </div>
 
@@ -304,16 +645,16 @@
     <div class="glass rounded-3xl max-w-md w-full p-5 text-left border border-white/20 max-h-[80vh] overflow-y-auto no-scrollbar">
       <div class="flex items-start justify-between gap-2 mb-3">
         <div>
-          <div class="text-[11px] uppercase tracking-wider text-sky-300 font-semibold">AeroVista 3D v4.2</div>
+          <div class="text-[11px] uppercase tracking-wider text-sky-300 font-semibold">AeroVista 3D v5</div>
           <div class="text-sm font-semibold text-white">Controls &amp; Help</div>
         </div>
         <button id="help-close-btn" type="button" class="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-slate-300 text-sm cursor-pointer shrink-0">&times;</button>
       </div>
       <div class="text-[11px] text-slate-300 leading-relaxed flex flex-col gap-2">
         <div><strong class="text-white">Touch / Mouse:</strong> Tap terrain or radar to divert · Drag in Orbit · Pinch or wheel zooms</div>
-        <div><strong class="text-white">Keyboard:</strong> WASD or arrows steer · Q/E or PageUp/PageDown altitude · C camera · M or Tab menu · H cinema · R Sky Rings · B or F bomb</div>
-        <div><strong class="text-white">Xbox:</strong> A begin · Y menu · D-pad move · A select · B close · LB/RB camera · LT/RT altitude · Left stick steer · Right stick orbit · X bomb · RS next landmark · Menu cinema</div>
-        <div class="text-slate-400">Enable Sky Rings or turn bombs off anytime in the Tour Director. This tour runs fully offline.</div>
+        <div><strong class="text-white">Keyboard:</strong> Scenic: WASD or arrows steer · Grand Tour P1 WASD + Space bomb · P2 arrows + Enter · Q/E altitude · C camera · M menu · H cinema · R Sky Rings</div>
+        <div><strong class="text-white">Xbox:</strong> A confirm / start 1P tour · each pad flies one plane in split-screen (any index) · left stick steer · LT/RT or stick Y climb &amp; dive · X bomb · Y menu · Menu cinema</div>
+        <div class="text-slate-400">Grand Tour: 1P, 2P split-screen, or take-turns, plus the Scenic Tour. Easy includes auto-level assist. This game runs fully offline.</div>
       </div>
     </div>
   </div>
@@ -325,7 +666,7 @@
       <!-- Compact Location & Tour Pill (Opens Tour Drawer) -->
       <button id="drawer-toggle-btn" class="hud-interactive glass slim-dock rounded-full px-2.5 py-1.5 flex items-center gap-1.5 cursor-pointer text-left">
         <span class="w-2 h-2 rounded-full bg-sky-400 shrink-0 pulse-dot"></span>
-        <span id="version-label" class="version-label">v4.2</span>
+        <span id="version-label" class="version-label">v5</span>
         <span class="text-xs font-medium text-white truncate">
           <span id="banner-region-label">Swiss Alps</span>
           <span class="text-white/40 mx-1">·</span>
@@ -452,7 +793,7 @@
         </div>
         <canvas id="radar-canvas" width="112" height="112" class="rounded-xl bg-slate-950/70 border border-white/10 cursor-crosshair shrink-0"></canvas>
       </div>
-      <div class="pt-1 border-t border-white/10 text-[10px] text-slate-400 leading-relaxed">v4.2 · R or Tour Director toggles Sky Rings · X bomb · RS next landmark · B closes menu</div>
+      <div class="pt-1 border-t border-white/10 text-[10px] text-slate-400 leading-relaxed">v5 · Grand Tour or Scenic Tour · R Sky Rings · X bomb · RS next landmark · B closes menu</div>
     </div>
 
     <!-- Ultra-Slim Centered Bottom Dock -->
@@ -2132,9 +2473,13 @@
         explosionTimes.push(performance.now());
         while (explosionTimes.length && performance.now() - explosionTimes[0] > 2000) explosionTimes.shift();
         activeExplosions = explosionTimes.length;
+        if (typeof GT !== 'undefined' && GT.onExplosion) GT.onExplosion(x, y, z, BLAST_RADIUS);
       }
 
       function dropBomb() {
+        if (typeof GT !== 'undefined' && GT.active && GT.isPlaying && GT.isPlaying() && GT.dropBomb) {
+          return GT.dropBomb(GT.format === 'split' ? 0 : GT.activeSeat);
+        }
         if (!state.flightStarted || !state.bombsEnabled) return false;
         if (state.bombAmmo <= 0 || state.bombCooldown > 0) return false;
         let slot = null;
@@ -2384,7 +2729,7 @@
         const cdWas = state.bombCooldown;
         if (state.bombCooldown > 0) state.bombCooldown = Math.max(0, state.bombCooldown - dt);
         if (cdWas > 0 && state.bombCooldown === 0) updateBombUI();
-        if (state.bombsEnabled && state.bombAmmo < BOMB_MAX_AMMO) {
+        if (state.bombsEnabled && state.bombAmmo < BOMB_MAX_AMMO && !(typeof GT !== 'undefined' && GT.active)) {
           state.bombReloadT += dt;
           if (state.bombReloadT >= BOMB_RELOAD) {
             state.bombReloadT = 0;
@@ -2409,6 +2754,7 @@
             b.mesh.visible = false;
             const kind = impactKind(b.x, b.z);
             const y = (kind === 'water' ? Math.max(gnd, reg.waterLevel) : gnd) + 0.2;
+            if (typeof b.owner === 'number') lastBombOwner = b.owner;
             triggerExplosion(b.x, y, b.z, kind);
           }
         });
@@ -3344,8 +3690,15 @@
         const aDown = padButtonValue(gp, 0) >= 0.5;
         if (!state.flightStarted) {
           if (padEdge(gp, 0)) {
-            beginFlight();
+            if (typeof GT !== 'undefined' && GT.start) GT.start({ format: '1p', difficulty: GT.difficulty || 'easy' });
+            else beginFlight();
             ignoreAUntilRelease = true;
+          }
+          return;
+        }
+        if (typeof GT !== 'undefined' && GT.active) {
+          if (!(GT.isPlaying && GT.isPlaying()) && GT.phase !== 'countdown') {
+            if (padEdge(gp, 0)) { GT.handleConfirm(); ignoreAUntilRelease = true; }
           }
           return;
         }
@@ -3388,15 +3741,14 @@
       }
 
       function pollKeyboardSteer() {
+        if (typeof GT !== 'undefined' && GT.active) return;
         let s = 0;
         if (keysDown.KeyA || keysDown.ArrowLeft) s -= 1;
         if (keysDown.KeyD || keysDown.ArrowRight) s += 1;
         steerNudge += s;
       }
 
-      document.getElementById('start-flight-btn').addEventListener('click', () => {
-        beginFlight();
-      });
+      // start-flight-btn replaced by Grand Tour mode menu
 
       document.getElementById('audio-toggle-btn').addEventListener('click', () => {
         AudioEngine.setEnabled(!state.audioEnabled);
@@ -3480,11 +3832,14 @@
         }
         keysDown[e.code] = true;
         if (!state.flightStarted) {
-          if (e.code === 'Space') {
+          if (e.code === 'Space' || e.code === 'Enter') {
             e.preventDefault();
-            beginFlight();
+            if (typeof GT !== 'undefined' && GT.start) GT.start({ format: '1p', difficulty: GT.difficulty || 'easy' });
           }
           return;
+        }
+        if (typeof GT !== 'undefined' && GT.active && (e.code === 'Space' || e.code === 'Enter')) {
+          if (GT.handleConfirm && GT.handleConfirm()) { e.preventDefault(); return; }
         }
         if (e.code === 'Space') e.preventDefault();
         if (e.code === 'Tab' || e.code === 'KeyM') {
@@ -3546,7 +3901,8 @@
       window.addEventListener('resize', () => {
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, currentQuality().dpr));
+        const dprCap = (typeof GT !== 'undefined' && GT.isSplitRender && GT.isSplitRender()) ? 1 : currentQuality().dpr;
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, dprCap));
         renderer.setSize(window.innerWidth, window.innerHeight);
         resizeCockpitCanvas();
       });
@@ -3584,10 +3940,12 @@
         }
 
         const reg = REGIONS[state.regionKey];
+        const gtHandled = (typeof GT !== 'undefined' && GT.active && GT.consumeFlightTick(dt));
         const target = getCurrentTarget();
 
         let goalX = target.x;
         let goalZ = target.z;
+        if (!gtHandled) {
         const distToTarget = Math.hypot(target.x - flight.pos.x, target.z - flight.pos.z);
 
         if (state.orbitTarget) {
@@ -3637,11 +3995,12 @@
         const targetPitch = Math.max(-0.22, Math.min(0.24, climbRate * 0.0065));
         flight.pitch += (targetPitch - flight.pitch) * Math.min(1, dt * 2.5);
 
-        const bobY = Math.sin(elapsed * 1.7) * 0.20;
-        const bobRoll = Math.sin(elapsed * 1.2) * 0.014;
-
         const minPlaneY = groundAhead + 10;
         if (flight.pos.y < minPlaneY) flight.pos.y = minPlaneY;
+        } // end scenic autopilot (skipped when Grand Tour handles flight)
+        const groundHere = reg.heightFn(flight.pos.x, flight.pos.z);
+        const bobY = Math.sin(elapsed * 1.7) * 0.20;
+        const bobRoll = Math.sin(elapsed * 1.2) * 0.014;
         planeGroup.position.set(flight.pos.x, flight.pos.y + bobY, flight.pos.z);
         planeGroup.rotation.order = 'YXZ';
         planeGroup.rotation.y = flight.yaw;
@@ -3746,8 +4105,9 @@
         const planeQuat = planeGroup.quaternion;
         let targetCamPos = new THREE.Vector3();
         let targetLookAt = new THREE.Vector3();
+        const gtSplit = (typeof GT !== 'undefined' && GT.isSplitRender && GT.isSplitRender());
 
-        if (state.cameraMode === 'chase') {
+        if (!gtSplit && state.cameraMode === 'chase') {
           const offset = new THREE.Vector3(0, 6.2, 22.5).applyQuaternion(planeQuat);
           targetCamPos.copy(planeGroup.position).add(offset);
           const lookFwd = new THREE.Vector3(0, 1.5, -45).applyQuaternion(planeQuat);
@@ -3756,19 +4116,19 @@
           camSmoothLook.lerp(targetLookAt, Math.min(1, dt * 6.5));
           camera.position.copy(camSmoothPos);
           camera.lookAt(camSmoothLook);
-        } else if (state.cameraMode === 'wing') {
+        } else if (!gtSplit && state.cameraMode === 'wing') {
           const offset = new THREE.Vector3(1.1, 1.05, 0.2).applyQuaternion(planeQuat);
           targetCamPos.copy(planeGroup.position).add(offset);
           const lookOut = new THREE.Vector3(24, -4.5, -16).applyQuaternion(planeQuat);
           targetLookAt.copy(planeGroup.position).add(lookOut);
           camera.position.copy(targetCamPos);
           camera.lookAt(targetLookAt);
-        } else if (state.cameraMode === 'cockpit') {
+        } else if (!gtSplit && state.cameraMode === 'cockpit') {
           const offset = new THREE.Vector3(0, 0.85, -3.2).applyQuaternion(planeQuat);
           camera.position.copy(planeGroup.position).add(offset);
           const lookFwd = new THREE.Vector3(0, -1.2, -65).applyQuaternion(planeQuat);
           camera.lookAt(planeGroup.position.clone().add(lookFwd));
-        } else if (state.cameraMode === 'orbit') {
+        } else if (!gtSplit && state.cameraMode === 'orbit') {
           const r = state.freeOrbitDist;
           const ox = Math.sin(state.freeOrbitYaw) * Math.cos(state.freeOrbitPitch) * r;
           const oy = Math.sin(state.freeOrbitPitch) * r;
@@ -3816,7 +4176,11 @@
         const hdgNow = (Math.round((-THREE.MathUtils.radToDeg(flight.yaw) + 360) % 360));
         drawCockpitHUD(altNow, spdNow, hdgNow);
 
-        renderer.render(scene, camera);
+        if (typeof GT !== 'undefined' && GT.isSplitRender && GT.isSplitRender()) {
+          GT.renderSplit(dt);
+        } else {
+          renderer.render(scene, camera);
+        }
       }
 
       window.__avDebug = {
@@ -3878,9 +4242,1665 @@
         },
         clearDebugCam() { state.debugCam = null; },
         setRingsEnabled,
-        getRings() { return { enabled: state.ringsEnabled, score: state.ringsScore, combo: state.ringsCombo, count: skyRings.length }; }
+        getRings() { return { enabled: state.ringsEnabled, score: state.ringsScore, combo: state.ringsCombo, count: skyRings.length }; },
+        startGrandTour(opts) { return GT.start(opts || {}); },
+        getGrandTour() { return GT.getState(); },
+        finishEvent(script) { return GT.finishEvent(script); },
+        gtConfirm() { return GT.confirm(); },
+        placePoints() { return GT.placePoints.apply(null, arguments); },
+        bonusPoints() { return GT.bonusPoints.apply(null, arguments); },
+        get gtEvents() { return GT.events; }
       };
       window.__av = window.__avDebug;
+
+      // =========================================================================
+      // GRAND TOUR v5
+      // =========================================================================
+      const GT_STORAGE_KEY = "aerovista.v5.bests";
+      const GT_PLACE_FIRST = 10;
+      const GT_PLACE_SECOND = 6;
+      const GT_PLACE_TIE = 8;
+      const GT_P1_COLOR = 0x0ea5e9;
+      const GT_P2_COLOR = 0xf59e0b;
+
+      const GT_DIFF = {
+        easy:   { label: "Easy",   ringScale: 1.35, gateScale: 1.35, tagRadius: 18, bombs: 12, timeMul: 1.08, missPen: 2, crashPen: 3, assist: true,  aiSpeed: 0.78 },
+        normal: { label: "Normal", ringScale: 1.0,  gateScale: 1.0,  tagRadius: 14, bombs: 10, timeMul: 1.0,  missPen: 3, crashPen: 4, assist: false, aiSpeed: 1.0  },
+        ace:    { label: "Ace",    ringScale: 0.78, gateScale: 0.82, tagRadius: 10, bombs: 8,  timeMul: 0.92, missPen: 4, crashPen: 6, assist: false, aiSpeed: 1.22 }
+      };
+
+      const GT_EVENTS = [
+        { id: "matterhorn", type: "rings", region: "alps", name: "Matterhorn Circuit", goal: "Fly the gold ring course. Missed rings add a time penalty. Chains of rings grant a speed boost.", duration: 120, par: 900, rings: 12 },
+        { id: "rimriver", type: "canyon", region: "canyon", name: "Rim to River", goal: "Stay low and thread the canyon gates. A terrain bump recovers you — it is not game over — but it costs time.", duration: 120, par: 850, gates: 10 },
+        { id: "khumbu", type: "rings", region: "everest", name: "Khumbu Chain", goal: "A high, tight ring race over the Khumbu. Stay on the line and keep the chain alive.", duration: 120, par: 880, rings: 12 },
+        { id: "fjordstrike", type: "bomb", region: "fjords", name: "Bridge & Barn", goal: "Limited bombs. Hit barns, bridges, haystacks, and the odd sheep. Watch the hikers — startling them costs points.", duration: 120, par: 700, targets: 10 },
+        { id: "valleychase", type: "tag", region: "yosemite", name: "Valley Chase", goal: "Sky Tag: the chaser scores a tag inside the glow, then roles swap. Survival time scores for the evader.", duration: 120, par: 650 },
+        { id: "hayfields", type: "bomb", region: "cascades", name: "Volcano Hayfields", goal: "A second bomb run over Cascade meadows. Combo hits pay extra. Keep it cartoonish — leave the hikers be.", duration: 120, par: 700, targets: 10 }
+      ];
+
+      function gtPlacePoints(rawA, rawB, solo, par) {
+        if (solo) {
+          const beat = rawA >= (par || 0);
+          return [beat ? GT_PLACE_FIRST : GT_PLACE_SECOND, 0];
+        }
+        if (rawA === rawB) return [GT_PLACE_TIE, GT_PLACE_TIE];
+        return rawA > rawB ? [GT_PLACE_FIRST, GT_PLACE_SECOND] : [GT_PLACE_SECOND, GT_PLACE_FIRST];
+      }
+
+      function gtBonusPoints(type, stats) {
+        stats = stats || {};
+        let b = 0;
+        if (type === "rings") {
+          if (stats.underPar) b += 2;
+          if ((stats.missed || 0) === 0 && (stats.collected || 0) > 0) b += 2;
+          else if ((stats.maxCombo || 0) >= 5) b += 1;
+        } else if (type === "bomb") {
+          if ((stats.accuracy || 0) >= 0.7 && (stats.dropped || 0) > 0) b += 2;
+          if ((stats.maxCombo || 0) >= 5) b += 2;
+        } else if (type === "canyon") {
+          if ((stats.crashes || 0) === 0) b += 2;
+          if ((stats.altBonus || 0) >= 80) b += 2;
+        } else if (type === "tag") {
+          if ((stats.tags || 0) >= 3) b += 2;
+          if ((stats.survival || 0) >= 40) b += 2;
+        }
+        return Math.max(0, Math.min(4, b));
+      }
+
+      function gtLoadBests() {
+        try {
+          const raw = localStorage.getItem(GT_STORAGE_KEY);
+          if (!raw) return { totals: {}, events: {}, ghosts: {} };
+          const data = JSON.parse(raw);
+          data.totals = data.totals || {};
+          data.events = data.events || {};
+          data.ghosts = data.ghosts || {};
+          return data;
+        } catch (err) {
+          return { totals: {}, events: {}, ghosts: {} };
+        }
+      }
+
+      function gtSaveBests(data) {
+        try { localStorage.setItem(GT_STORAGE_KEY, JSON.stringify(data)); } catch (err) { /* quota */ }
+      }
+
+
+      const GT = {
+        active: false,
+        format: "1p",
+        difficulty: "easy",
+        eventIndex: 0,
+        phase: "idle",
+        phaseT: 0,
+        timeScale: 1,
+        skipCountdown: false,
+        autoPlay: false,
+        eventDurationOverride: null,
+        instantResolve: false,
+        scriptedResults: null,
+        splitForced: false,
+        players: 1,
+        activeSeat: 0,
+        totals: [0, 0],
+        eventLog: [],
+        results: [null, null],
+        turnDone: [false, false],
+        clock: 0,
+        duration: 120,
+        inputs: [{ yaw: 0, alt: 0, bomb: false }, { yaw: 0, alt: 0, bomb: false }],
+        touch: { x: 0, y: 0, active: false },
+        flights: [null, null],
+        world: null,
+        rings: [],
+        gates: [],
+        targets: [],
+        nextRing: 0,
+        nextGate: 0,
+        ringProgress: [0, 0],
+        gateProgress: [0, 0],
+        boostT: [0, 0],
+        combo: [0, 0],
+        comboT: [0, 0],
+        stats: [null, null],
+        ghost: null,
+        ghostRec: [],
+        recAcc: 0,
+        drone: null,
+        chaser: 0,
+        invuln: 0,
+        camera2: null,
+        plane2: null,
+        propellers2: [],
+        ghostGroup: null,
+        confetti: null,
+        confettiBits: [],
+        prevQuality: null
+      };
+      window.GT = GT;
+      let lastBombOwner = 0;
+
+      function gtDiff() { return GT_DIFF[GT.difficulty] || GT_DIFF.easy; }
+      function gtEvent() { return GT_EVENTS[GT.eventIndex]; }
+      function gtSolo() { return GT.format === "1p"; }
+      function gtIsSplit() { return GT.active && GT.format === "split"; }
+      function gtPlaying() { return GT.active && GT.phase === "play"; }
+      function gtWideSplit() { return window.innerWidth >= window.innerHeight; }
+      function gtEl(id) { return document.getElementById(id); }
+      function gtShow(id, on) {
+        const el = gtEl(id);
+        if (!el) return;
+        el.classList.toggle("hidden", !on);
+      }
+      function gtHideAllModals() {
+        ["gt-brief", "gt-ready", "gt-standings", "gt-champion", "gt-countdown"].forEach((id) => gtShow(id, false));
+      }
+      function gtConnectedPads() {
+        if (!navigator.getGamepads) return [];
+        const pads = navigator.getGamepads();
+        const out = [];
+        for (let i = 0; i < pads.length; i++) if (pads[i]) out.push(pads[i]);
+        return out;
+      }
+      function gtRumbleSeat(seat, duration, weak, strong) {
+        const pads = gtConnectedPads();
+        const list = [];
+        if (GT.format === "split" && pads.length >= 2) list.push(pads[seat] || pads[0]);
+        else if (pads.length) list.push(pads[0]);
+        else return;
+        list.forEach((gp) => {
+          const act = gp && gp.vibrationActuator;
+          if (!act || typeof act.playEffect !== "function") return;
+          try {
+            act.playEffect("dual-rumble", {
+              startDelay: 0,
+              duration: duration || 160,
+              weakMagnitude: weak == null ? 0.3 : weak,
+              strongMagnitude: strong == null ? 0.5 : strong
+            });
+          } catch (err) { /* optional */ }
+        });
+      }
+      function gtTone(freqs, type, step, dur, gain) {
+        if (typeof AudioEngine === "undefined" || !AudioEngine.initialized || !state.audioEnabled || !AudioEngine.ctx) return;
+        const t = AudioEngine.ctx.currentTime;
+        (freqs || []).forEach((f, idx) => {
+          const osc = AudioEngine.ctx.createOscillator();
+          const g = AudioEngine.ctx.createGain();
+          osc.type = type || "triangle";
+          osc.frequency.value = f;
+          g.gain.setValueAtTime(0.0001, t + idx * step);
+          g.gain.exponentialRampToValueAtTime(gain || 0.08, t + idx * step + 0.03);
+          g.gain.exponentialRampToValueAtTime(0.0001, t + idx * step + dur);
+          osc.connect(g);
+          g.connect(AudioEngine.masterGain);
+          osc.start(t + idx * step);
+          osc.stop(t + idx * step + dur + 0.05);
+        });
+      }
+      function gtPlayStinger() { gtTone([392, 523.25, 659.25, 784], "triangle", 0.09, 0.45, 0.08); }
+      function gtPlayFanfare() { gtTone([261.63, 329.63, 392, 523.25, 659.25, 783.99, 1046.5], "sawtooth", 0.11, 0.7, 0.06); }
+      function gtPlayTick() { gtTone([880], "square", 0, 0.18, 0.05); }
+      function gtPlayGo() { gtTone([523.25, 783.99], "triangle", 0.05, 0.4, 0.08); }
+      function gtPlayTag() { gtTone([698.46, 880, 1174.66], "triangle", 0.05, 0.35, 0.08); }
+
+      function gtUnlock() {
+        state.flightStarted = true;
+        AudioEngine.setEnabled(true);
+        updateBombUI();
+        const overlay = gtEl("welcome-overlay");
+        if (overlay) {
+          overlay.style.display = "none";
+          overlay.style.pointerEvents = "none";
+        }
+      }
+
+      function gtRefreshBestLine() {
+        const line = gtEl("gt-best-line");
+        if (!line) return;
+        const bests = gtLoadBests();
+        const d = GT.difficulty;
+        const tot = bests.totals[d];
+        line.textContent = tot != null ? ("Best " + GT_DIFF[d].label + " total: " + tot) : ("No " + GT_DIFF[d].label + " best yet — set one on the Grand Tour");
+      }
+
+
+      function gtShowMenu() {
+        GT.active = false;
+        GT.phase = "idle";
+        const overlay = gtEl("welcome-overlay");
+        if (overlay) {
+          overlay.style.display = "";
+          overlay.style.pointerEvents = "";
+        }
+        if (gtEl("gt-layer")) gtEl("gt-layer").classList.add("hidden");
+        gtHideAllModals();
+        gtShow("gt-goal", false);
+        gtShow("gt-play-hud", false);
+        gtShow("gt-split-labels", false);
+        gtShow("gt-stick-wrap", false);
+        if (GT.plane2) GT.plane2.visible = false;
+        if (GT.ghostGroup) GT.ghostGroup.visible = false;
+        if (GT.drone) GT.drone.visible = false;
+        gtClearWorld();
+        gtRestoreQuality();
+        setBombsEnabled(true);
+        gtRefreshBestLine();
+        if (typeof setCameraMode === "function") setCameraMode(state.cameraMode || "chase");
+        if (planeGroup) planeGroup.visible = state.cameraMode !== "cockpit";
+        renderer.setScissorTest(false);
+        renderer.setViewport(0, 0, window.innerWidth, window.innerHeight);
+      }
+
+      function gtEnsureSecondPlane() {
+        if (GT.plane2) return;
+        const clone = planeGroup.clone(true);
+        clone.traverse((o) => {
+          if (!o.material) return;
+          const mats = Array.isArray(o.material) ? o.material : [o.material];
+          const cloned = mats.map((m) => {
+            const c = m.clone();
+            if (c.color && typeof c.color.getHex === "function" && c.color.getHex() === GT_P1_COLOR) {
+              c.color.setHex(GT_P2_COLOR);
+            }
+            return c;
+          });
+          o.material = Array.isArray(o.material) ? cloned : cloned[0];
+        });
+        const props = [];
+        clone.traverse((o) => {
+          if (o.isGroup && o.children.length === 2 && o.children[0] && o.children[0].isMesh) {
+            const g = o.children[0].geometry;
+            if (g && g.type === "BoxGeometry") props.push(o);
+          }
+        });
+        clone.visible = false;
+        scene.add(clone);
+        GT.plane2 = clone;
+        GT.propellers2 = props;
+        GT.camera2 = new THREE.PerspectiveCamera(54, 1, 0.5, 4200);
+        GT.cam2SmoothPos = new THREE.Vector3();
+        GT.cam2SmoothLook = new THREE.Vector3();
+
+        const ghost = planeGroup.clone(true);
+        ghost.traverse((o) => {
+          if (!o.material) return;
+          const m = Array.isArray(o.material) ? o.material[0] : o.material;
+          const c = m.clone();
+          c.transparent = true;
+          c.opacity = 0.35;
+          c.depthWrite = false;
+          if (c.color) c.color.offsetHSL(0, -0.2, 0.15);
+          o.material = c;
+        });
+        ghost.visible = false;
+        scene.add(ghost);
+        GT.ghostGroup = ghost;
+
+        const drone = new THREE.Group();
+        const body = new THREE.Mesh(
+          new THREE.SphereGeometry(0.9, 10, 8),
+          new THREE.MeshStandardMaterial({ color: 0x22c55e, emissive: 0x14532d, roughness: 0.4, metalness: 0.3 })
+        );
+        const wing = new THREE.Mesh(
+          new THREE.BoxGeometry(3.6, 0.12, 0.7),
+          new THREE.MeshStandardMaterial({ color: 0x86efac, roughness: 0.4, metalness: 0.2 })
+        );
+        drone.add(body, wing);
+        drone.visible = false;
+        scene.add(drone);
+        GT.drone = drone;
+      }
+
+      function gtNewFlight(x, y, z, yaw) {
+        return { pos: new THREE.Vector3(x, y, z), yaw: yaw || 0, pitch: 0.08, bank: 0, orbitPhase: 0 };
+      }
+      function gtCopyFlight(from, to) {
+        to.pos.copy(from.pos);
+        to.yaw = from.yaw;
+        to.pitch = from.pitch;
+        to.bank = from.bank;
+      }
+      function gtHeight(reg, x, z) {
+        return Math.max(reg.heightFn(x, z), reg.waterLevel);
+      }
+      function gtSpawnPos(i, ev) {
+        const side = (i === 0 ? -18 : 18);
+        let x = 0, z = 0, yaw = 0;
+        if (ev.type === "canyon") {
+          z = -520;
+          x = Math.sin((-520) * 0.0014 * 2.8) * 220 + Math.cos((-520) * 0.0014 * 1.4) * 110 + side;
+          yaw = 0;
+        } else if (ev.region === "alps") { x = -180 + side; z = 200; yaw = 0.2; }
+        else if (ev.region === "everest") { x = -80 + side; z = 260; yaw = 0.15; }
+        else if (ev.region === "fjords") { x = -40 + side; z = -280; yaw = 0.1; }
+        else if (ev.region === "yosemite") { x = -30 + side; z = 80; yaw = 0; }
+        else { x = -20 + side; z = 160; yaw = 0.05; }
+        const reg = REGIONS[ev.region];
+        const h = Math.max(reg.heightFn(x, z), reg.waterLevel) + (ev.type === "canyon" ? 28 : 42);
+        return { x: x, y: h, z: z, yaw: yaw };
+      }
+      function gtClearWorld() {
+        if (GT.world) {
+          scene.remove(GT.world);
+          if (typeof disposeObject3D === "function") disposeObject3D(GT.world);
+          GT.world = null;
+        }
+        GT.rings = [];
+        GT.gates = [];
+        GT.targets = [];
+        if (GT.drone) GT.drone.visible = false;
+        if (GT.ghostGroup) GT.ghostGroup.visible = false;
+      }
+      function gtSharedMat(params) {
+        const m = new THREE.MeshStandardMaterial(params);
+        m.userData.shared = true;
+        return m;
+      }
+
+
+      function gtBuildCourse() {
+        gtClearWorld();
+        const ev = gtEvent();
+        const d = gtDiff();
+        const group = new THREE.Group();
+        group.name = "gtWorld";
+        const reg = REGIONS[ev.region];
+        if (ev.type === "rings") gtBuildRings(group, ev, d, reg);
+        else if (ev.type === "canyon") gtBuildGates(group, ev, d, reg);
+        else if (ev.type === "bomb") gtBuildTargets(group, ev, d, reg);
+        else if (ev.type === "tag") gtBuildTagField(group, ev, d, reg);
+        scene.add(group);
+        GT.world = group;
+        GT.nextRing = 0;
+        GT.nextGate = 0;
+        GT.ringProgress = [0, 0];
+        GT.gateProgress = [0, 0];
+      }
+
+      function gtRingPath(ev, n) {
+        const pts = [];
+        if (ev.region === "alps") {
+          for (let i = 0; i < n; i++) {
+            const t = i / (n - 1);
+            const x = -160 + t * 520 + Math.sin(t * 6.2) * 70;
+            const z = 160 - t * 480 + Math.cos(t * 4.5) * 50;
+            const yaw = Math.atan2(-((-160 + (t + 0.08) * 520) - x), -((160 - (t + 0.08) * 480) - z));
+            pts.push({ x: x, z: z, alt: 36 + Math.sin(t * 9) * 8, yaw: yaw });
+          }
+        } else {
+          for (let i = 0; i < n; i++) {
+            const t = i / (n - 1);
+            const x = -40 + Math.sin(t * 5.8) * 160 + t * 80;
+            const z = 240 - t * 560;
+            const yaw = 0.05 + Math.sin(t * 3) * 0.3;
+            pts.push({ x: x, z: z, alt: 48 + Math.sin(t * 7) * 12, yaw: yaw });
+          }
+        }
+        return pts;
+      }
+
+      function gtBuildRings(group, ev, d, reg) {
+        const n = ev.rings || 12;
+        const torusR = 7.5 * d.ringScale;
+        const geo = new THREE.TorusGeometry(torusR, 0.55, 10, 28);
+        geo.userData.shared = true;
+        const matActive = new THREE.MeshBasicMaterial({ color: 0xfbbf24, transparent: true, opacity: 0.95 });
+        const matNext = new THREE.MeshBasicMaterial({ color: 0x7dd3fc, transparent: true, opacity: 0.7 });
+        const matDone = new THREE.MeshBasicMaterial({ color: 0x64748b, transparent: true, opacity: 0.35 });
+        const matMiss = new THREE.MeshBasicMaterial({ color: 0xf87171, transparent: true, opacity: 0.55 });
+        matActive.userData.shared = matNext.userData.shared = matDone.userData.shared = matMiss.userData.shared = true;
+        const path = gtRingPath(ev, n);
+        GT.rings = path.map((p, i) => {
+          const mesh = new THREE.Mesh(geo, i === 0 ? matActive : matNext);
+          const y = gtHeight(reg, p.x, p.z) + p.alt;
+          mesh.position.set(p.x, y, p.z);
+          mesh.lookAt(p.x - Math.sin(p.yaw) * 10, y, p.z - Math.cos(p.yaw) * 10);
+          mesh.rotation.z += Math.PI / 2;
+          group.add(mesh);
+          return { mesh: mesh, x: p.x, y: y, z: p.z, yaw: p.yaw, radius: torusR, state: i === 0 ? "active" : "pending", mats: { active: matActive, next: matNext, done: matDone, miss: matMiss } };
+        });
+      }
+
+      function gtBuildGates(group, ev, d, reg) {
+        const n = ev.gates || 10;
+        const w = 16 * d.gateScale;
+        const h = 11 * d.gateScale;
+        const postGeo = new THREE.BoxGeometry(0.7, h, 0.7);
+        const barGeo = new THREE.BoxGeometry(w + 1.2, 0.55, 0.55);
+        postGeo.userData.shared = barGeo.userData.shared = true;
+        const mat = gtSharedMat({ color: 0xfbbf24, emissive: 0x78350f, roughness: 0.4, metalness: 0.2 });
+        const matNext = gtSharedMat({ color: 0x38bdf8, emissive: 0x0c4a6e, roughness: 0.4, metalness: 0.2 });
+        GT.gates = [];
+        for (let i = 0; i < n; i++) {
+          const t = i / (n - 1);
+          const z = -520 + t * 1080;
+          const x = Math.sin(z * 0.0014 * 2.8) * 220 + Math.cos(z * 0.0014 * 1.4) * 110;
+          const yG = gtHeight(reg, x, z);
+          const g = new THREE.Group();
+          const left = new THREE.Mesh(postGeo, i === 0 ? mat : matNext);
+          const right = new THREE.Mesh(postGeo, i === 0 ? mat : matNext);
+          const bar = new THREE.Mesh(barGeo, i === 0 ? mat : matNext);
+          left.position.set(-w / 2, h / 2, 0);
+          right.position.set(w / 2, h / 2, 0);
+          bar.position.set(0, h, 0);
+          g.add(left, right, bar);
+          g.position.set(x, yG + 2, z);
+          const nextZ = z + 40;
+          const nextX = Math.sin(nextZ * 0.0014 * 2.8) * 220 + Math.cos(nextZ * 0.0014 * 1.4) * 110;
+          g.lookAt(nextX, yG + 2, nextZ);
+          group.add(g);
+          GT.gates.push({ group: g, x: x, y: yG + 2 + h * 0.45, z: z, width: w, height: h, state: i === 0 ? "active" : "pending" });
+        }
+      }
+
+      function gtBuildTargets(group, ev, d, reg) {
+        const barnMat = gtSharedMat({ color: 0xb45309, roughness: 0.7, metalness: 0.05 });
+        const roofMat = gtSharedMat({ color: 0x7f1d1d, roughness: 0.65, metalness: 0.05 });
+        const hayMat = gtSharedMat({ color: 0xeab308, roughness: 0.8, metalness: 0 });
+        const bridgeMat = gtSharedMat({ color: 0x57534e, roughness: 0.5, metalness: 0.25 });
+        const sheepMat = gtSharedMat({ color: 0xf5f5f4, roughness: 0.9, metalness: 0 });
+        const kindCycle = ev.region === "fjords"
+          ? ["bridge", "barn", "hay", "barn", "sheep", "bridge", "hay", "barn", "bridge", "hay"]
+          : ["hay", "barn", "hay", "sheep", "barn", "hay", "barn", "hay", "sheep", "barn"];
+        const n = ev.targets || 10;
+        GT.targets = [];
+        for (let i = 0; i < n; i++) {
+          const kind = kindCycle[i % kindCycle.length];
+          const ang = (i / n) * Math.PI * 2;
+          const rad = 180 + (i % 4) * 70;
+          let x = Math.cos(ang) * rad;
+          let z = Math.sin(ang) * rad * 0.85;
+          if (kind === "bridge" && ev.region === "fjords") {
+            z = -200 + i * 80;
+            x = Math.sin(z * 0.00155 * 2.4) * 260 + Math.cos(z * 0.00155 * 1.1) * 140;
+          }
+          let y = gtHeight(reg, x, z);
+          if (y <= reg.waterLevel + 2 && kind !== "bridge") {
+            x += 80; y = gtHeight(reg, x, z);
+          }
+          const obj = new THREE.Group();
+          let pts = 80;
+          if (kind === "barn") {
+            const body = new THREE.Mesh(new THREE.BoxGeometry(10, 6, 8), barnMat);
+            body.position.y = 3;
+            const roof = new THREE.Mesh(new THREE.ConeGeometry(8.2, 4, 4), roofMat);
+            roof.position.y = 8;
+            roof.rotation.y = Math.PI / 4;
+            obj.add(body, roof);
+            pts = 100;
+          } else if (kind === "bridge") {
+            const deck = new THREE.Mesh(new THREE.BoxGeometry(28, 1.1, 6), bridgeMat);
+            deck.position.y = 7;
+            const p1 = new THREE.Mesh(new THREE.BoxGeometry(1.2, 8, 1.2), bridgeMat);
+            const p2 = p1.clone();
+            p1.position.set(-10, 4, 0);
+            p2.position.set(10, 4, 0);
+            obj.add(deck, p1, p2);
+            pts = 140;
+            y = Math.max(y, reg.waterLevel);
+          } else if (kind === "hay") {
+            const hay = new THREE.Mesh(new THREE.CylinderGeometry(3.2, 3.6, 4.2, 10), hayMat);
+            hay.position.y = 2.1;
+            obj.add(hay);
+            pts = 70;
+          } else {
+            const s = new THREE.Mesh(new THREE.SphereGeometry(1.6, 10, 8), sheepMat);
+            s.position.y = 1.6;
+            const head = new THREE.Mesh(new THREE.SphereGeometry(0.8, 8, 6), sheepMat);
+            head.position.set(1.4, 1.8, 0);
+            obj.add(s, head);
+            pts = 120;
+          }
+          obj.position.set(x, y, z);
+          obj.rotation.y = ang;
+          group.add(obj);
+          GT.targets.push({ mesh: obj, x: x, y: y, z: z, kind: kind, points: pts, hit: false, hitBy: -1 });
+        }
+      }
+
+      function gtBuildTagField(group, ev, d, reg) {
+        const ringGeo = new THREE.RingGeometry(d.tagRadius - 0.4, d.tagRadius, 32);
+        ringGeo.rotateX(-Math.PI / 2);
+        ringGeo.userData.shared = true;
+        const mat = new THREE.MeshBasicMaterial({ color: 0x4ade80, transparent: true, opacity: 0.35, side: THREE.DoubleSide });
+        mat.userData.shared = true;
+        const ring = new THREE.Mesh(ringGeo, mat);
+        ring.position.y = 0.4;
+        group.add(ring);
+        GT.tagRing = ring;
+      }
+
+      function gtResetStats() {
+        const ammo = gtDiff().bombs;
+        GT.stats = [0, 1].map(() => ({
+          raw: 0, place: 0, bonus: 0, collected: 0, missed: 0, maxCombo: 0,
+          dropped: 0, hits: 0, hikers: 0, accuracy: 0, gates: 0, crashes: 0,
+          altBonus: 0, tags: 0, survival: 0, underPar: false, bombsLeft: ammo,
+          cooldown: 0, finished: false, finishTime: 0
+        }));
+        GT.combo = [0, 0];
+        GT.comboT = [0, 0];
+        GT.boostT = [0, 0];
+        GT.ghostRec = [];
+        GT.recAcc = 0;
+      }
+
+
+      function gtFormatClock(sec) {
+        const s = Math.max(0, Math.ceil(sec));
+        const m = Math.floor(s / 60);
+        const r = s % 60;
+        return m + ":" + String(r).padStart(2, "0");
+      }
+      function gtSyncHud() {
+        const ev = gtEvent();
+        if (!ev) return;
+        const goal = gtEl("gt-goal-line");
+        const meta = gtEl("gt-goal-meta");
+        if (goal) goal.textContent = ev.goal;
+        const d = gtDiff();
+        let extra = ev.name + " · " + d.label;
+        if (ev.type === "rings") extra += " · Next ring " + Math.min((GT.format === "split" ? GT.ringProgress[0] : GT.nextRing) + 1, GT.rings.length) + "/" + GT.rings.length;
+        if (ev.type === "canyon") extra += " · Gate " + Math.min((GT.format === "split" ? GT.gateProgress[0] : GT.nextGate) + 1, GT.gates.length) + "/" + GT.gates.length;
+        if (ev.type === "bomb") {
+          const seat = GT.format === "turns" ? GT.activeSeat : 0;
+          extra += " · Bombs " + (GT.stats[seat] ? GT.stats[seat].bombsLeft : d.bombs);
+        }
+        if (ev.type === "tag") extra += (GT.chaser === 0 ? " · P1 is chaser" : " · P2 is chaser");
+        if (meta) meta.textContent = extra;
+        const timer = gtEl("gt-timer");
+        if (timer) timer.textContent = gtFormatClock(GT.clock);
+        const sc = gtEl("gt-event-score");
+        if (sc) {
+          if (gtSolo() || GT.format === "turns") {
+            const st = GT.stats[GT.activeSeat] || GT.stats[0];
+            sc.textContent = "Score " + Math.round(st.raw);
+          } else {
+            sc.innerHTML = "<span class=\"gt-pcolor-1\">P1 " + Math.round(GT.stats[0].raw) + "</span> · <span class=\"gt-pcolor-2\">P2 " + Math.round(GT.stats[1].raw) + "</span>";
+          }
+        }
+        gtLayoutSplitLabels();
+      }
+      function gtLayoutSplitLabels() {
+        const wrap = gtEl("gt-split-labels");
+        if (!wrap) return;
+        const on = gtIsSplit() && (GT.phase === "play" || GT.phase === "countdown");
+        wrap.classList.toggle("hidden", !on);
+        if (!on) return;
+        const wide = gtWideSplit();
+        const a = gtEl("gt-lab-p1");
+        const b = gtEl("gt-lab-p2");
+        if (wide) {
+          if (a) { a.style.left = "12px"; a.style.top = "10px"; a.style.right = "auto"; a.style.bottom = "auto"; }
+          if (b) { b.style.left = "calc(50% + 12px)"; b.style.top = "10px"; b.style.right = "auto"; b.style.bottom = "auto"; }
+        } else {
+          if (a) { a.style.left = "12px"; a.style.top = "10px"; a.style.right = "auto"; a.style.bottom = "auto"; }
+          if (b) { b.style.left = "12px"; b.style.top = "calc(50% + 8px)"; b.style.right = "auto"; b.style.bottom = "auto"; }
+        }
+      }
+      function gtApplyQualityForSplit() {
+        if (!gtIsSplit() || GT.splitForced) return;
+        GT.prevQuality = state.quality;
+        GT.splitForced = true;
+        if (typeof applyQuality === "function" && state.quality !== "low") applyQuality("low", false);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1));
+      }
+      function gtRestoreQuality() {
+        if (!GT.splitForced) return;
+        GT.splitForced = false;
+        const q = GT.prevQuality || "medium";
+        if (typeof applyQuality === "function") applyQuality(q, false);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, currentQuality().dpr));
+        renderer.setScissorTest(false);
+        renderer.setViewport(0, 0, window.innerWidth, window.innerHeight);
+      }
+      function gtShowTouchStick() {
+        const isTouch = ("ontouchstart" in window) || (navigator.maxTouchPoints > 0);
+        const ok = isTouch && GT.format !== "split" && (GT.phase === "play" || GT.phase === "countdown");
+        const wrap = gtEl("gt-stick-wrap");
+        if (wrap) wrap.classList.toggle("hidden", !ok);
+      }
+      function gtPosePlane(group, fl) {
+        if (!group || !fl) return;
+        group.position.set(fl.pos.x, fl.pos.y, fl.pos.z);
+        group.rotation.order = "YXZ";
+        group.rotation.y = fl.yaw;
+        group.rotation.x = fl.pitch;
+        group.rotation.z = fl.bank;
+        group.updateMatrixWorld(true);
+      }
+
+      function gtStart(opts) {
+        opts = opts || {};
+        GT.format = opts.format || "1p";
+        GT.difficulty = opts.difficulty || GT.difficulty || "easy";
+        GT.timeScale = opts.timeScale || 1;
+        GT.skipCountdown = !!opts.skipCountdown;
+        GT.autoPlay = !!opts.autoPlay;
+        GT.eventDurationOverride = opts.eventDuration != null ? opts.eventDuration : null;
+        GT.instantResolve = !!opts.instantResolve;
+        GT.scriptedResults = opts.scriptedResults || null;
+        GT.eventIndex = opts.eventIndex || 0;
+        GT.players = GT.format === "1p" ? 1 : 2;
+        GT.totals = [0, 0];
+        GT.eventLog = [];
+        GT.active = true;
+        GT.activeSeat = 0;
+        gtEnsureSecondPlane();
+        gtUnlock();
+        const layer = gtEl("gt-layer");
+        if (layer) layer.classList.remove("hidden");
+        if (GT.format === "split") {
+          setCameraMode("chase");
+          const cock = gtEl("cockpit-overlay");
+          if (cock) cock.classList.remove("visible");
+          gtApplyQualityForSplit();
+        }
+        if (typeof setCinemaMode === "function") setCinemaMode(false);
+        gtBeginEvent();
+      }
+
+      function gtBeginEvent() {
+        const ev = gtEvent();
+        if (!ev) { gtShowChampion(); return; }
+        GT.phase = "brief";
+        GT.phaseT = 0;
+        GT.turnDone = [false, false];
+        GT.activeSeat = 0;
+        GT.results = [null, null];
+        gtResetStats();
+        gtHideAllModals();
+        gtShow("gt-play-hud", false);
+        gtShow("gt-goal", false);
+        selectRegion(ev.region);
+        gtBuildCourse();
+        GT.flights = [null, null];
+        for (let i = 0; i < 2; i++) {
+          const sp = gtSpawnPos(i, ev);
+          GT.flights[i] = gtNewFlight(sp.x, sp.y, sp.z, sp.yaw);
+        }
+        gtCopyFlight(GT.flights[0], flight);
+        if (GT.plane2) {
+          GT.plane2.visible = GT.format === "split";
+          gtPosePlane(GT.plane2, GT.flights[1]);
+        }
+        planeGroup.visible = state.cameraMode !== "cockpit";
+        const bombsOn = ev.type === "bomb";
+        setBombsEnabled(bombsOn);
+        if (bombsOn) {
+          state.bombAmmo = gtDiff().bombs;
+          state.bombCooldown = 0;
+          updateBombUI();
+        }
+        if (ev.type === "tag") {
+          GT.chaser = 0;
+          GT.invuln = 1.2;
+          if (gtSolo()) {
+            const sp = gtSpawnPos(1, ev);
+            if (GT.drone) {
+              GT.drone.visible = true;
+              GT.drone.position.set(sp.x + 40, sp.y, sp.z - 40);
+              GT.droneYaw = 0;
+            }
+          }
+        }
+        const bests = gtLoadBests();
+        const gKey = ev.id + "_" + GT.difficulty;
+        GT.ghost = (gtSolo() && bests.ghosts[gKey] && bests.ghosts[gKey].path) ? bests.ghosts[gKey] : null;
+        if (GT.ghostGroup) GT.ghostGroup.visible = !!(GT.ghost && GT.ghost.path && GT.ghost.path.length);
+        const kicker = gtEl("gt-brief-kicker");
+        if (kicker) kicker.textContent = "Event " + (GT.eventIndex + 1) + " of " + GT_EVENTS.length + " · " + REGIONS[ev.region].name;
+        if (gtEl("gt-brief-title")) gtEl("gt-brief-title").textContent = ev.name;
+        if (gtEl("gt-brief-body")) gtEl("gt-brief-body").textContent = ev.goal;
+        const bannerTitle = document.getElementById("banner-title");
+        const bannerRegion = document.getElementById("banner-region-label");
+        const bannerMode = document.getElementById("banner-mode");
+        if (bannerRegion) bannerRegion.textContent = REGIONS[ev.region].name;
+        if (bannerTitle) bannerTitle.textContent = ev.name;
+        if (bannerMode) bannerMode.textContent = "Grand Tour";
+        if (GT.instantResolve) {
+          gtApplyScriptedOrAuto();
+          gtAfterBothPlayed();
+          return;
+        }
+        gtShow("gt-brief", true);
+        if (GT.skipCountdown) {
+          gtShow("gt-brief", false);
+          gtStartCountdown();
+        }
+      }
+
+      function gtStartCountdown() {
+        GT.phase = "countdown";
+        GT.phaseT = 0;
+        gtHideAllModals();
+        gtShow("gt-goal", true);
+        gtShow("gt-play-hud", true);
+        const ev = gtEvent();
+        const d = gtDiff();
+        GT.duration = (GT.eventDurationOverride != null) ? GT.eventDurationOverride : Math.round(ev.duration * d.timeMul);
+        GT.clock = GT.duration;
+        gtSyncHud();
+        gtShowTouchStick();
+        if (GT.skipCountdown) { gtEnterPlay(); return; }
+        gtShow("gt-countdown", true);
+        const el = gtEl("gt-countdown");
+        if (el) { el.textContent = "3"; el.classList.remove("go"); }
+        gtPlayTick();
+      }
+      function gtEnterPlay() {
+        GT.phase = "play";
+        GT.phaseT = 0;
+        gtShow("gt-countdown", false);
+        gtShow("gt-goal", true);
+        gtShow("gt-play-hud", true);
+        gtPlayStinger();
+        gtPlayGo();
+        gtSyncHud();
+      }
+
+
+      function gtAimPoint(seat) {
+        const ev = gtEvent();
+        if (ev.type === "rings") {
+          const idx = GT.format === "split" ? GT.ringProgress[seat] : GT.nextRing;
+          const r = GT.rings[idx];
+          if (r) return { x: r.x, y: r.y, z: r.z };
+        }
+        if (ev.type === "canyon") {
+          const idx = GT.format === "split" ? GT.gateProgress[seat] : GT.nextGate;
+          const g = GT.gates[idx];
+          if (g) return { x: g.x, y: g.y, z: g.z };
+        }
+        if (ev.type === "bomb") {
+          const t = GT.targets.find((o) => !o.hit);
+          if (t) return { x: t.x, y: t.y + 30, z: t.z };
+        }
+        if (ev.type === "tag") {
+          if (gtSolo() && GT.drone) return { x: GT.drone.position.x, y: GT.drone.position.y, z: GT.drone.position.z };
+          const other = GT.flights[seat ^ 1];
+          if (other) return { x: other.pos.x, y: other.pos.y, z: other.pos.z };
+        }
+        return null;
+      }
+
+      function gtManualFlight(fl, inp, dt, seat) {
+        const ev = gtEvent();
+        const d = gtDiff();
+        const assist = d.assist || GT.autoPlay;
+        let yawIn = inp.yaw || 0;
+        let altIn = inp.alt || 0;
+        if (assist) {
+          const aim = gtAimPoint(seat);
+          if (aim) {
+            const desired = Math.atan2(-(aim.x - fl.pos.x), -(aim.z - fl.pos.z));
+            const diff = normalizeAngle(desired - fl.yaw);
+            yawIn += Math.max(-1, Math.min(1, diff * 1.4)) * (GT.autoPlay ? 1 : 0.45);
+            altIn += Math.max(-1, Math.min(1, (aim.y - fl.pos.y) / 30)) * (GT.autoPlay ? 0.7 : 0.35);
+          }
+        }
+        yawIn = Math.max(-1, Math.min(1, yawIn));
+        altIn = Math.max(-1, Math.min(1, altIn));
+        fl.yaw = normalizeAngle(fl.yaw + (assist ? 1.05 : 1.35) * yawIn * dt * 1.4);
+        fl.bank += ((-yawIn * 0.5) - fl.bank) * Math.min(1, dt * 3.2);
+        fl.pitch += ((altIn * 0.28) - fl.pitch) * Math.min(1, dt * 3);
+        if (assist && Math.abs(yawIn) < 0.08) fl.bank += (0 - fl.bank) * Math.min(1, dt * 2.4);
+        if (assist && Math.abs(altIn) < 0.08) fl.pitch += (0.06 - fl.pitch) * Math.min(1, dt * 1.6);
+        const boost = GT.boostT[seat] > 0 ? 1.35 : 1;
+        const spd = 62 * (state.speedMult || 1) * boost * (ev.type === "canyon" ? 0.92 : 1);
+        const fwdX = -Math.sin(fl.yaw);
+        const fwdZ = -Math.cos(fl.yaw);
+        fl.pos.x += fwdX * spd * dt;
+        fl.pos.z += fwdZ * spd * dt;
+        fl.pos.y += Math.sin(fl.pitch) * spd * dt + altIn * 32 * dt;
+        const reg = REGIONS[state.regionKey];
+        const gnd = Math.max(reg.heightFn(fl.pos.x, fl.pos.z), reg.waterLevel);
+        const minY = gnd + 8;
+        if (fl.pos.y < minY) {
+          if (ev.type === "canyon" && fl.pos.y < gnd + 4) {
+            fl.pos.y = gnd + 26;
+            fl.pitch = 0.12;
+            fl.bank = 0;
+            GT.stats[seat].crashes += 1;
+            GT.clock = Math.max(0, GT.clock - d.crashPen);
+            gtRumbleSeat(seat, 280, 0.5, 0.8);
+            showToast("Recovered from terrain — +" + d.crashPen + "s");
+          } else {
+            fl.pos.y = minY;
+          }
+        }
+        const lim = HALF_WORLD * 0.72;
+        fl.pos.x = Math.max(-lim, Math.min(lim, fl.pos.x));
+        fl.pos.z = Math.max(-lim, Math.min(lim, fl.pos.z));
+        if (ev.type === "canyon" && fl.pos.y >= minY) {
+          const agl = fl.pos.y - gnd;
+          if (agl < 40) GT.stats[seat].altBonus += dt * (40 - agl) * 0.35;
+        }
+        if (GT.boostT[seat] > 0) GT.boostT[seat] -= dt;
+        if (GT.comboT[seat] > 0) {
+          GT.comboT[seat] -= dt;
+          if (GT.comboT[seat] <= 0) GT.combo[seat] = 0;
+        }
+        if (GT.stats[seat].cooldown > 0) GT.stats[seat].cooldown -= dt;
+      }
+
+      function gtSeatsThisPhase() {
+        if (GT.format === "split") return [0, 1];
+        return [GT.activeSeat];
+      }
+
+      function gtCollectInputs(dt) {
+        GT.inputs[0] = { yaw: 0, alt: 0, bomb: false };
+        GT.inputs[1] = { yaw: 0, alt: 0, bomb: false };
+        function keySeat(seat, left, right, up, down, bomb) {
+          if (keysDown[left]) GT.inputs[seat].yaw -= 1;
+          if (keysDown[right]) GT.inputs[seat].yaw += 1;
+          if (keysDown[up]) GT.inputs[seat].alt += 1;
+          if (keysDown[down]) GT.inputs[seat].alt -= 1;
+          if (keysDown[bomb]) GT.inputs[seat].bomb = true;
+        }
+        if (GT.format === "split") {
+          keySeat(0, "KeyA", "KeyD", "KeyW", "KeyS", "Space");
+          keySeat(1, "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Enter");
+        } else {
+          const seat = GT.activeSeat;
+          keySeat(seat, "KeyA", "KeyD", "KeyW", "KeyS", "Space");
+          if (seat === 1) keySeat(1, "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Enter");
+        }
+        if (GT.touch.active && GT.format !== "split") {
+          const seat = GT.activeSeat;
+          GT.inputs[seat].yaw += GT.touch.x;
+          GT.inputs[seat].alt += -GT.touch.y;
+        }
+        const pads = gtConnectedPads();
+        const dead = 0.18;
+        function fromPad(gp, seat) {
+          if (!gp) return;
+          const lx = Math.abs(gp.axes[0]) > dead ? gp.axes[0] : 0;
+          const ly = Math.abs(gp.axes[1]) > dead ? gp.axes[1] : 0;
+          GT.inputs[seat].yaw += lx;
+          const lt = (gp.buttons[6] && gp.buttons[6].value) || 0;
+          const rt = (gp.buttons[7] && gp.buttons[7].value) || 0;
+          GT.inputs[seat].alt += rt - lt;
+          if (Math.abs(ly) > dead) GT.inputs[seat].alt += -ly;
+          const xb = gp.buttons[2];
+          if (xb && (xb.pressed || xb.value > 0.5)) GT.inputs[seat].bomb = true;
+        }
+        if (GT.format === "split") {
+          fromPad(pads[0], 0);
+          fromPad(pads[1], 1);
+        } else {
+          fromPad(pads[0], GT.activeSeat);
+        }
+      }
+
+      function gtDropFor(seat) {
+        const ev = gtEvent();
+        if (ev.type !== "bomb") return false;
+        const st = GT.stats[seat];
+        if (!st || st.bombsLeft <= 0 || st.cooldown > 0) return false;
+        const fl = GT.flights[seat];
+        if (!fl) return false;
+        let slot = null;
+        for (let i = 0; i < inFlight.length; i++) {
+          if (!inFlight[i].live) { slot = inFlight[i]; break; }
+        }
+        if (!slot) return false;
+        const fwdX = -Math.sin(fl.yaw);
+        const fwdZ = -Math.cos(fl.yaw);
+        const speed = 62 * state.speedMult;
+        slot.live = true;
+        slot.owner = seat;
+        lastBombOwner = seat;
+        slot.x = fl.pos.x + fwdX * 2;
+        slot.y = fl.pos.y - 1.4;
+        slot.z = fl.pos.z + fwdZ * 2;
+        slot.vx = fwdX * speed;
+        slot.vy = -10 - fl.pitch * 30;
+        slot.vz = fwdZ * speed;
+        slot.age = 0;
+        slot.mesh.visible = true;
+        slot.mesh.position.set(slot.x, slot.y, slot.z);
+        st.bombsLeft -= 1;
+        st.dropped += 1;
+        st.cooldown = 0.7;
+        if (seat === 0 || GT.format !== "split") {
+          state.bombAmmo = st.bombsLeft;
+          state.bombCooldown = st.cooldown;
+          updateBombUI();
+        }
+        AudioEngine.playWhistle();
+        return true;
+      }
+
+      function gtOnExplosion(x, y, z, radius) {
+        if (!GT.active || GT.phase !== "play") return;
+        const ev = gtEvent();
+        if (ev.type !== "bomb") return;
+        const r = (radius || BLAST_RADIUS);
+        const r2 = r * r;
+        let owner = lastBombOwner;
+        if (GT.format === "turns") owner = GT.activeSeat;
+        let hikerHit = false;
+        for (let i = 0; i < hikerStates.length; i++) {
+          const h = hikerStates[i];
+          const d2 = (h.x - x) * (h.x - x) + (h.z - z) * (h.z - z);
+          if (d2 < r2 * 0.85) { hikerHit = true; break; }
+        }
+        if (hikerHit) {
+          GT.stats[owner].hikers += 1;
+          GT.stats[owner].raw = Math.max(0, GT.stats[owner].raw - 50);
+          GT.combo[owner] = 0;
+          showToast("Watch the trail! −50");
+          gtRumbleSeat(owner, 200, 0.2, 0.4);
+        }
+        let scored = false;
+        for (let i = 0; i < GT.targets.length; i++) {
+          const t = GT.targets[i];
+          if (t.hit) continue;
+          const d2 = (t.x - x) * (t.x - x) + (t.z - z) * (t.z - z);
+          const hitR = t.kind === "bridge" ? r * 1.15 : r;
+          if (d2 <= hitR * hitR) {
+            t.hit = true;
+            t.hitBy = owner;
+            scored = true;
+            GT.combo[owner] += 1;
+            GT.comboT[owner] = 3;
+            GT.stats[owner].maxCombo = Math.max(GT.stats[owner].maxCombo, GT.combo[owner]);
+            GT.stats[owner].hits += 1;
+            const gain = t.points * (1 + (GT.combo[owner] - 1) * 0.15);
+            GT.stats[owner].raw += gain;
+            t.mesh.visible = false;
+            gtRumbleSeat(owner, 220, 0.4, 0.7);
+            showToast((t.kind === "sheep" ? "Woolly bonus! +" : "Hit! +") + Math.round(gain));
+          }
+        }
+        if (!scored && !hikerHit && typeof animatedAnimals !== "undefined") {
+          for (let i = 0; i < animatedAnimals.length; i++) {
+            const a = animatedAnimals[i];
+            if (!a.isSheep) continue;
+            const ax = a.baseX + (a.offX || 0);
+            const az = a.baseZ + (a.offZ || 0);
+            const d2 = (ax - x) * (ax - x) + (az - z) * (az - z);
+            if (d2 < r2) {
+              GT.combo[owner] += 1;
+              GT.comboT[owner] = 3;
+              GT.stats[owner].maxCombo = Math.max(GT.stats[owner].maxCombo, GT.combo[owner]);
+              GT.stats[owner].hits += 1;
+              GT.stats[owner].raw += 60 * (1 + (GT.combo[owner] - 1) * 0.15);
+              showToast("A cartoon sheep bounces away! +60");
+              break;
+            }
+          }
+        }
+        const st = GT.stats[owner];
+        st.accuracy = st.dropped ? (st.hits / st.dropped) : 0;
+        gtSyncHud();
+      }
+
+
+      function gtUpdateRings() {
+        const ev = gtEvent();
+        if (ev.type !== "rings") return;
+        gtSeatsThisPhase().forEach((seat) => {
+          const fl = GT.flights[seat];
+          let idx = GT.format === "split" ? GT.ringProgress[seat] : GT.nextRing;
+          const r = GT.rings[idx];
+          if (!r) return;
+          const dx = fl.pos.x - r.x, dy = fl.pos.y - r.y, dz = fl.pos.z - r.z;
+          const ringFwdX = -Math.sin(r.yaw), ringFwdZ = -Math.cos(r.yaw);
+          const along = dx * ringFwdX + dz * ringFwdZ;
+          const radial = Math.hypot(dx - along * ringFwdX, dz - along * ringFwdZ, dy);
+          if (Math.abs(along) < 4 && radial <= r.radius + 1.2) {
+            if (GT.format !== "split") {
+              r.state = "done";
+              r.mesh.material = r.mats.done;
+              GT.nextRing = idx + 1;
+              if (GT.rings[GT.nextRing]) {
+                GT.rings[GT.nextRing].state = "active";
+                GT.rings[GT.nextRing].mesh.material = GT.rings[GT.nextRing].mats.active;
+              }
+            } else {
+              GT.ringProgress[seat] = idx + 1;
+            }
+            GT.stats[seat].collected += 1;
+            GT.combo[seat] += 1;
+            GT.comboT[seat] = 3.2;
+            GT.stats[seat].maxCombo = Math.max(GT.stats[seat].maxCombo, GT.combo[seat]);
+            if (GT.combo[seat] >= 3) GT.boostT[seat] = 1.6;
+            if (typeof AudioEngine.playRingChime === "function") AudioEngine.playRingChime(GT.combo[seat]);
+            gtRumbleSeat(seat, 140, 0.25, 0.4);
+          } else {
+            const toRing = (r.x - fl.pos.x) * ringFwdX + (r.z - fl.pos.z) * ringFwdZ;
+            if (toRing < -12) {
+              if (GT.format !== "split") {
+                r.state = "miss";
+                r.mesh.material = r.mats.miss;
+                GT.nextRing = idx + 1;
+                if (GT.rings[GT.nextRing]) {
+                  GT.rings[GT.nextRing].state = "active";
+                  GT.rings[GT.nextRing].mesh.material = GT.rings[GT.nextRing].mats.active;
+                }
+              } else {
+                GT.ringProgress[seat] = idx + 1;
+              }
+              GT.stats[seat].missed += 1;
+              GT.combo[seat] = 0;
+              GT.clock = Math.max(0, GT.clock - gtDiff().missPen);
+              showToast("Missed ring · +" + gtDiff().missPen + "s");
+            }
+          }
+          const done = GT.format === "split" ? GT.ringProgress[seat] : GT.nextRing;
+          if (done >= GT.rings.length) GT.stats[seat].finished = true;
+        });
+        if (GT.format !== "split") GT.ringProgress = [GT.nextRing, GT.nextRing];
+      }
+
+      function gtUpdateGates() {
+        const ev = gtEvent();
+        if (ev.type !== "canyon") return;
+        gtSeatsThisPhase().forEach((seat) => {
+          let idx = GT.format === "split" ? GT.gateProgress[seat] : GT.nextGate;
+          const g = GT.gates[idx];
+          if (!g) return;
+          const fl = GT.flights[seat];
+          const dx = fl.pos.x - g.x, dy = fl.pos.y - g.y, dz = fl.pos.z - g.z;
+          const distH = Math.hypot(dx, dz);
+          if (distH < g.width * 0.55 && Math.abs(dy) < g.height * 0.7) {
+            if (GT.format !== "split") { g.state = "done"; GT.nextGate = idx + 1; }
+            else GT.gateProgress[seat] = idx + 1;
+            GT.stats[seat].gates += 1;
+            GT.combo[seat] += 1;
+            GT.comboT[seat] = 3;
+            GT.stats[seat].maxCombo = Math.max(GT.stats[seat].maxCombo, GT.combo[seat]);
+            if (typeof AudioEngine.playRingChime === "function") AudioEngine.playRingChime(GT.combo[seat]);
+            gtRumbleSeat(seat, 140, 0.3, 0.45);
+            const done = GT.format === "split" ? GT.gateProgress[seat] : GT.nextGate;
+            if (done >= GT.gates.length) GT.stats[seat].finished = true;
+          } else if (fl.pos.z - g.z > 18 && distH > 4) {
+            if (GT.format !== "split") GT.nextGate = idx + 1;
+            else GT.gateProgress[seat] = idx + 1;
+            showToast("Missed a gate");
+          }
+        });
+        if (GT.format !== "split") GT.gateProgress = [GT.nextGate, GT.nextGate];
+      }
+
+      function gtUpdateTag(dt) {
+        const ev = gtEvent();
+        if (ev.type !== "tag") return;
+        const d = gtDiff();
+        if (GT.invuln > 0) GT.invuln -= dt;
+        function posOf(id) {
+          if (id === 1 && gtSolo() && GT.drone) return GT.drone.position;
+          return GT.flights[id].pos;
+        }
+        if (gtSolo() && GT.drone) {
+          const player = GT.flights[0];
+          const dp = GT.drone.position;
+          const chasing = GT.chaser === 1;
+          const ax = player.pos.x - dp.x, az = player.pos.z - dp.z;
+          const dist = Math.max(1, Math.hypot(ax, az));
+          const spd = 58 * d.aiSpeed * (chasing ? 1.05 : 0.92);
+          let dirX, dirZ;
+          if (chasing) { dirX = ax / dist; dirZ = az / dist; }
+          else {
+            dirX = -ax / dist + Math.sin(performance.now() * 0.0015) * 0.6;
+            dirZ = -az / dist + Math.cos(performance.now() * 0.0012) * 0.6;
+            if (dist > 220) { dirX = ax / dist; dirZ = az / dist; }
+          }
+          const len = Math.max(0.2, Math.hypot(dirX, dirZ));
+          dp.x += (dirX / len) * spd * dt;
+          dp.z += (dirZ / len) * spd * dt;
+          const reg = REGIONS[state.regionKey];
+          const gnd = gtHeight(reg, dp.x, dp.z) + 30;
+          dp.y += (gnd + 8 - dp.y) * Math.min(1, dt * 2);
+          GT.drone.rotation.y = Math.atan2(-dirX, -dirZ);
+        }
+        const evader = GT.chaser ^ 1;
+        const a = posOf(GT.chaser);
+        const b = posOf(evader);
+        const dist = Math.hypot(a.x - b.x, a.y - b.y, a.z - b.z);
+        const src = (gtSolo() && GT.chaser === 1 && GT.drone) ? GT.drone.position : (GT.flights[GT.chaser] ? GT.flights[GT.chaser].pos : a);
+        if (GT.tagRing) GT.tagRing.position.set(src.x, src.y - 4, src.z);
+        if (gtSolo()) {
+          if (GT.chaser === 1) GT.stats[0].survival += dt;
+        } else {
+          GT.stats[evader].survival += dt;
+        }
+        if (GT.invuln <= 0 && dist <= d.tagRadius) {
+          const tagSeat = gtSolo() ? 0 : GT.chaser;
+          GT.stats[tagSeat].tags += 1;
+          GT.stats[tagSeat].raw += 120;
+          GT.chaser = GT.chaser ^ 1;
+          GT.invuln = 2.0;
+          gtPlayTag();
+          gtRumbleSeat(0, 260, 0.55, 0.85);
+          if (!gtSolo()) gtRumbleSeat(1, 260, 0.55, 0.85);
+          showToast("Tag! Roles swap");
+        }
+      }
+
+      function gtEventPar() {
+        const ev = gtEvent();
+        return ev.par * (GT.eventDurationOverride ? (GT.eventDurationOverride / ev.duration) : 1);
+      }
+
+      function gtComputeRaw(seat) {
+        const ev = gtEvent();
+        const st = GT.stats[seat];
+        const timeLeft = Math.max(0, GT.clock);
+        if (ev.type === "rings") {
+          st.raw = timeLeft * 8 + st.collected * 40 - st.missed * 25 + st.maxCombo * 8;
+          if (st.finished) st.raw += 120;
+        } else if (ev.type === "canyon") {
+          st.raw = timeLeft * 6 + st.gates * 70 + st.altBonus - st.crashes * 40;
+          if (st.finished) st.raw += 120;
+        } else if (ev.type === "bomb") {
+          st.accuracy = st.dropped ? (st.hits / st.dropped) : 0;
+          st.raw = st.raw + timeLeft * 2 + st.bombsLeft * 8;
+        } else if (ev.type === "tag") {
+          st.raw = st.tags * 120 + st.survival * 8 + timeLeft * 1;
+        }
+        st.raw = Math.max(0, Math.round(st.raw));
+        return st.raw;
+      }
+
+      function gtFinalizeSeat(seat) {
+        const ev = gtEvent();
+        const st = GT.stats[seat];
+        gtComputeRaw(seat);
+        st.underPar = st.raw >= gtEventPar();
+        st.bonus = gtBonusPoints(ev.type, st);
+        st.finishTime = GT.duration - GT.clock;
+        GT.results[seat] = { raw: st.raw, bonus: st.bonus, stats: Object.assign({}, st) };
+      }
+
+      function gtMaybeEndPlay() {
+        if (GT.phase !== "play") return;
+        const ev = gtEvent();
+        const seats = gtSeatsThisPhase();
+        const timeUp = GT.clock <= 0;
+        const allFinished = seats.every((s) => GT.stats[s].finished);
+        let bombsDone = false;
+        if (ev.type === "bomb") {
+          bombsDone = seats.every((s) => GT.stats[s].bombsLeft <= 0) && inFlight.every((b) => !b.live);
+        }
+        if (timeUp || allFinished || bombsDone) gtEndPlay();
+      }
+
+      function gtEndPlay() {
+        if (GT.phase !== "play") return;
+        const seats = gtSeatsThisPhase();
+        seats.forEach(gtFinalizeSeat);
+        seats.forEach((s) => { GT.turnDone[s] = true; });
+        if (gtSolo() && GT.ghostRec.length) GT.pendingGhost = GT.ghostRec.slice();
+        if (GT.format === "turns" && !GT.turnDone[1]) {
+          GT.phase = "ready";
+          GT.phaseT = 0;
+          gtShow("gt-play-hud", false);
+          gtShow("gt-goal", false);
+          gtShow("gt-stick-wrap", false);
+          gtShow("gt-ready", true);
+          return;
+        }
+        gtAfterBothPlayed();
+      }
+
+      function gtStartTurn2() {
+        GT.activeSeat = 1;
+        GT.phase = "countdown";
+        GT.phaseT = 0;
+        const ev = gtEvent();
+        gtBuildCourse();
+        const sp = gtSpawnPos(1, ev);
+        GT.flights[1] = gtNewFlight(sp.x, sp.y, sp.z, sp.yaw);
+        gtCopyFlight(GT.flights[1], flight);
+        if (ev.type === "bomb") {
+          setBombsEnabled(true);
+          state.bombAmmo = gtDiff().bombs;
+          state.bombCooldown = 0;
+          updateBombUI();
+        }
+        if (ev.type === "tag") { GT.chaser = 1; GT.invuln = 1.2; }
+        GT.duration = (GT.eventDurationOverride != null) ? GT.eventDurationOverride : Math.round(ev.duration * gtDiff().timeMul);
+        GT.clock = GT.duration;
+        gtHideAllModals();
+        gtShow("gt-goal", true);
+        gtShow("gt-play-hud", true);
+        gtShowTouchStick();
+        if (GT.skipCountdown) gtEnterPlay();
+        else {
+          gtShow("gt-countdown", true);
+          const el = gtEl("gt-countdown");
+          if (el) { el.textContent = "3"; el.classList.remove("go"); }
+          gtPlayTick();
+        }
+        gtSyncHud();
+      }
+
+
+      function gtApplyScriptedOrAuto() {
+        const ev = gtEvent();
+        const script = GT.scriptedResults && GT.scriptedResults[GT.eventIndex];
+        const n = GT.format === "1p" ? 1 : 2;
+        for (let i = 0; i < n; i++) {
+          if (script) {
+            GT.stats[i].raw = script.raw[i];
+            if (script.stats) Object.assign(GT.stats[i], script.stats[i] || {});
+            GT.stats[i].bonus = script.bonus ? script.bonus[i] : gtBonusPoints(ev.type, GT.stats[i]);
+          } else {
+            GT.stats[i].raw = ev.par + (i === 0 ? 40 : -20);
+            GT.stats[i].collected = ev.rings || ev.gates || 6;
+            GT.stats[i].bonus = 2;
+          }
+          GT.results[i] = { raw: GT.stats[i].raw, bonus: GT.stats[i].bonus, stats: Object.assign({}, GT.stats[i]) };
+          GT.turnDone[i] = true;
+        }
+        if (n === 1) GT.results[1] = null;
+      }
+
+      function gtAfterBothPlayed() {
+        const ev = gtEvent();
+        const solo = gtSolo();
+        const raw0 = (GT.results[0] && GT.results[0].raw) || 0;
+        const raw1 = solo ? 0 : ((GT.results[1] && GT.results[1].raw) || 0);
+        const par = gtEventPar();
+        const places = gtPlacePoints(raw0, raw1, solo, par);
+        const bonus0 = (GT.results[0] && GT.results[0].bonus) || 0;
+        const bonus1 = solo ? 0 : ((GT.results[1] && GT.results[1].bonus) || 0);
+        if (GT.results[0]) GT.results[0].place = places[0];
+        if (GT.results[1]) GT.results[1].place = places[1];
+        const add0 = places[0] + bonus0;
+        const add1 = solo ? 0 : (places[1] + bonus1);
+        GT.totals[0] += add0;
+        if (!solo) GT.totals[1] += add1;
+        GT.eventLog.push({
+          id: ev.id, name: ev.name, type: ev.type,
+          raw: [raw0, raw1], place: places, bonus: [bonus0, bonus1],
+          add: [add0, add1], totals: GT.totals.slice()
+        });
+        gtPersistBests();
+        GT.phase = "standings";
+        GT.phaseT = 0;
+        gtShowStandings();
+      }
+
+      function gtPersistBests() {
+        const bests = gtLoadBests();
+        const d = GT.difficulty;
+        const ev = gtEvent();
+        const raw0 = GT.results[0] ? GT.results[0].raw : 0;
+        if (!bests.events[ev.id]) bests.events[ev.id] = {};
+        const prev = bests.events[ev.id][d];
+        if (!prev || raw0 > prev.raw) {
+          bests.events[ev.id][d] = { raw: raw0, total: GT.totals[0] };
+          if (GT.pendingGhost && GT.pendingGhost.length) {
+            bests.ghosts[ev.id + "_" + d] = { path: GT.pendingGhost.slice(0, 600), raw: raw0 };
+          }
+        }
+        gtSaveBests(bests);
+      }
+
+      function gtShowStandings() {
+        gtHideAllModals();
+        gtShow("gt-play-hud", false);
+        gtShow("gt-goal", false);
+        gtShow("gt-stick-wrap", false);
+        gtShow("gt-split-labels", false);
+        const last = GT.eventLog[GT.eventLog.length - 1];
+        const title = gtEl("gt-standings-title");
+        if (title) title.textContent = "After " + last.name;
+        const body = gtEl("gt-standings-body");
+        const names = gtSolo() ? ["You"] : ["Player 1", "Player 2"];
+        const n = gtSolo() ? 1 : 2;
+        let html = "";
+        const lead = !gtSolo() && GT.totals[0] !== GT.totals[1] ? (GT.totals[0] > GT.totals[1] ? 0 : 1) : -1;
+        for (let i = 0; i < n; i++) {
+          const cls = lead === i ? " class=\"lead\"" : "";
+          html += "<tr" + cls + "><td>" + names[i] + "</td><td class=\"num\">" + last.place[i] + "</td><td class=\"num\">+" + last.bonus[i] + "</td><td class=\"num\">" + GT.totals[i] + "</td></tr>";
+        }
+        if (body) body.innerHTML = html;
+        const note = gtEl("gt-standings-note");
+        if (note) {
+          note.textContent = last.place[0] + " placement + " + last.bonus[0] + " bonus" + (gtSolo() ? "" : (" · P2 " + last.place[1] + "+" + last.bonus[1]));
+        }
+        const btn = gtEl("gt-standings-btn");
+        const more = GT.eventIndex < GT_EVENTS.length - 1;
+        if (btn) btn.textContent = more ? "Next Event" : "See Champion";
+        gtShow("gt-standings", true);
+      }
+
+      function gtAdvance() {
+        if (GT.eventIndex < GT_EVENTS.length - 1) {
+          GT.eventIndex += 1;
+          gtBeginEvent();
+        } else {
+          gtShowChampion();
+        }
+      }
+
+      function gtShowChampion() {
+        GT.phase = "champion";
+        gtHideAllModals();
+        gtShow("gt-play-hud", false);
+        gtShow("gt-goal", false);
+        gtShow("gt-stick-wrap", false);
+        const names = gtSolo() ? ["You"] : ["Player 1", "Player 2"];
+        let title = names[0];
+        if (!gtSolo()) {
+          if (GT.totals[0] === GT.totals[1]) title = "Shared title!";
+          else if (GT.totals[1] > GT.totals[0]) title = "Player 2";
+          else title = "Player 1";
+        }
+        if (gtEl("gt-champ-name")) gtEl("gt-champ-name").textContent = title;
+        const body = gtEl("gt-champ-body");
+        const n = gtSolo() ? 1 : 2;
+        let html = "";
+        for (let i = 0; i < n; i++) html += "<tr><td>" + names[i] + "</td><td class=\"num\">" + GT.totals[i] + "</td></tr>";
+        if (body) body.innerHTML = html;
+        const bests = gtLoadBests();
+        const d = GT.difficulty;
+        const prev = bests.totals[d] || 0;
+        const isBest = GT.totals[0] >= prev;
+        if (isBest) bests.totals[d] = GT.totals[0];
+        gtSaveBests(bests);
+        const bl = gtEl("gt-champ-best");
+        if (bl) bl.textContent = isBest ? ("New " + gtDiff().label + " best total: " + GT.totals[0]) : (gtDiff().label + " best remains " + prev);
+        gtShow("gt-champion", true);
+        gtStartConfetti();
+        gtPlayFanfare();
+      }
+
+      function gtStartConfetti() {
+        const c = gtEl("gt-confetti");
+        if (!c) return;
+        const ctx = c.getContext("2d");
+        const w = c.width = c.clientWidth || window.innerWidth;
+        const h = c.height = c.clientHeight || window.innerHeight;
+        const colors = ["#38bdf8", "#fbbf24", "#f472b6", "#4ade80", "#c084fc", "#f8fafc"];
+        GT.confettiBits = [];
+        for (let i = 0; i < 160; i++) {
+          GT.confettiBits.push({
+            x: Math.random() * w, y: -20 - Math.random() * h,
+            vx: (Math.random() - 0.5) * 80, vy: 80 + Math.random() * 140,
+            s: 4 + Math.random() * 6, rot: Math.random() * 6, rv: (Math.random() - 0.5) * 8,
+            color: colors[i % colors.length]
+          });
+        }
+        GT.confetti = { ctx: ctx, w: w, h: h, t: 0 };
+      }
+      function gtTickConfetti(dt) {
+        if (!GT.confetti || GT.phase !== "champion") return;
+        const ctx = GT.confetti.ctx, w = GT.confetti.w, h = GT.confetti.h;
+        GT.confetti.t += dt;
+        ctx.clearRect(0, 0, w, h);
+        GT.confettiBits.forEach((p) => {
+          p.vy += 40 * dt;
+          p.x += p.vx * dt;
+          p.y += p.vy * dt;
+          p.rot += p.rv * dt;
+          if (p.y > h + 20) { p.y = -10; p.x = Math.random() * w; p.vy = 80 + Math.random() * 80; }
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.rot);
+          ctx.fillStyle = p.color;
+          ctx.fillRect(-p.s * 0.5, -p.s * 0.25, p.s, p.s * 0.5);
+          ctx.restore();
+        });
+      }
+      function gtRecordGhost(dt) {
+        if (!gtSolo() || GT.phase !== "play") return;
+        GT.recAcc += dt;
+        if (GT.recAcc < 0.2) return;
+        GT.recAcc = 0;
+        const fl = GT.flights[0];
+        if (!fl || GT.ghostRec.length > 600) return;
+        GT.ghostRec.push({ t: GT.duration - GT.clock, x: fl.pos.x, y: fl.pos.y, z: fl.pos.z, yaw: fl.yaw });
+      }
+      function gtUpdateGhost() {
+        if (!GT.ghostGroup || !GT.ghost || !GT.ghost.path || !GT.ghost.path.length) {
+          if (GT.ghostGroup) GT.ghostGroup.visible = false;
+          return;
+        }
+        GT.ghostGroup.visible = GT.phase === "play" && gtSolo();
+        if (!GT.ghostGroup.visible) return;
+        const t = GT.duration - GT.clock;
+        const path = GT.ghost.path;
+        let i = 0;
+        while (i + 1 < path.length && path[i + 1].t < t) i++;
+        const a = path[i];
+        const b = path[Math.min(i + 1, path.length - 1)];
+        const span = Math.max(0.001, (b.t - a.t));
+        const u = Math.max(0, Math.min(1, (t - a.t) / span));
+        GT.ghostGroup.position.set(a.x + (b.x - a.x) * u, a.y + (b.y - a.y) * u, a.z + (b.z - a.z) * u);
+        GT.ghostGroup.rotation.order = "YXZ";
+        GT.ghostGroup.rotation.y = a.yaw + normalizeAngle(b.yaw - a.yaw) * u;
+      }
+
+
+      function gtHoldPlanes() {
+        if (!GT.flights || !GT.flights[0]) return;
+        if (GT.format === "turns" && GT.flights[GT.activeSeat]) gtCopyFlight(GT.flights[GT.activeSeat], flight);
+        else gtCopyFlight(GT.flights[0], flight);
+        if (GT.plane2 && GT.format === "split" && GT.flights[1]) {
+          GT.plane2.visible = true;
+          gtPosePlane(GT.plane2, GT.flights[1]);
+        }
+      }
+
+      function gtConsumeFlightTick(dt) {
+        if (!GT.active) return false;
+        const scaled = dt * (GT.timeScale || 1);
+        GT.phaseT += scaled;
+        if (GT.phase === "countdown") {
+          const el = gtEl("gt-countdown");
+          const remain = 3 - GT.phaseT;
+          if (remain > 2) { if (el) el.textContent = "3"; }
+          else if (remain > 1) { if (el && el.textContent !== "2") { el.textContent = "2"; gtPlayTick(); } }
+          else if (remain > 0) { if (el && el.textContent !== "1") { el.textContent = "1"; gtPlayTick(); } }
+          else {
+            if (el) { el.textContent = "GO!"; el.classList.add("go"); }
+            if (GT.phaseT >= 3.45) gtEnterPlay();
+          }
+          gtHoldPlanes();
+          return true;
+        }
+        if (GT.phase === "play") {
+          gtCollectInputs(scaled);
+          const seats = gtSeatsThisPhase();
+          seats.forEach((seat) => {
+            gtManualFlight(GT.flights[seat], GT.inputs[seat], scaled, seat);
+            if (GT.inputs[seat].bomb) gtDropFor(seat);
+          });
+          if (GT.format === "turns") gtCopyFlight(GT.flights[GT.activeSeat], flight);
+          else gtCopyFlight(GT.flights[0], flight);
+          if (GT.plane2) {
+            GT.plane2.visible = GT.format === "split";
+            if (GT.format === "split") gtPosePlane(GT.plane2, GT.flights[1]);
+          }
+          if (GT.format === "split") planeGroup.visible = true;
+          GT.clock = Math.max(0, GT.clock - scaled);
+          GT.propellers2.forEach((pr) => { pr.rotation.z += scaled * 36 * state.speedMult; });
+          gtUpdateRings();
+          gtUpdateGates();
+          gtUpdateTag(scaled);
+          gtRecordGhost(scaled);
+          gtUpdateGhost();
+          if (Math.floor(GT.phaseT * 8) !== Math.floor((GT.phaseT - scaled) * 8)) gtSyncHud();
+          gtMaybeEndPlay();
+          return true;
+        }
+        gtHoldPlanes();
+        if (GT.phase === "champion") gtTickConfetti(scaled);
+        return true;
+      }
+
+      function gtViewPlane() { return planeGroup; }
+      function gtIsSplitRender() {
+        return gtIsSplit() && (GT.phase === "play" || GT.phase === "countdown" || GT.phase === "brief" || GT.phase === "standings" || GT.phase === "champion" || GT.phase === "ready");
+      }
+      function gtFollowCam(cam, group, smoothPos, smoothLook, dt) {
+        const planeQuat = group.quaternion;
+        const offset = new THREE.Vector3(0, 6.2, 22.5).applyQuaternion(planeQuat);
+        const targetCamPos = group.position.clone().add(offset);
+        const lookFwd = new THREE.Vector3(0, 1.5, -45).applyQuaternion(planeQuat);
+        const targetLookAt = group.position.clone().add(lookFwd);
+        smoothPos.lerp(targetCamPos, Math.min(1, dt * 5.2));
+        smoothLook.lerp(targetLookAt, Math.min(1, dt * 6.5));
+        cam.position.copy(smoothPos);
+        cam.lookAt(smoothLook);
+        clampPosAboveTerrain(cam.position, 8);
+      }
+      function gtRenderSplit(dt) {
+        if (!GT.camera2) gtEnsureSecondPlane();
+        if (GT.flights[0]) gtPosePlane(planeGroup, GT.flights[0]);
+        if (GT.flights[1]) gtPosePlane(GT.plane2, GT.flights[1]);
+        const w = window.innerWidth, h = window.innerHeight;
+        const wide = w >= h;
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1));
+        renderer.setSize(w, h);
+        renderer.setScissorTest(true);
+        const views = wide
+          ? [
+              { x: 0, y: 0, w: Math.floor(w / 2), h: h, cam: camera, group: planeGroup, sp: camSmoothPos, sl: camSmoothLook },
+              { x: Math.floor(w / 2), y: 0, w: w - Math.floor(w / 2), h: h, cam: GT.camera2, group: GT.plane2, sp: GT.cam2SmoothPos, sl: GT.cam2SmoothLook }
+            ]
+          : [
+              { x: 0, y: Math.floor(h / 2), w: w, h: h - Math.floor(h / 2), cam: camera, group: planeGroup, sp: camSmoothPos, sl: camSmoothLook },
+              { x: 0, y: 0, w: w, h: Math.floor(h / 2), cam: GT.camera2, group: GT.plane2, sp: GT.cam2SmoothPos, sl: GT.cam2SmoothLook }
+            ];
+        views.forEach((v) => {
+          v.cam.aspect = v.w / Math.max(1, v.h);
+          v.cam.updateProjectionMatrix();
+          if (v.group) gtFollowCam(v.cam, v.group, v.sp, v.sl, dt || 0.016);
+          renderer.setViewport(v.x, v.y, v.w, v.h);
+          renderer.setScissor(v.x, v.y, v.w, v.h);
+          skyDome.position.copy(v.cam.position);
+          renderer.render(scene, v.cam);
+        });
+      }
+
+      function gtHandleMenuConfirm() {
+        if (!GT.active) return false;
+        if (GT.phase === "brief") { gtStartCountdown(); return true; }
+        if (GT.phase === "ready") { gtStartTurn2(); return true; }
+        if (GT.phase === "standings") { gtAdvance(); return true; }
+        if (GT.phase === "champion") { gtShowMenu(); return true; }
+        return false;
+      }
+
+      function gtBindUI() {
+        document.querySelectorAll(".diff-btn").forEach((btn) => {
+          btn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            GT.difficulty = btn.dataset.diff;
+            document.querySelectorAll(".diff-btn").forEach((b) => b.classList.toggle("active", b === btn));
+            gtRefreshBestLine();
+          });
+        });
+        const start = (fmt) => () => gtStart({ format: fmt, difficulty: GT.difficulty });
+        const b1 = gtEl("mode-1p-btn");
+        const b2 = gtEl("mode-split-btn");
+        const b3 = gtEl("mode-turns-btn");
+        const b4 = gtEl("mode-scenic-btn");
+        if (b1) b1.addEventListener("click", start("1p"));
+        if (b2) b2.addEventListener("click", start("split"));
+        if (b3) b3.addEventListener("click", start("turns"));
+        if (b4) b4.addEventListener("click", () => { beginFlight(); });
+        ["gt-brief-btn", "gt-ready-btn", "gt-standings-btn", "gt-champ-btn"].forEach((id) => {
+          const el = gtEl(id);
+          if (el) el.addEventListener("click", (e) => { e.preventDefault(); gtHandleMenuConfirm(); });
+        });
+        const base = gtEl("gt-stick-base");
+        if (base) {
+          const knob = gtEl("gt-stick-knob");
+          const setFrom = (cx, cy) => {
+            const rect = base.getBoundingClientRect();
+            const x = (cx - (rect.left + rect.width / 2)) / (rect.width / 2);
+            const y = (cy - (rect.top + rect.height / 2)) / (rect.height / 2);
+            const m = Math.hypot(x, y);
+            const s = m > 1 ? 1 / m : 1;
+            GT.touch.x = x * s;
+            GT.touch.y = y * s;
+            GT.touch.active = true;
+            if (knob) {
+              knob.style.left = (34 + GT.touch.x * 28) + "px";
+              knob.style.top = (34 + GT.touch.y * 28) + "px";
+            }
+          };
+          const clear = () => {
+            GT.touch.x = 0; GT.touch.y = 0; GT.touch.active = false;
+            if (knob) { knob.style.left = "34px"; knob.style.top = "34px"; }
+          };
+          base.addEventListener("pointerdown", (e) => { e.preventDefault(); base.setPointerCapture(e.pointerId); setFrom(e.clientX, e.clientY); });
+          base.addEventListener("pointermove", (e) => { if (GT.touch.active) setFrom(e.clientX, e.clientY); });
+          base.addEventListener("pointerup", clear);
+          base.addEventListener("pointercancel", clear);
+        }
+        gtRefreshBestLine();
+      }
+
+      GT.isActive = function () { return !!GT.active; };
+      GT.isPlaying = function () { return gtPlaying(); };
+      GT.isSplitRender = gtIsSplitRender;
+      GT.consumeFlightTick = gtConsumeFlightTick;
+      GT.renderSplit = gtRenderSplit;
+      GT.onExplosion = gtOnExplosion;
+      GT.viewPlane = gtViewPlane;
+      GT.handleConfirm = gtHandleMenuConfirm;
+      GT.start = gtStart;
+      GT.placePoints = gtPlacePoints;
+      GT.bonusPoints = gtBonusPoints;
+      GT.events = GT_EVENTS;
+      GT.confirm = gtHandleMenuConfirm;
+      GT.gotoMenu = gtShowMenu;
+      GT.dropBomb = function (seat) { return gtDropFor(seat == null ? GT.activeSeat : seat); };
+      GT.getState = function () {
+        return {
+          active: GT.active,
+          format: GT.format,
+          difficulty: GT.difficulty,
+          eventIndex: GT.eventIndex,
+          event: gtEvent() ? { id: gtEvent().id, type: gtEvent().type, name: gtEvent().name, region: gtEvent().region } : null,
+          phase: GT.phase,
+          totals: GT.totals.slice(),
+          log: GT.eventLog.slice(),
+          clock: GT.clock,
+          stats: GT.stats,
+          results: GT.results,
+          split: gtIsSplit(),
+          lineup: GT_EVENTS.map((e) => ({ id: e.id, type: e.type, region: e.region, name: e.name }))
+        };
+      };
+      GT.finishEvent = function (script) {
+        if (script) {
+          const n = GT.format === "1p" ? 1 : 2;
+          for (let i = 0; i < n; i++) {
+            if (script.raw) GT.stats[i].raw = script.raw[i];
+            if (script.stats && script.stats[i]) Object.assign(GT.stats[i], script.stats[i]);
+            GT.stats[i].bonus = script.bonus ? script.bonus[i] : gtBonusPoints(gtEvent().type, GT.stats[i]);
+            GT.results[i] = { raw: GT.stats[i].raw, bonus: GT.stats[i].bonus, stats: Object.assign({}, GT.stats[i]) };
+            GT.turnDone[i] = true;
+          }
+        } else {
+          gtSeatsThisPhase().forEach(gtFinalizeSeat);
+          if (GT.format === "turns" && GT.activeSeat === 0 && !GT.turnDone[1]) {
+            GT.turnDone[0] = true;
+            GT.phase = "ready";
+            gtShow("gt-play-hud", false);
+            gtShow("gt-goal", false);
+            gtShow("gt-ready", true);
+            return GT.getState();
+          }
+        }
+        if (GT.format === "turns") { GT.turnDone[0] = GT.turnDone[1] = true; }
+        gtAfterBothPlayed();
+        return GT.getState();
+      };
+
+      gtBindUI();
 
       window.addEventListener('load', () => {
         document.querySelectorAll('.quality-btn').forEach((b) => {
