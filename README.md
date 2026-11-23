@@ -10,13 +10,16 @@ This is a single offline HTML file. It does not need a network connection after 
 
 Tap **Begin Scenic Flight** (or press A / Space). Audio starts only after that.
 
-- **Touch or mouse:** tap the terrain or the radar to divert. Drag to orbit in Orbit view. Scroll or pinch to zoom.
+- **Touch or mouse:** tap the terrain or the radar to divert. Drag to orbit in Orbit view. Scroll or pinch to zoom. The **?** button opens Controls & Help.
 - **Xbox controller:** A begins and confirms, Y opens the Tour Director, D-pad moves the focus ring, B closes it, LB/RB change cameras, LT/RT change altitude, left stick steers, right stick orbits, X drops a bomb, right-stick click goes to the next landmark, and Menu toggles Cinema Mode.
-- **Keyboard:** Space begins, WASD or arrows steer, Q/E or PageUp/PageDown set altitude, C cycles cameras, Tab or M opens the menu, H toggles Cinema Mode, B or F drops a bomb.
-- **Touch:** a BOMB button in the dock shows the remaining payload count.
+- **Keyboard:** Space begins, WASD or arrows steer, Q/E or PageUp/PageDown set altitude, C cycles cameras, Tab or M opens the menu, H toggles Cinema Mode, R toggles Sky Rings, B or F drops a bomb.
+- **Touch:** a large round BOMB button at the bottom-right thumb position shows the remaining payload count.
+- **Sky Rings:** optional. Turn them on in the Tour Director (or press R) and fly through the golden rings for combo points.
 - **Bombs:** optional. The Tour Director has a Bombs On/Off toggle (default On) so the peaceful scenic mode still exists. Bombs inherit the plane's velocity, fall with gravity, and bloom into fire, smoke, splash, or powder depending on the surface. People and animals are never harmed; they scatter out of the way.
 
 Quality defaults to High on desktop and Medium on touch devices. You can switch High / Medium / Low in the Tour Director drawer.
+
+The version mark **v4.2** is visible in the location pill. Pull to refresh if you still see an older version.
 
 ## v4
 
@@ -28,4 +31,8 @@ Optional bombing runs: real-ish ballistics, an aiming reticle, a short cooldown 
 
 ## v4.1.1
 
-On iPhone, the BOMB control is a large round button at the bottom-right thumb position, so it is no longer clipped off the end of the bottom dock in portrait. The version mark **v4.1.1** is visible in the location pill (and briefly in the lower-left after Begin) so you can confirm you have the new build. Pull to refresh if you still see an older version.
+On iPhone, the BOMB control is a large round button at the bottom-right thumb position, so it is no longer clipped off the end of the bottom dock in portrait.
+
+## v4.2
+
+Sky Rings with combo scoring, a cockpit avionics HUD, wingtip contrails and a twilight landing light, a Help modal, baked radar terrain, and a compact dock so Help and Cinema both fit on iPhone 390-wide screens. Still a single offline file, with the same Xbox rumble, D-pad menu focus, and cloud-lift behavior as v4.1.1.
