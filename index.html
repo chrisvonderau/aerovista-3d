@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>AeroVista — Ultra-Realistic Scenic Flight Tour</title>
+  <title>AeroVista — Scenic Flight Tour v4.1</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%230ea5e9'/%3E%3Cpath d='M8 3l6 5-6 2-6-2 6-5zm0 8v3' fill='%23f8fafc'/%3E%3C/svg%3E"/>
   <style>
 /* Tailwind 3.4.17 utilities used by this page (precompiled, offline) */
@@ -82,6 +82,32 @@
       border-color: rgba(186, 230, 253, 0.95) !important;
       outline: none;
     }
+    #bomb-dock { position: relative; }
+    #bomb-btn {
+      position: relative;
+      min-width: 3.15rem;
+      background: rgba(180, 50, 30, 0.42);
+      border-color: rgba(251, 146, 60, 0.7);
+      color: #fff7ed;
+    }
+    #bomb-btn:hover { background: rgba(220, 70, 30, 0.58); }
+    #bomb-btn.cooling { opacity: 0.55; }
+    .bomb-badge {
+      position: absolute;
+      top: -7px;
+      right: -5px;
+      min-width: 1.05rem;
+      height: 1.05rem;
+      padding: 0 0.22rem;
+      border-radius: 999px;
+      background: #fb923c;
+      color: #1c1008;
+      font-size: 9px;
+      font-weight: 700;
+      line-height: 1.05rem;
+      text-align: center;
+      pointer-events: none;
+    }
     .hud-interactive {
       pointer-events: auto;
     }
@@ -157,8 +183,8 @@
       <button id="start-flight-btn" class="w-full py-3.5 px-6 rounded-2xl bg-sky-500 hover:bg-sky-400 active:scale-[0.98] text-white font-semibold text-base shadow-lg shadow-sky-500/30 transition cursor-pointer">
         Begin Scenic Flight
       </button>
-      <p class="text-[11px] text-slate-400 mt-3">v4 · Offline scenic tour · Xbox controller ready</p>
-      <p class="text-[10px] text-slate-400 mt-2 leading-relaxed">Xbox: A begin · Y menu · D-pad move · A select · B close · LB/RB camera · LT/RT altitude · Left stick steer · Right stick orbit · X or RS next landmark · Menu cinema. Keyboard: Space begin · WASD or arrows steer · Q/E or PageUp/PageDown altitude · C camera · Tab or M menu · H cinema · wheel or pinch zoom.</p>
+      <p class="text-[11px] text-slate-400 mt-3">v4.1 · Offline scenic tour · Optional bombing runs</p>
+      <p class="text-[10px] text-slate-400 mt-2 leading-relaxed">Xbox: A begin · Y menu · D-pad move · A select · B close · LB/RB camera · LT/RT altitude · Left stick steer · Right stick orbit · X drop bomb · RS next landmark · Menu cinema. Keyboard: Space begin · WASD or arrows steer · Q/E or PageUp/PageDown altitude · C camera · Tab or M menu · H cinema · B or F drop bomb · wheel or pinch zoom. Bombs can be switched off in the Tour Director.</p>
     </div>
   </div>
 
@@ -276,6 +302,14 @@
         </div>
       </div>
 
+      <div>
+        <div class="text-[10px] uppercase tracking-wider text-slate-400 font-medium mb-1.5">Bombs</div>
+        <div class="flex flex-wrap gap-1">
+          <button data-bombs="on" class="bomb-mode-btn glass-pill active px-2 py-1 rounded-lg text-[11px] font-medium cursor-pointer">On</button>
+          <button data-bombs="off" class="bomb-mode-btn glass-pill px-2 py-1 rounded-lg text-[11px] font-medium cursor-pointer">Off</button>
+        </div>
+      </div>
+
       <!-- Route Radar -->
       <div class="flex items-center justify-between gap-3 pt-1 border-t border-white/10">
         <div class="text-[11px] text-slate-300 leading-snug">
@@ -289,7 +323,7 @@
         </div>
         <canvas id="radar-canvas" width="112" height="112" class="rounded-xl bg-slate-950/70 border border-white/10 cursor-crosshair shrink-0"></canvas>
       </div>
-      <div class="pt-1 border-t border-white/10 text-[10px] text-slate-400 leading-relaxed">v4 · A confirm · Y Tour Director · B close · LB/RB camera · LT/RT altitude · sticks steer &amp; orbit</div>
+      <div class="pt-1 border-t border-white/10 text-[10px] text-slate-400 leading-relaxed">v4.1 · X bomb · RS next landmark · B closes menu · B or F on the keyboard also drops</div>
     </div>
 
     <!-- Ultra-Slim Centered Bottom Dock -->
@@ -306,6 +340,10 @@
           <button data-alt="low" class="alt-btn glass-pill px-2.5 py-1 rounded-full text-[11px] font-medium whitespace-nowrap cursor-pointer">Low</button>
           <button data-alt="scenic" class="alt-btn glass-pill active px-2.5 py-1 rounded-full text-[11px] font-medium whitespace-nowrap cursor-pointer">Scenic</button>
           <button data-alt="high" class="alt-btn glass-pill px-2.5 py-1 rounded-full text-[11px] font-medium whitespace-nowrap cursor-pointer">High</button>
+        </div>
+        <span id="bomb-dock-rule" class="text-white/20 text-xs">|</span>
+        <div id="bomb-dock">
+          <button id="bomb-btn" type="button" class="glass-pill px-2.5 py-1 rounded-full text-[11px] font-medium whitespace-nowrap cursor-pointer">BOMB<span id="bomb-count" class="bomb-badge">6</span></button>
         </div>
       </div>
     </div>
@@ -750,6 +788,7 @@
             lastOut = output[i];
             output[i] *= 3.2;
           }
+          this.noiseBuffer = noiseBuffer;
 
           // Cabin / Airframe Rumble
           const cabinNoise = this.ctx.createBufferSource();
@@ -869,6 +908,59 @@
             osc.start(t + idx * 0.14);
             osc.stop(t + idx * 0.14 + 1.0);
           });
+        },
+
+        playWhistle() {
+          if (!this.initialized || !state.audioEnabled || !this.ctx) return;
+          const t = this.ctx.currentTime;
+          const osc = this.ctx.createOscillator();
+          const g = this.ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(1480, t);
+          osc.frequency.exponentialRampToValueAtTime(620, t + 1.35);
+          g.gain.setValueAtTime(0.0001, t);
+          g.gain.exponentialRampToValueAtTime(0.06, t + 0.04);
+          g.gain.exponentialRampToValueAtTime(0.0001, t + 1.4);
+          osc.connect(g);
+          g.connect(this.masterGain);
+          osc.start(t);
+          osc.stop(t + 1.45);
+        },
+
+        playBoom(dist, kind) {
+          if (!this.initialized || !state.audioEnabled || !this.ctx) return;
+          const t = this.ctx.currentTime;
+          const att = Math.max(0.06, Math.min(1, 1 / (1 + (dist || 40) / 95)));
+          const thump = this.ctx.createOscillator();
+          const thumpG = this.ctx.createGain();
+          thump.type = 'sine';
+          const base = kind === 'water' ? 90 : 52;
+          thump.frequency.setValueAtTime(base, t);
+          thump.frequency.exponentialRampToValueAtTime(28, t + 0.38);
+          thumpG.gain.setValueAtTime(0.0001, t);
+          thumpG.gain.exponentialRampToValueAtTime(0.55 * att, t + 0.012);
+          thumpG.gain.exponentialRampToValueAtTime(0.0001, t + 0.42);
+          thump.connect(thumpG);
+          thumpG.connect(this.masterGain);
+          thump.start(t);
+          thump.stop(t + 0.45);
+          if (this.noiseBuffer) {
+            const src = this.ctx.createBufferSource();
+            src.buffer = this.noiseBuffer;
+            const filt = this.ctx.createBiquadFilter();
+            filt.type = 'bandpass';
+            filt.frequency.value = kind === 'water' ? 1600 : (kind === 'snow' ? 2200 : 700);
+            filt.Q.value = 0.7;
+            const ng = this.ctx.createGain();
+            ng.gain.setValueAtTime(0.0001, t);
+            ng.gain.exponentialRampToValueAtTime((kind === 'land' ? 0.35 : 0.22) * att, t + 0.01);
+            ng.gain.exponentialRampToValueAtTime(0.0001, t + 0.55);
+            src.connect(filt);
+            filt.connect(ng);
+            ng.connect(this.masterGain);
+            src.start(t);
+            src.stop(t + 0.6);
+          }
         }
       };
 
@@ -1147,6 +1239,13 @@
         animatedCars.length = 0;
         animatedAnimals.length = 0;
         animatedBoats.length = 0;
+        treeStates.length = 0;
+        hikerStates.length = 0;
+        trunksMesh = null;
+        crownsMesh = null;
+        hikersMesh = null;
+        animalsMeshRef = null;
+        if (typeof clearBombFX === 'function') clearBombFX();
 
         const reg = REGIONS[regionKey];
         const dummy = new THREE.Object3D();
@@ -1185,12 +1284,20 @@
               dummy.updateMatrix();
               trunks.setMatrixAt(tCount, dummy.matrix);
               crowns.setMatrixAt(tCount, dummy.matrix);
+              treeStates.push({
+                x: x, z: z, h: h, s: s, rotY: dummy.rotation.y,
+                fallen: false, fall: 0, fallVel: 0, fallDir: 0, fling: 0
+              });
               tCount++;
             }
           }
         }
         trunks.count = tCount;
         crowns.count = tCount;
+        trunks.userData.isTrunks = true;
+        crowns.userData.isCrowns = true;
+        trunksMesh = trunks;
+        crownsMesh = crowns;
         worldDetailsGroup.add(trunks, crowns);
 
         // 2) Wildlife Herds (Deer / Ibex / Elk silhouettes)
@@ -1199,7 +1306,10 @@
         const animalMat = new THREE.MeshLambertMaterial({ color: 0x8b6244, fog: true });
         const maxAnimals = q.animals;
         const animalsMesh = new THREE.InstancedMesh(animalGeo, animalMat, maxAnimals);
+        animalsMesh.instanceColor = new THREE.InstancedBufferAttribute(new Float32Array(maxAnimals * 3), 3);
         let aCount = 0;
+        const sheepColor = new THREE.Color(0xf3eee4);
+        const herdColor = new THREE.Color(0x8b6244);
         for (let i = 0; i < 800 && aCount < maxAnimals; i++) {
           const x = (Math.random() - 0.5) * WORLD_SIZE * 0.55;
           const z = (Math.random() - 0.5) * WORLD_SIZE * 0.55;
@@ -1207,17 +1317,23 @@
           if (h > reg.waterLevel + 2 && h < reg.snowLine - 15) {
             const h2 = reg.heightFn(x + 3, z);
             if (Math.abs(h2 - h) < 1.3) {
+              const isSheep = aCount === 0;
               animatedAnimals.push({
                 baseX: x, baseZ: z,
                 phase: Math.random() * Math.PI * 2,
-                speed: 0.35 + Math.random() * 0.4
+                speed: 0.35 + Math.random() * 0.4,
+                fleeX: 0, fleeZ: 0, fleeing: 0, offX: 0, offZ: 0,
+                isSheep: isSheep
               });
+              animalsMesh.setColorAt(aCount, isSheep ? sheepColor : herdColor);
               aCount++;
             }
           }
         }
         animalsMesh.count = aCount;
         animalsMesh.userData.isAnimals = true;
+        if (animalsMesh.instanceColor) animalsMesh.instanceColor.needsUpdate = true;
+        animalsMeshRef = animalsMesh;
         worldDetailsGroup.add(animalsMesh);
 
         // 3) Hikers — small muted human-ish figures (not bright red cylinders)
@@ -1242,12 +1358,18 @@
               dummy.updateMatrix();
               peopleMesh.setMatrixAt(pCount, dummy.matrix);
               peopleMesh.setColorAt(pCount, new THREE.Color(hikerColors[pCount % hikerColors.length]));
+              hikerStates.push({
+                x: px, z: pz, h: ph, s: s, rotY: dummy.rotation.y,
+                fleeX: 0, fleeZ: 0, fleeing: 0
+              });
               pCount++;
             }
           }
         });
         peopleMesh.count = pCount;
         if (peopleMesh.instanceColor) peopleMesh.instanceColor.needsUpdate = true;
+        peopleMesh.userData.isHikers = true;
+        hikersMesh = peopleMesh;
         worldDetailsGroup.add(peopleMesh);
 
         // 4) Moving Cars along the scenic valley road
@@ -1264,7 +1386,8 @@
             mesh: carMesh,
             z: (Math.random() - 0.5) * WORLD_SIZE * 0.6,
             dir: c % 2 === 0 ? 1 : -1,
-            speed: 14 + Math.random() * 10
+            speed: 14 + Math.random() * 10,
+            launched: 0, vx: 0, vy: 0, vz: 0, spin: 0
           });
         }
 
@@ -1279,7 +1402,8 @@
               mesh: boat,
               z: (Math.random() - 0.5) * WORLD_SIZE * 0.55,
               dir: b % 2 === 0 ? 1 : -1,
-              speed: 6 + Math.random() * 4
+              speed: 6 + Math.random() * 4,
+              launched: 0, vx: 0, vy: 0, vz: 0, spin: 0
             });
           }
         }
@@ -1377,6 +1501,799 @@
       }
 
       rebuildClouds();
+
+      // =========================================================================
+      // 12. OPTIONAL BOMBING RUNS (cartoonish, pooled, peaceful-toggle)
+      // =========================================================================
+      const BOMB_MAX_AMMO = 6;
+      const BOMB_RELOAD = 3.6;
+      const BOMB_COOLDOWN = 0.55;
+      const BOMB_GRAVITY = 78;
+      const BLAST_RADIUS = 44;
+      const MAX_IN_FLIGHT = 8;
+      const MAX_EXPLOSIONS = 6;
+      const SCORCH_POOL = 12;
+      const FX_MAX = { fire: 16, smoke: 24, debris: 18, splash: 20, snow: 18 };
+
+      state.bombsEnabled = true;
+      state.bombAmmo = BOMB_MAX_AMMO;
+      state.bombCooldown = 0;
+      state.bombReloadT = 0;
+      state.shakeAmp = 0;
+      state.sheepToast = false;
+
+      const treeStates = [];
+      const hikerStates = [];
+      let trunksMesh = null;
+      let crownsMesh = null;
+      let hikersMesh = null;
+      let animalsMeshRef = null;
+
+      const fxGroup = new THREE.Group();
+      scene.add(fxGroup);
+
+      function makeSoftTex(inner, mid, outer, alphaInner) {
+        const c = document.createElement('canvas');
+        c.width = 64; c.height = 64;
+        const g = c.getContext('2d');
+        const grd = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+        grd.addColorStop(0, inner);
+        grd.addColorStop(0.45, mid);
+        grd.addColorStop(1, outer);
+        g.fillStyle = grd;
+        g.fillRect(0, 0, 64, 64);
+        const tex = new THREE.CanvasTexture(c);
+        tex.needsUpdate = true;
+        return tex;
+      }
+
+      const texFire = makeSoftTex('rgba(255,250,220,1)', 'rgba(255,140,30,0.85)', 'rgba(255,40,0,0)', 1);
+      const texSmoke = makeSoftTex('rgba(40,36,32,0.7)', 'rgba(30,28,26,0.45)', 'rgba(20,20,20,0)', 1);
+      const texSplash = makeSoftTex('rgba(230,250,255,0.95)', 'rgba(140,200,230,0.55)', 'rgba(80,150,200,0)', 1);
+      const texSnow = makeSoftTex('rgba(255,255,255,1)', 'rgba(230,240,255,0.7)', 'rgba(200,220,255,0)', 1);
+      const texFlash = makeSoftTex('rgba(255,255,240,1)', 'rgba(255,220,140,0.7)', 'rgba(255,160,40,0)', 1);
+      const texScorch = makeSoftTex('rgba(18,12,8,0.75)', 'rgba(28,22,16,0.4)', 'rgba(20,16,12,0)', 1);
+
+      function makeBillboardMat(tex, color, additive) {
+        const m = new THREE.MeshBasicMaterial({
+          map: tex,
+          color: color,
+          transparent: true,
+          depthWrite: false,
+          fog: true,
+          blending: additive ? THREE.AdditiveBlending : THREE.NormalBlending,
+          side: THREE.DoubleSide,
+          opacity: 1
+        });
+        return m;
+      }
+
+      const planeGeo = new THREE.PlaneGeometry(1, 1);
+      const boxGeo = new THREE.BoxGeometry(1, 1, 1);
+      const ringGeo = new THREE.RingGeometry(0.7, 1, 32);
+      const scorchGeo = new THREE.CircleGeometry(1, 20);
+      const bombBodyGeo = new THREE.CylinderGeometry(0.22, 0.28, 1.15, 8);
+      bombBodyGeo.rotateX(Math.PI / 2);
+      const bombNoseGeo = new THREE.ConeGeometry(0.22, 0.45, 8);
+      bombNoseGeo.rotateX(-Math.PI / 2);
+      bombNoseGeo.translate(0, 0, -0.78);
+
+      const fireMesh = new THREE.InstancedMesh(planeGeo, makeBillboardMat(texFire, 0xffffff, true), MAX_EXPLOSIONS * FX_MAX.fire);
+      const smokeMesh = new THREE.InstancedMesh(planeGeo, makeBillboardMat(texSmoke, 0xffffff, false), MAX_EXPLOSIONS * FX_MAX.smoke);
+      const splashMesh = new THREE.InstancedMesh(planeGeo, makeBillboardMat(texSplash, 0xffffff, true), MAX_EXPLOSIONS * FX_MAX.splash);
+      const snowMesh = new THREE.InstancedMesh(planeGeo, makeBillboardMat(texSnow, 0xffffff, true), MAX_EXPLOSIONS * FX_MAX.snow);
+      const debrisMesh = new THREE.InstancedMesh(boxGeo, new THREE.MeshLambertMaterial({ color: 0x6b4a2a, fog: true }), MAX_EXPLOSIONS * FX_MAX.debris);
+      [fireMesh, smokeMesh, splashMesh, snowMesh, debrisMesh].forEach((m) => {
+        m.frustumCulled = false;
+        m.count = 0;
+        fxGroup.add(m);
+      });
+
+      const flashSprites = [];
+      const flashMat = new THREE.SpriteMaterial({
+        map: texFlash, color: 0xfff2c0, transparent: true, depthWrite: false,
+        blending: THREE.AdditiveBlending, fog: true
+      });
+      for (let i = 0; i < MAX_EXPLOSIONS; i++) {
+        const s = new THREE.Sprite(flashMat.clone());
+        s.visible = false;
+        fxGroup.add(s);
+        flashSprites.push({ sprite: s, life: 0, max: 0.18, peak: 14 });
+      }
+
+      const shockWaves = [];
+      const shockMat = new THREE.MeshBasicMaterial({
+        color: 0xffe6a8, transparent: true, opacity: 0.7, side: THREE.DoubleSide,
+        depthWrite: false, blending: THREE.AdditiveBlending, fog: true
+      });
+      for (let i = 0; i < MAX_EXPLOSIONS; i++) {
+        const m = new THREE.Mesh(ringGeo, shockMat.clone());
+        m.rotation.x = -Math.PI / 2;
+        m.visible = false;
+        fxGroup.add(m);
+        shockWaves.push({ mesh: m, life: 0, max: 0.7, kind: 'land' });
+      }
+
+      const scorches = [];
+      const scorchMat = new THREE.MeshBasicMaterial({
+        map: texScorch, transparent: true, depthWrite: false, fog: true, side: THREE.DoubleSide, opacity: 0.8
+      });
+      for (let i = 0; i < SCORCH_POOL; i++) {
+        const m = new THREE.Mesh(scorchGeo, scorchMat.clone());
+        m.rotation.x = -Math.PI / 2;
+        m.visible = false;
+        fxGroup.add(m);
+        scorches.push({ mesh: m, life: 0, max: 18 });
+      }
+      let scorchCursor = 0;
+
+      const bombMat = new THREE.MeshStandardMaterial({ color: 0x2a2e28, roughness: 0.45, metalness: 0.35, fog: true });
+      const bombAccent = new THREE.MeshStandardMaterial({ color: 0xc9a227, roughness: 0.4, metalness: 0.3, fog: true });
+      const inFlight = [];
+      for (let i = 0; i < MAX_IN_FLIGHT; i++) {
+        const g = new THREE.Group();
+        g.add(new THREE.Mesh(bombBodyGeo, bombMat));
+        g.add(new THREE.Mesh(bombNoseGeo, bombMat));
+        const stripe = new THREE.Mesh(new THREE.TorusGeometry(0.26, 0.04, 6, 10), bombAccent);
+        stripe.rotation.y = Math.PI / 2;
+        g.add(stripe);
+        g.visible = false;
+        fxGroup.add(g);
+        inFlight.push({
+          live: false, mesh: g,
+          x: 0, y: 0, z: 0, vx: 0, vy: 0, vz: 0, age: 0
+        });
+      }
+
+      const reticle = new THREE.Mesh(
+        new THREE.RingGeometry(2.2, 2.8, 24),
+        new THREE.MeshBasicMaterial({
+          color: 0x7dd3fc, transparent: true, opacity: 0.85, side: THREE.DoubleSide,
+          depthWrite: false, fog: true
+        })
+      );
+      reticle.rotation.x = -Math.PI / 2;
+      reticle.visible = false;
+      const reticleInner = new THREE.Mesh(
+        new THREE.RingGeometry(0.35, 0.7, 16),
+        reticle.material
+      );
+      reticleInner.rotation.x = -Math.PI / 2;
+      fxGroup.add(reticle, reticleInner);
+
+      const fireParts = [];
+      const smokeParts = [];
+      const debrisParts = [];
+      const splashParts = [];
+      const snowParts = [];
+      function fillPool(arr, n) {
+        for (let i = 0; i < n; i++) {
+          arr.push({
+            live: false, x: 0, y: 0, z: 0, vx: 0, vy: 0, vz: 0,
+            life: 0, max: 1, sx: 1, sy: 1, sz: 1, spin: 0, rot: 0
+          });
+        }
+      }
+      fillPool(fireParts, MAX_EXPLOSIONS * FX_MAX.fire);
+      fillPool(smokeParts, MAX_EXPLOSIONS * FX_MAX.smoke);
+      fillPool(debrisParts, MAX_EXPLOSIONS * FX_MAX.debris);
+      fillPool(splashParts, MAX_EXPLOSIONS * FX_MAX.splash);
+      fillPool(snowParts, MAX_EXPLOSIONS * FX_MAX.snow);
+
+      let lastImpact = null;
+      let activeExplosions = 0;
+      const explosionTimes = [];
+
+      function fxCounts() {
+        const t = state.quality;
+        if (t === 'low') return { fire: 6, smoke: 8, debris: 6, splash: 8, snow: 8 };
+        if (t === 'medium') return { fire: 10, smoke: 14, debris: 10, splash: 12, snow: 12 };
+        return { fire: 16, smoke: 24, debris: 18, splash: 20, snow: 18 };
+      }
+
+      function takeParticle(pool) {
+        for (let i = 0; i < pool.length; i++) {
+          if (!pool[i].live) return pool[i];
+        }
+        let oldest = pool[0];
+        for (let i = 1; i < pool.length; i++) {
+          if (pool[i].life < oldest.life) oldest = pool[i];
+        }
+        return oldest;
+      }
+
+      function predictImpact() {
+        const reg = REGIONS[state.regionKey];
+        const fwdX = -Math.sin(flight.yaw);
+        const fwdZ = -Math.cos(flight.yaw);
+        const speed = 62 * state.speedMult;
+        let x = flight.pos.x + fwdX * 2;
+        let y = flight.pos.y - 1.4;
+        let z = flight.pos.z + fwdZ * 2;
+        let vx = fwdX * speed;
+        let vy = -10 - flight.pitch * 30;
+        let vz = fwdZ * speed;
+        for (let i = 0; i < 100; i++) {
+          const dt = 0.045;
+          vy -= BOMB_GRAVITY * dt;
+          x += vx * dt; y += vy * dt; z += vz * dt;
+          const gnd = reg.heightFn(x, z);
+          if (y <= gnd + 0.5) return { x, y: gnd + 0.2, z };
+        }
+        return { x, y: reg.heightFn(x, z) + 0.2, z };
+      }
+
+      function impactKind(x, z) {
+        const reg = REGIONS[state.regionKey];
+        const h = reg.heightFn(x, z);
+        if (h <= reg.waterLevel + 0.8) return 'water';
+        if (h >= reg.snowLine - 10) return 'snow';
+        return 'land';
+      }
+
+      function updateBombUI() {
+        const badge = document.getElementById('bomb-count');
+        if (badge) badge.textContent = String(state.bombAmmo);
+        const btn = document.getElementById('bomb-btn');
+        if (btn) {
+          btn.classList.toggle('cooling', state.bombCooldown > 0 || state.bombAmmo <= 0);
+          btn.disabled = !state.bombsEnabled || state.bombAmmo <= 0 || state.bombCooldown > 0 || !state.flightStarted;
+        }
+        const dock = document.getElementById('bomb-dock');
+        if (dock) dock.classList.toggle('hidden', !state.bombsEnabled);
+        document.querySelectorAll('.bomb-mode-btn').forEach((b) => {
+          b.classList.toggle('active', (b.dataset.bombs === 'on') === state.bombsEnabled);
+        });
+      }
+
+      function setBombsEnabled(on) {
+        state.bombsEnabled = !!on;
+        if (!state.bombsEnabled) {
+          reticle.visible = false;
+          reticleInner.visible = false;
+        }
+        updateBombUI();
+      }
+
+      function rumbleBoom(dist) {
+        if (!navigator.getGamepads) return;
+        const mag = Math.max(0, Math.min(1, 0.95 * (1 - dist / 240)));
+        if (mag < 0.05) return;
+        const pads = navigator.getGamepads();
+        for (let i = 0; i < pads.length; i++) {
+          const gp = pads[i];
+          if (!gp || !gp.vibrationActuator || typeof gp.vibrationActuator.playEffect !== 'function') continue;
+          try {
+            gp.vibrationActuator.playEffect('dual-rumble', {
+              startDelay: 0,
+              duration: 280,
+              weakMagnitude: mag * 0.45,
+              strongMagnitude: mag * 0.85
+            });
+          } catch (err) { /* optional */ }
+        }
+      }
+
+      function spawnBurst(pool, n, origin, opts) {
+        for (let i = 0; i < n; i++) {
+          const p = takeParticle(pool);
+          const az = Math.random() * Math.PI * 2;
+          const el = (opts.elMin || 0.1) + Math.random() * (opts.elMax || 0.9);
+          const spd = (opts.spdMin || 4) + Math.random() * (opts.spdMax || 16);
+          p.live = true;
+          p.x = origin.x + (Math.random() - 0.5) * (opts.spread || 2);
+          p.y = origin.y + (opts.yOff || 0.6) + Math.random() * 0.8;
+          p.z = origin.z + (Math.random() - 0.5) * (opts.spread || 2);
+          p.vx = Math.cos(az) * Math.cos(el) * spd;
+          p.vy = Math.sin(el) * spd * (opts.up || 1);
+          p.vz = Math.sin(az) * Math.cos(el) * spd;
+          p.life = (opts.life || 1) * (0.7 + Math.random() * 0.5);
+          p.max = p.life;
+          const s = (opts.size || 3) * (0.6 + Math.random() * 0.8);
+          p.sx = s * (opts.sx || 1);
+          p.sy = s * (opts.sy || 1);
+          p.sz = s * (opts.sz || 1);
+          p.spin = (Math.random() - 0.5) * (opts.spin || 4);
+          p.rot = Math.random() * Math.PI;
+        }
+      }
+
+      function triggerExplosion(x, y, z, kind) {
+        const counts = fxCounts();
+        const origin = { x, y, z };
+        lastImpact = { x, y, z, kind, time: performance.now() };
+
+        const dist = Math.hypot(camera.position.x - x, camera.position.y - y, camera.position.z - z);
+        state.shakeAmp = Math.max(state.shakeAmp, 3.2 * Math.max(0, 1 - dist / 260));
+        rumbleBoom(dist);
+        AudioEngine.playBoom(dist, kind);
+
+        // flash
+        let fl = flashSprites[0];
+        for (let i = 0; i < flashSprites.length; i++) {
+          if (flashSprites[i].life <= 0) { fl = flashSprites[i]; break; }
+        }
+        fl.life = fl.max;
+        fl.sprite.visible = true;
+        fl.sprite.position.set(x, y + 2.5, z);
+        fl.peak = kind === 'water' ? 10 : 16;
+
+        // shockwave
+        let sh = shockWaves[0];
+        for (let i = 0; i < shockWaves.length; i++) {
+          if (shockWaves[i].life <= 0) { sh = shockWaves[i]; break; }
+        }
+        sh.life = sh.max;
+        sh.kind = kind;
+        sh.mesh.visible = true;
+        sh.mesh.position.set(x, y + 0.25, z);
+        sh.mesh.scale.set(2, 2, 2);
+        sh.mesh.material.color.setHex(kind === 'water' ? 0xbfefff : (kind === 'snow' ? 0xffffff : 0xffe6a8));
+
+        if (kind === 'land' || kind === 'snow') {
+          const sc = scorches[scorchCursor % SCORCH_POOL];
+          scorchCursor++;
+          sc.life = sc.max;
+          sc.mesh.visible = true;
+          sc.mesh.position.set(x, y + 0.18, z);
+          sc.mesh.scale.set(kind === 'snow' ? 9 : 11, kind === 'snow' ? 9 : 11, 1);
+          sc.mesh.material.opacity = kind === 'snow' ? 0.35 : 0.8;
+          sc.mesh.material.color.setHex(kind === 'snow' ? 0x8899aa : 0xffffff);
+        }
+
+        if (kind === 'water') {
+          spawnBurst(splashParts, counts.splash, origin, {
+            spdMin: 8, spdMax: 28, elMin: 0.5, elMax: 1.3, up: 1.6,
+            size: 3.2, sy: 2.4, life: 1.05, yOff: 0.2, spread: 3
+          });
+          spawnBurst(smokeParts, Math.max(3, counts.smoke * 0.3), origin, {
+            spdMin: 1, spdMax: 4, elMin: 0.4, elMax: 1, size: 5, life: 1.4, yOff: 1, spread: 4
+          });
+        } else if (kind === 'snow') {
+          spawnBurst(snowParts, counts.snow, origin, {
+            spdMin: 7, spdMax: 22, elMin: 0.15, elMax: 1.1, size: 2.8, life: 1.2, yOff: 0.8, spread: 3
+          });
+          spawnBurst(smokeParts, Math.max(4, counts.smoke * 0.4), origin, {
+            spdMin: 1, spdMax: 5, elMin: 0.3, elMax: 1, size: 6, life: 1.6, yOff: 1.2, spread: 3
+          });
+          spawnBurst(debrisParts, Math.floor(counts.debris * 0.4), origin, {
+            spdMin: 4, spdMax: 14, elMin: 0.2, elMax: 0.9, size: 0.45, life: 1.3, spin: 8
+          });
+        } else {
+          spawnBurst(fireParts, counts.fire, origin, {
+            spdMin: 3, spdMax: 14, elMin: 0.2, elMax: 1.15, size: 4.5, life: 0.7, yOff: 1, spread: 2
+          });
+          spawnBurst(smokeParts, counts.smoke, origin, {
+            spdMin: 1.2, spdMax: 6, elMin: 0.35, elMax: 1.15, size: 6.5, life: 2.1, yOff: 1.6, spread: 3, sy: 1.2
+          });
+          spawnBurst(debrisParts, counts.debris, origin, {
+            spdMin: 6, spdMax: 22, elMin: 0.15, elMax: 1.0, size: 0.55, life: 1.5, spin: 10, yOff: 0.8
+          });
+        }
+
+        // trees fall
+        const rad2 = BLAST_RADIUS * BLAST_RADIUS;
+        for (let i = 0; i < treeStates.length; i++) {
+          const t = treeStates[i];
+          if (t.fallen) continue;
+          const d2 = (t.x - x) * (t.x - x) + (t.z - z) * (t.z - z);
+          if (d2 < rad2) {
+            t.fallen = true;
+            t.fallVel = 2.4 + Math.random() * 2.2;
+            t.fallDir = Math.atan2(t.z - z, t.x - x) + (Math.random() - 0.5) * 0.5;
+            t.fling = (1 - Math.sqrt(d2) / BLAST_RADIUS) * (4 + Math.random() * 6);
+          }
+        }
+
+        // hikers and wildlife flee — never harmed
+        const fleeR = BLAST_RADIUS * 2.4;
+        const fleeR2 = fleeR * fleeR;
+        for (let i = 0; i < hikerStates.length; i++) {
+          const h = hikerStates[i];
+          let dx = h.x - x, dz = h.z - z;
+          const d2 = dx * dx + dz * dz;
+          if (d2 < fleeR2) {
+            let d = Math.sqrt(d2);
+            if (d < 0.25) {
+              const ang = Math.random() * Math.PI * 2;
+              dx = Math.cos(ang);
+              dz = Math.sin(ang);
+              d = 1;
+            }
+            const str = (1 - Math.min(d, fleeR) / fleeR) * 42 + 22;
+            h.fleeX = (dx / d) * str;
+            h.fleeZ = (dz / d) * str;
+            h.fleeing = 2.6 + Math.random() * 0.8;
+          }
+        }
+        let startledSheep = false;
+        for (let i = 0; i < animatedAnimals.length; i++) {
+          const a = animatedAnimals[i];
+          const ax = a.baseX + (a.offX || 0);
+          const az = a.baseZ + (a.offZ || 0);
+          let dx = ax - x, dz = az - z;
+          const d2 = dx * dx + dz * dz;
+          if (d2 < fleeR2) {
+            let d = Math.sqrt(d2);
+            if (d < 0.25) {
+              const ang = Math.random() * Math.PI * 2;
+              dx = Math.cos(ang);
+              dz = Math.sin(ang);
+              d = 1;
+            }
+            const str = (1 - Math.min(d, fleeR) / fleeR) * 48 + 24;
+            a.fleeX = (dx / d) * str;
+            a.fleeZ = (dz / d) * str;
+            a.fleeing = 2.6 + Math.random() * 0.8;
+            if (a.isSheep) startledSheep = true;
+          }
+        }
+        if (startledSheep && !state.sheepToast) {
+          state.sheepToast = true;
+          showToast('A nearby sheep looks mildly put out.');
+        }
+
+        // comic launch for cars and boats
+        animatedCars.forEach((car) => {
+          const cx = car.mesh.position.x, cz = car.mesh.position.z;
+          const d2 = (cx - x) * (cx - x) + (cz - z) * (cz - z);
+          if (d2 < rad2) {
+            const d = Math.max(1, Math.sqrt(d2));
+            const str = (1 - d / BLAST_RADIUS) * 38;
+            car.launched = 2.8;
+            car.vx = ((cx - x) / d) * str;
+            car.vy = 18 + Math.random() * 12;
+            car.vz = ((cz - z) / d) * str;
+            car.spin = (Math.random() - 0.5) * 8;
+          }
+        });
+        animatedBoats.forEach((boat) => {
+          const bx = boat.mesh.position.x, bz = boat.mesh.position.z;
+          const d2 = (bx - x) * (bx - x) + (bz - z) * (bz - z);
+          if (d2 < rad2) {
+            const d = Math.max(1, Math.sqrt(d2));
+            const str = (1 - d / BLAST_RADIUS) * 32;
+            boat.launched = 2.6;
+            boat.vx = ((bx - x) / d) * str;
+            boat.vy = 14 + Math.random() * 10;
+            boat.vz = ((bz - z) / d) * str;
+            boat.spin = (Math.random() - 0.5) * 6;
+          }
+        });
+
+        activeExplosions = Math.min(MAX_EXPLOSIONS, activeExplosions + 1);
+        explosionTimes.push(performance.now());
+        while (explosionTimes.length && performance.now() - explosionTimes[0] > 2000) explosionTimes.shift();
+        activeExplosions = explosionTimes.length;
+      }
+
+      function dropBomb() {
+        if (!state.flightStarted || !state.bombsEnabled) return false;
+        if (state.bombAmmo <= 0 || state.bombCooldown > 0) return false;
+        let slot = null;
+        for (let i = 0; i < inFlight.length; i++) {
+          if (!inFlight[i].live) { slot = inFlight[i]; break; }
+        }
+        if (!slot) return false;
+        const fwdX = -Math.sin(flight.yaw);
+        const fwdZ = -Math.cos(flight.yaw);
+        const speed = 62 * state.speedMult;
+        slot.live = true;
+        slot.x = flight.pos.x + fwdX * 2;
+        slot.y = flight.pos.y - 1.4;
+        slot.z = flight.pos.z + fwdZ * 2;
+        slot.vx = fwdX * speed;
+        slot.vy = -10 - flight.pitch * 30;
+        slot.vz = fwdZ * speed;
+        slot.age = 0;
+        slot.mesh.visible = true;
+        slot.mesh.position.set(slot.x, slot.y, slot.z);
+        state.bombAmmo -= 1;
+        state.bombCooldown = BOMB_COOLDOWN;
+        updateBombUI();
+        AudioEngine.playWhistle();
+        return true;
+      }
+
+      function explodeAt(x, z) {
+        const reg = REGIONS[state.regionKey];
+        const y = Math.max(reg.heightFn(x, z), reg.waterLevel) + 0.2;
+        triggerExplosion(x, y, z, impactKind(x, z));
+        return lastImpact;
+      }
+
+      function clearBombFX() {
+        inFlight.forEach((b) => { b.live = false; b.mesh.visible = false; });
+        [fireParts, smokeParts, debrisParts, splashParts, snowParts].forEach((pool) => {
+          pool.forEach((p) => { p.live = false; });
+        });
+        flashSprites.forEach((f) => { f.life = 0; f.sprite.visible = false; });
+        shockWaves.forEach((s) => { s.life = 0; s.mesh.visible = false; });
+        scorches.forEach((s) => { s.life = 0; s.mesh.visible = false; });
+        fireMesh.count = smokeMesh.count = splashMesh.count = snowMesh.count = debrisMesh.count = 0;
+        activeExplosions = 0;
+        explosionTimes.length = 0;
+        state.shakeAmp = 0;
+        state.sheepToast = false;
+      }
+
+      function syncBillboards(mesh, pool, camQuat, windX, gravity, grow) {
+        const dummy = new THREE.Object3D();
+        dummy.quaternion.copy(camQuat);
+        let n = 0;
+        for (let i = 0; i < pool.length; i++) {
+          const p = pool[i];
+          if (!p.live) continue;
+          dummy.position.set(p.x, p.y, p.z);
+          const fade = Math.max(0.001, p.life / p.max);
+          const sc = 1 + (1 - fade) * (grow || 1.4);
+          dummy.scale.set(p.sx * sc, p.sy * sc, 1);
+          dummy.updateMatrix();
+          mesh.setMatrixAt(n, dummy.matrix);
+          n++;
+        }
+        mesh.count = n;
+        mesh.instanceMatrix.needsUpdate = true;
+        return n;
+      }
+
+      function updateParticles(dt, camQuat) {
+        const wind = 2.8;
+        // fire
+        fireParts.forEach((p) => {
+          if (!p.live) return;
+          p.life -= dt;
+          if (p.life <= 0) { p.live = false; return; }
+          p.vy += 6 * dt;
+          p.vx += wind * 0.15 * dt;
+          p.x += p.vx * dt; p.y += p.vy * dt; p.z += p.vz * dt;
+          p.vx *= 0.96; p.vz *= 0.96;
+        });
+        smokeParts.forEach((p) => {
+          if (!p.live) return;
+          p.life -= dt;
+          if (p.life <= 0) { p.live = false; return; }
+          p.vy += 7 * dt;
+          p.vx += wind * dt;
+          p.x += p.vx * dt; p.y += p.vy * dt; p.z += p.vz * dt;
+          p.vx *= 0.98; p.vz *= 0.98;
+        });
+        splashParts.forEach((p) => {
+          if (!p.live) return;
+          p.life -= dt;
+          if (p.life <= 0) { p.live = false; return; }
+          p.vy -= 38 * dt;
+          p.x += p.vx * dt; p.y += p.vy * dt; p.z += p.vz * dt;
+        });
+        snowParts.forEach((p) => {
+          if (!p.live) return;
+          p.life -= dt;
+          if (p.life <= 0) { p.live = false; return; }
+          p.vy -= 16 * dt;
+          p.vx += wind * 0.4 * dt;
+          p.x += p.vx * dt; p.y += p.vy * dt; p.z += p.vz * dt;
+        });
+        debrisParts.forEach((p) => {
+          if (!p.live) return;
+          p.life -= dt;
+          if (p.life <= 0) { p.live = false; return; }
+          p.vy -= 62 * dt;
+          p.x += p.vx * dt; p.y += p.vy * dt; p.z += p.vz * dt;
+          p.rot += p.spin * dt;
+          const gnd = REGIONS[state.regionKey].heightFn(p.x, p.z);
+          if (p.y < gnd + 0.2) {
+            p.y = gnd + 0.2;
+            p.vy *= -0.25;
+            p.vx *= 0.5;
+            p.vz *= 0.5;
+            if (Math.abs(p.vy) < 2) p.vy = 0;
+          }
+        });
+
+        syncBillboards(fireMesh, fireParts, camQuat, wind, 0, 1.6);
+        syncBillboards(smokeMesh, smokeParts, camQuat, wind, 0, 2.2);
+        syncBillboards(splashMesh, splashParts, camQuat, 0, 0, 0.6);
+        syncBillboards(snowMesh, snowParts, camQuat, 0, 0, 1.1);
+
+        const dmy = new THREE.Object3D();
+        let dn = 0;
+        debrisParts.forEach((p) => {
+          if (!p.live) return;
+          dmy.position.set(p.x, p.y, p.z);
+          dmy.rotation.set(p.rot, p.rot * 0.7, p.rot * 0.4);
+          dmy.scale.set(p.sx, p.sy, p.sz);
+          dmy.updateMatrix();
+          debrisMesh.setMatrixAt(dn, dmy.matrix);
+          dn++;
+        });
+        debrisMesh.count = dn;
+        debrisMesh.instanceMatrix.needsUpdate = true;
+
+        flashSprites.forEach((f) => {
+          if (f.life <= 0) { f.sprite.visible = false; return; }
+          f.life -= dt;
+          const u = Math.max(0, f.life / f.max);
+          const s = f.peak * (u > 0.6 ? (1 - u) / 0.4 * 0.5 + 0.7 : u / 0.6);
+          f.sprite.scale.set(s, s, 1);
+          f.sprite.material.opacity = u;
+          f.sprite.visible = u > 0;
+        });
+        shockWaves.forEach((s) => {
+          if (s.life <= 0) { s.mesh.visible = false; return; }
+          s.life -= dt;
+          const u = Math.max(0, s.life / s.max);
+          const sc = 2 + (1 - u) * 28;
+          s.mesh.scale.set(sc, sc, 1);
+          s.mesh.material.opacity = 0.7 * u;
+          s.mesh.visible = u > 0;
+        });
+        scorches.forEach((s) => {
+          if (s.life <= 0) { s.mesh.visible = false; return; }
+          s.life -= dt;
+          const u = Math.max(0, s.life / s.max);
+          s.mesh.material.opacity = (s.mesh.material.color.getHex() === 0x8899aa ? 0.35 : 0.8) * Math.min(1, u * 3);
+          s.mesh.visible = u > 0;
+        });
+      }
+
+      function updateTrees(dt) {
+        if (!trunksMesh || !crownsMesh || !treeStates.length) return;
+        const dummy = new THREE.Object3D();
+        let dirty = false;
+        for (let i = 0; i < treeStates.length; i++) {
+          const t = treeStates[i];
+          if (!t.fallen && t.fall <= 0) continue;
+          dirty = true;
+          if (t.fallen && t.fall < 1.2) {
+            t.fallVel += 8 * dt;
+            t.fall += t.fallVel * dt;
+            if (t.fall > 1.15) t.fall = 1.15;
+          }
+          dummy.position.set(t.x, t.h - 0.2, t.z);
+          dummy.scale.set(t.s, t.s, t.s);
+          dummy.rotation.set(0, t.rotY, 0);
+          dummy.rotateOnAxis(new THREE.Vector3(Math.sin(t.fallDir || 0), 0, -Math.cos(t.fallDir || 0)), Math.min(t.fall, 1.12));
+          dummy.updateMatrix();
+          trunksMesh.setMatrixAt(i, dummy.matrix);
+          crownsMesh.setMatrixAt(i, dummy.matrix);
+        }
+        if (dirty) {
+          trunksMesh.instanceMatrix.needsUpdate = true;
+          crownsMesh.instanceMatrix.needsUpdate = true;
+        }
+      }
+
+      function updateFleeers(dt, elapsed) {
+        const reg = REGIONS[state.regionKey];
+        const dummy = new THREE.Object3D();
+        if (hikersMesh && hikerStates.length) {
+          for (let i = 0; i < hikerStates.length; i++) {
+            const h = hikerStates[i];
+            if (h.fleeing > 0) {
+              h.fleeing -= dt;
+              h.x += h.fleeX * dt;
+              h.z += h.fleeZ * dt;
+              const hd = Math.exp(-0.7 * dt);
+              h.fleeX *= hd;
+              h.fleeZ *= hd;
+              h.rotY = Math.atan2(h.fleeX, h.fleeZ);
+              h.h = reg.heightFn(h.x, h.z);
+            }
+            dummy.position.set(h.x, h.h, h.z);
+            dummy.scale.set(h.s, h.s, h.s);
+            dummy.rotation.set(0, h.rotY, 0);
+            dummy.updateMatrix();
+            hikersMesh.setMatrixAt(i, dummy.matrix);
+          }
+          hikersMesh.instanceMatrix.needsUpdate = true;
+        }
+        if (animalsMeshRef) {
+          for (let i = 0; i < animatedAnimals.length; i++) {
+            const a = animatedAnimals[i];
+            if (a.fleeing > 0) {
+              a.fleeing -= dt;
+              a.offX = (a.offX || 0) + a.fleeX * dt;
+              a.offZ = (a.offZ || 0) + a.fleeZ * dt;
+              a.baseX += a.fleeX * dt * 0.15;
+              a.baseZ += a.fleeZ * dt * 0.15;
+              const ad = Math.exp(-0.7 * dt);
+              a.fleeX *= ad;
+              a.fleeZ *= ad;
+            }
+            const ax = a.baseX + (a.offX || 0) + (a.fleeing > 0 ? 0 : Math.sin(elapsed * a.speed + a.phase) * 5.5);
+            const az = a.baseZ + (a.offZ || 0) + (a.fleeing > 0 ? 0 : Math.cos(elapsed * a.speed * 0.8 + a.phase) * 5.5);
+            const sc = a.isSheep ? 1.15 : 1;
+            dummy.position.set(ax, reg.heightFn(ax, az), az);
+            dummy.rotation.y = a.fleeing > 0 ? Math.atan2(a.fleeX, a.fleeZ) : (elapsed * a.speed + a.phase);
+            dummy.scale.set(sc, sc * (a.isSheep ? 0.95 : 1), sc * (a.isSheep ? 1.15 : 1));
+            dummy.updateMatrix();
+            animalsMeshRef.setMatrixAt(i, dummy.matrix);
+          }
+          animalsMeshRef.instanceMatrix.needsUpdate = true;
+        }
+      }
+
+      function updateBombs(dt, elapsed) {
+        const cdWas = state.bombCooldown;
+        if (state.bombCooldown > 0) state.bombCooldown = Math.max(0, state.bombCooldown - dt);
+        if (cdWas > 0 && state.bombCooldown === 0) updateBombUI();
+        if (state.bombsEnabled && state.bombAmmo < BOMB_MAX_AMMO) {
+          state.bombReloadT += dt;
+          if (state.bombReloadT >= BOMB_RELOAD) {
+            state.bombReloadT = 0;
+            state.bombAmmo += 1;
+            updateBombUI();
+          }
+        }
+        const reg = REGIONS[state.regionKey];
+        inFlight.forEach((b) => {
+          if (!b.live) return;
+          b.age += dt;
+          b.vy -= BOMB_GRAVITY * dt;
+          b.x += b.vx * dt;
+          b.y += b.vy * dt;
+          b.z += b.vz * dt;
+          b.mesh.position.set(b.x, b.y, b.z);
+          const speed = Math.hypot(b.vx, b.vy, b.vz) || 1;
+          b.mesh.lookAt(b.x + b.vx, b.y + b.vy, b.z + b.vz);
+          const gnd = reg.heightFn(b.x, b.z);
+          if (b.y <= gnd + 0.45 || b.age > 8) {
+            b.live = false;
+            b.mesh.visible = false;
+            const kind = impactKind(b.x, b.z);
+            const y = (kind === 'water' ? Math.max(gnd, reg.waterLevel) : gnd) + 0.2;
+            triggerExplosion(b.x, y, b.z, kind);
+          }
+        });
+
+        if (state.bombsEnabled && state.flightStarted) {
+          const aim = predictImpact();
+          reticle.position.set(aim.x, aim.y + 0.3, aim.z);
+          reticleInner.position.set(aim.x, aim.y + 0.32, aim.z);
+          const pulse = 1 + Math.sin(elapsed * 6) * 0.08;
+          reticle.scale.set(pulse, pulse, 1);
+          reticle.visible = true;
+          reticleInner.visible = true;
+          reticle.material.opacity = state.cinemaMode ? 0.45 : 0.85;
+        } else {
+          reticle.visible = false;
+          reticleInner.visible = false;
+        }
+
+        updateParticles(dt, camera.quaternion);
+        updateTrees(dt);
+        updateFleeers(dt, elapsed);
+      }
+
+      function getBombDebug() {
+        const fleeingH = hikerStates.filter((h) => h.fleeing > 0).length;
+        const fleeingA = animatedAnimals.filter((a) => a.fleeing > 0).length;
+        const fallen = treeStates.filter((t) => t.fallen).length;
+        return {
+          enabled: state.bombsEnabled,
+          ammo: state.bombAmmo,
+          cooldown: state.bombCooldown,
+          inFlight: inFlight.filter((b) => b.live).length,
+          lastImpact,
+          fallenTrees: fallen,
+          fleeingHikers: fleeingH,
+          fleeingAnimals: fleeingA,
+          fireLive: fireParts.filter((p) => p.live).length,
+          smokeLive: smokeParts.filter((p) => p.live).length,
+          splashLive: splashParts.filter((p) => p.live).length,
+          snowLive: snowParts.filter((p) => p.live).length,
+          debrisLive: debrisParts.filter((p) => p.live).length,
+          hikers: hikerStates.map((h) => ({ x: h.x, z: h.z, fleeing: h.fleeing })),
+          animals: animatedAnimals.map((a) => ({
+            x: a.baseX + (a.offX || 0),
+            z: a.baseZ + (a.offZ || 0),
+            fleeing: a.fleeing || 0,
+            isSheep: !!a.isSheep
+          })),
+          trees: treeStates.map((t) => ({ x: t.x, z: t.z, fallen: !!t.fallen }))
+        };
+      }
+
 
       // =========================================================================
       // 6. SLEEK 3D EXECUTIVE TOURING AIRCRAFT + REAL-TIME GROUND SHADOW
@@ -1885,6 +2802,7 @@
         overlay.style.display = 'none';
         overlay.style.pointerEvents = 'none';
         AudioEngine.setEnabled(true);
+        updateBombUI();
       }
 
       function setCinemaMode(on) {
@@ -2008,7 +2926,10 @@
         if (padEdge(gp, 5)) cycleCamera(1);  // RB
         if (padEdge(gp, 6)) cycleAltitude(-1); // LT
         if (padEdge(gp, 7)) cycleAltitude(1);  // RT
-        if (padEdge(gp, 2) || padEdge(gp, 11)) cycleLandmark(); // X or RS click
+        const xEdge = padEdge(gp, 2);
+        const rsEdge = padEdge(gp, 11);
+        if (xEdge) dropBomb();
+        if (rsEdge) cycleLandmark();
 
         const drawerOpen = !tourDrawer.classList.contains('drawer-closed');
         if (drawerOpen) {
@@ -2099,9 +3020,17 @@
       document.querySelectorAll('.quality-btn').forEach((btn) => {
         btn.addEventListener('click', () => applyQuality(btn.dataset.quality, true));
       });
+      document.querySelectorAll('.bomb-mode-btn').forEach((btn) => {
+        btn.addEventListener('click', () => setBombsEnabled(btn.dataset.bombs === 'on'));
+      });
+      document.getElementById('bomb-btn').addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropBomb();
+      });
 
       window.addEventListener('keydown', (e) => {
-        if (e.repeat && (e.code === 'Space' || e.code === 'Tab' || e.code === 'KeyH' || e.code === 'KeyC' || e.code === 'KeyM' || e.code === 'KeyQ' || e.code === 'KeyE' || e.code === 'PageUp' || e.code === 'PageDown')) {
+        if (e.repeat && (e.code === 'Space' || e.code === 'Tab' || e.code === 'KeyH' || e.code === 'KeyC' || e.code === 'KeyM' || e.code === 'KeyQ' || e.code === 'KeyE' || e.code === 'KeyB' || e.code === 'KeyF' || e.code === 'PageUp' || e.code === 'PageDown')) {
           e.preventDefault();
           return;
         }
@@ -2123,6 +3052,7 @@
         if (e.code === 'KeyC') cycleCamera(1);
         if (e.code === 'KeyQ' || e.code === 'PageDown') cycleAltitude(-1);
         if (e.code === 'KeyE' || e.code === 'PageUp') cycleAltitude(1);
+        if (e.code === 'KeyB' || e.code === 'KeyF') { e.preventDefault(); dropBomb(); }
         if (e.code === 'Escape') toggleDrawer(false);
       });
       window.addEventListener('keyup', (e) => { keysDown[e.code] = false; });
@@ -2286,43 +3216,66 @@
 
         // Animate Cars along scenic road
         animatedCars.forEach(car => {
-          car.z += car.dir * car.speed * dt;
-          if (car.z > HALF_WORLD * 0.6) car.z = -HALF_WORLD * 0.6;
-          if (car.z < -HALF_WORLD * 0.6) car.z = HALF_WORLD * 0.6;
-          const cx = reg.roadFn(car.z);
-          const cy = Math.max(reg.waterLevel + 1.2, reg.heightFn(cx, car.z));
-          const nextZ = car.z + car.dir * 2;
-          const nextX = reg.roadFn(nextZ);
-          car.mesh.position.set(cx, cy, car.z);
-          car.mesh.rotation.y = Math.atan2(nextX - cx, nextZ - car.z);
+          if (car.launched > 0) {
+            car.launched -= dt;
+            car.vy -= 42 * dt;
+            car.mesh.position.x += car.vx * dt;
+            car.mesh.position.y += car.vy * dt;
+            car.mesh.position.z += car.vz * dt;
+            car.mesh.rotation.x += car.spin * dt;
+            car.mesh.rotation.z += car.spin * 0.6 * dt;
+            const gnd = Math.max(reg.waterLevel + 1.2, reg.heightFn(car.mesh.position.x, car.mesh.position.z));
+            if (car.mesh.position.y < gnd) {
+              car.mesh.position.y = gnd;
+              car.vy *= -0.2;
+              if (car.launched < 0.4) {
+                car.launched = 0;
+                car.z = car.mesh.position.z;
+                car.mesh.rotation.x = 0;
+                car.mesh.rotation.z = 0;
+              }
+            }
+          } else {
+            car.z += car.dir * car.speed * dt;
+            if (car.z > HALF_WORLD * 0.6) car.z = -HALF_WORLD * 0.6;
+            if (car.z < -HALF_WORLD * 0.6) car.z = HALF_WORLD * 0.6;
+            const cx = reg.roadFn(car.z);
+            const cy = Math.max(reg.waterLevel + 1.2, reg.heightFn(cx, car.z));
+            const nextZ = car.z + car.dir * 2;
+            const nextX = reg.roadFn(nextZ);
+            car.mesh.position.set(cx, cy, car.z);
+            car.mesh.rotation.y = Math.atan2(nextX - cx, nextZ - car.z);
+          }
         });
 
         // Animate Boats on water
         animatedBoats.forEach(boat => {
-          boat.z += boat.dir * boat.speed * dt;
-          if (boat.z > HALF_WORLD * 0.55) boat.z = -HALF_WORLD * 0.55;
-          if (boat.z < -HALF_WORLD * 0.55) boat.z = HALF_WORLD * 0.55;
-          const bx = state.regionKey === 'fjords'
-            ? Math.sin(boat.z * 0.00155 * 2.4) * 260 + Math.cos(boat.z * 0.00155 * 1.1) * 140
-            : Math.sin(boat.z * 0.0014 * 2.8) * 220 + Math.cos(boat.z * 0.0014 * 1.4) * 110;
-          boat.mesh.position.set(bx, reg.waterLevel + 0.35, boat.z);
-        });
-
-        // Animate Wildlife grazing
-        const animalInst = worldDetailsGroup.children.find(c => c.userData && c.userData.isAnimals);
-        if (animalInst) {
-          for (let i = 0; i < animatedAnimals.length; i++) {
-            const a = animatedAnimals[i];
-            const ax = a.baseX + Math.sin(elapsed * a.speed + a.phase) * 5.5;
-            const az = a.baseZ + Math.cos(elapsed * a.speed * 0.8 + a.phase) * 5.5;
-            animDummy.position.set(ax, reg.heightFn(ax, az), az);
-            animDummy.rotation.y = elapsed * a.speed + a.phase;
-            animDummy.scale.set(1, 1, 1);
-            animDummy.updateMatrix();
-            animalInst.setMatrixAt(i, animDummy.matrix);
+          if (boat.launched > 0) {
+            boat.launched -= dt;
+            boat.vy -= 36 * dt;
+            boat.mesh.position.x += boat.vx * dt;
+            boat.mesh.position.y += boat.vy * dt;
+            boat.mesh.position.z += boat.vz * dt;
+            boat.mesh.rotation.z += boat.spin * dt;
+            if (boat.mesh.position.y < reg.waterLevel + 0.35) {
+              boat.mesh.position.y = reg.waterLevel + 0.35;
+              boat.vy *= -0.25;
+              if (boat.launched < 0.35) {
+                boat.launched = 0;
+                boat.z = boat.mesh.position.z;
+                boat.mesh.rotation.z = 0;
+              }
+            }
+          } else {
+            boat.z += boat.dir * boat.speed * dt;
+            if (boat.z > HALF_WORLD * 0.55) boat.z = -HALF_WORLD * 0.55;
+            if (boat.z < -HALF_WORLD * 0.55) boat.z = HALF_WORLD * 0.55;
+            const bx = state.regionKey === 'fjords'
+              ? Math.sin(boat.z * 0.00155 * 2.4) * 260 + Math.cos(boat.z * 0.00155 * 1.1) * 140
+              : Math.sin(boat.z * 0.0014 * 2.8) * 220 + Math.cos(boat.z * 0.0014 * 1.4) * 110;
+            boat.mesh.position.set(bx, reg.waterLevel + 0.35, boat.z);
           }
-          animalInst.instanceMatrix.needsUpdate = true;
-        }
+        });
 
         propellers.forEach(p => { p.rotation.z += dt * 36 * state.speedMult; });
         strobeLight.visible = (elapsed % 1.4) < 0.1;
@@ -2371,6 +3324,24 @@
         const camClearance = state.cameraMode === 'wing' || state.cameraMode === 'cockpit' ? 3.5 : 8;
         clampPosAboveTerrain(camera.position, camClearance);
 
+        if (state.debugCam) {
+          camera.position.set(state.debugCam.x, state.debugCam.y, state.debugCam.z);
+          camera.lookAt(state.debugCam.lx, state.debugCam.ly, state.debugCam.lz);
+          camSmoothPos.copy(camera.position);
+          if (typeof camSmoothLook !== 'undefined') camSmoothLook.set(state.debugCam.lx, state.debugCam.ly, state.debugCam.lz);
+        }
+
+        updateBombs(Math.min(rawDt, 0.1), elapsed);
+        if (state.shakeAmp > 0.01) {
+          const s = state.shakeAmp;
+          camera.position.x += (Math.random() - 0.5) * s;
+          camera.position.y += (Math.random() - 0.5) * s * 0.55;
+          camera.position.z += (Math.random() - 0.5) * s;
+          state.shakeAmp *= Math.exp(-dt * 7.5);
+        } else {
+          state.shakeAmp = 0;
+        }
+
         skyDome.position.copy(camera.position);
 
         AudioEngine.update(state.speedMult, flight.bank, state.cameraMode, agl);
@@ -2413,13 +3384,46 @@
         toggleDrawer,
         sampleSafeFloor,
         terrainHeight(x, z) { return REGIONS[state.regionKey].heightFn(x, z); },
-        getRegions() { return Object.keys(REGIONS); }
+        getRegions() { return Object.keys(REGIONS); },
+        dropBomb,
+        explodeAt,
+        setBombsEnabled,
+        clearBombFX,
+        getBombs() { return getBombDebug(); },
+        placeAircraft(x, z, yOff, yaw) {
+          const reg = REGIONS[state.regionKey];
+          const h = Math.max(reg.heightFn(x, z), reg.waterLevel);
+          flight.pos.set(x, h + (yOff == null ? 46 : yOff), z);
+          flight.yaw = yaw == null ? 0 : yaw;
+          flight.pitch = 0.12;
+          flight.bank = 0;
+        },
+        aimExplosionShot(x, z, dist, height) {
+          const reg = REGIONS[state.regionKey];
+          const h = Math.max(reg.heightFn(x, z), reg.waterLevel);
+          const d = dist == null ? 36 : dist;
+          const hy = height == null ? 15 : height;
+          const camX = x + 3;
+          const camY = h + hy;
+          const camZ = z + d;
+          state.debugCam = { x: camX, y: camY, z: camZ, lx: x, ly: h + 5, lz: z };
+          camera.position.set(camX, camY, camZ);
+          camera.lookAt(x, h + 5, z);
+          if (typeof camSmoothPos !== 'undefined') camSmoothPos.set(camX, camY, camZ);
+          flight.pos.set(x + 6, h + 22, z + d * 0.6);
+          flight.yaw = 0;
+          flight.pitch = 0.1;
+          flight.bank = 0;
+          planeGroup.position.copy(flight.pos);
+        },
+        clearDebugCam() { state.debugCam = null; }
       };
 
       window.addEventListener('load', () => {
         document.querySelectorAll('.quality-btn').forEach((b) => {
           b.classList.toggle('active', b.dataset.quality === state.quality);
         });
+        updateBombUI();
         applyTimeOfDay(state.timeKey);
         selectRegion(state.regionKey);
         rebuildClouds();
