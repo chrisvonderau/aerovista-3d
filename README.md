@@ -25,3 +25,7 @@ Offline, encoding fixes, safer low flybys, cheaper clouds that stay above the te
 ## v4.1
 
 Optional bombing runs: real-ish ballistics, an aiming reticle, a short cooldown and a 6-bomb payload that slowly reloads, pooled fire/smoke/debris/splash FX, trees that stay down until you change regions, and a Bombs Off toggle for a purely scenic flight.
+
+## v4.1.1
+
+On iPhone, the BOMB control is a large round button at the bottom-right thumb position, so it is no longer clipped off the end of the bottom dock in portrait. The version mark **v4.1.1** is visible in the location pill (and briefly in the lower-left after Begin) so you can confirm you have the new build. Pull to refresh if you still see an older version.
