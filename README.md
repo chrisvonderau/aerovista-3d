@@ -4,7 +4,7 @@ A Grand Tour competitive flight game — and the original Scenic Tour — over s
 
 Open it here: [chrisvonderau.github.io/aerovista-3d](https://chrisvonderau.github.io/aerovista-3d/)
 
-This is a single offline HTML file. It does not need a network connection after you have the file, so it also works from Mail or Files.
+This is a single offline HTML file. It does not need a network connection after you have the file. Open the live link in Safari (or Chrome). If you received the HTML as a Mail attachment, do not play it from Mail's preview — that often disables scripts. Save the file and open it in Safari, or use the website link instead.
 
 ## Play
 
@@ -38,16 +38,20 @@ The original free-flight sightseeing mode is still on the menu: autopilot landma
 - **Keyboard P1:** WASD to steer and climb or dive, Space to drop a bomb. In Scenic Tour, arrows also steer, and B or F also bombs.
 - **Keyboard P2:** arrow keys to fly, Enter to bomb.
 - **Xbox:** A confirms and can start a 1P tour from the menu. Each pad flies one plane in split-screen (any controller index, even if they are not 0 and 1). Left stick steers, LT/RT or stick Y climb and dive, X drops a bomb, Y opens the Tour Director, Menu toggles Cinema Mode. Rumble fires on rings, hits, and tags.
-- **Touch (1P or take-turns):** a left-hand stick plus the bottom-right BOMB button. The Scenic Tour still lets you tap the terrain or radar to divert.
+- **Touch (1P, take-turns, or Scenic Tour):** a left-hand virtual stick plus the bottom-right BOMB button on bomb events. Scenic Tour also keeps camera orbit and tap-to-divert. 2P Split-Screen needs two controllers or a keyboard.
 
 - **Restart:** hold R or Backspace (keyboard) or View/Back on an Xbox pad for about 0.7 seconds to restart the current event. A short hold keeps it from firing by accident. In split-screen both players must hold (P2 uses Shift or View).
 - **Invert Pitch:** a per-player (P1/P2) toggle in the Tour Director and the Grand Tour setup. It is saved and applies to the stick, keys, and touch.
 - **Stick sensitivity:** Low, Normal, or High, with a fixed deadzone.
 - **Reduce Motion:** turns off speed/dive FOV widening and the micro camera shake on bomb blasts and near-misses.
 
-The version mark **v5.1** is visible in the location pill. Pull to refresh if you still see an older version.
+The version mark **v5.1.1** is visible on the title screen and in the location pill. Pull to refresh if you still see an older version.
 
 ## Version history
+
+### v5.1.1
+
+Fixes the iPad “stuck on the title screen or menu” bug: `.hidden { display: none !important; }` is now last in the stylesheet so Grand Tour modals cannot stay visible under a later `display: flex` rule. Starting a tour hides the title overlay before audio is unlocked, so a Safari audio restriction cannot trap you on the title screen. The title card scrolls on shorter iPad Safari viewports. The same virtual stick used in Grand Tour 1P and Take Turns is also available in Scenic Tour on touch devices.
 
 ### v5.1
 

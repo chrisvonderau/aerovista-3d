@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>AeroVista 3D — Grand Tour v5.1</title>
+  <title>AeroVista 3D — Grand Tour v5.1.1</title>
   <script>
     (function () {
       if (!('serviceWorker' in navigator)) return;
@@ -460,7 +460,7 @@
       margin: 4px 0 10px;
     }
     #gt-stick-wrap {
-      position: absolute;
+      position: fixed;
       left: calc(var(--safe-left, 0px) + 18px);
       bottom: calc(var(--safe-bottom, 0px) + 86px);
       width: 116px;
@@ -489,7 +489,7 @@
     }
     .gt-pcolor-1 { color: #7dd3fc; }
     .gt-pcolor-2 { color: #fbbf24; }
-    @media (max-width: 430px), (max-height: 500px) {
+    @media (max-width: 430px), (max-height: 820px) {
       #welcome-overlay .glass { padding: 16px 14px !important; }
       #welcome-overlay h1 { font-size: 1.25rem !important; margin-bottom: 6px !important; }
       #welcome-overlay .mode-btn { padding: 8px 10px; font-size: 12px; }
@@ -500,9 +500,9 @@
       .gt-timer { font-size: 18px; }
     }
 
-    @media (max-height: 430px) {
+    @media (max-height: 820px) {
       #welcome-overlay { padding: 8px !important; }
-      #welcome-overlay .glass { padding: 10px 12px !important; max-height: 96vh; overflow: auto; }
+      #welcome-overlay .glass { padding: 10px 12px !important; }
       #welcome-overlay h1 { font-size: 1.15rem !important; margin-bottom: 0 !important; }
       #welcome-overlay .intro-copy { display: none; }
       #welcome-overlay .howto { display: none; }
@@ -654,11 +654,49 @@
       pointer-events: none;
       z-index: 35;
     }
-    @media (max-height: 430px) {
+    @media (max-height: 820px) {
       #welcome-overlay .set-row .set-lab { display: none; }
       #welcome-overlay .set-btn { padding: 3px 7px; font-size: 10px; }
       .gt-mini { padding: 4px 6px; font-size: 10px; }
       .gt-mini .score { font-size: 12px; }
+    }
+
+    /* ===== v5.1.1 iPad / hidden fix ===== */
+    #welcome-overlay {
+      touch-action: pan-y;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      align-items: safe center;
+    }
+    #welcome-overlay .glass {
+      max-height: min(90dvh, 100%);
+      overflow-y: auto;
+      touch-action: pan-y;
+      -webkit-overflow-scrolling: touch;
+    }
+    .touch-only-note {
+      display: none;
+      font-weight: 500;
+      font-size: 10px;
+      color: #94a3b8;
+      margin-top: 2px;
+    }
+    html.has-touch .touch-only-note { display: block; }
+    @media (pointer: coarse) {
+      .touch-only-note { display: block; }
+    }
+    #banner-mode.hidden { display: none !important; }
+    @media (min-width: 640px) {
+      #banner-mode:not(.hidden) { display: inline-block; }
+    }
+
+    /* Must be last so no display:flex/grid rule can override .hidden */
+    .gt-modal.hidden,
+    .gt-countdown.hidden {
+      display: none !important;
+    }
+    .hidden {
+      display: none !important;
     }
 
   </style>
@@ -674,7 +712,7 @@
 
   <!-- Welcome / Audio Unlock Overlay (Apple Safari Web Audio compliant) -->
   <div id="welcome-overlay" class="fixed inset-0 z-40 flex items-center justify-center p-5 bg-slate-950/65 backdrop-blur-xl" style="-webkit-backdrop-filter: blur(22px);">
-    <div class="glass rounded-3xl max-w-md w-full p-7 text-center border border-white/20" style="max-height:90vh;overflow:auto;">
+    <div class="glass rounded-3xl max-w-md w-full p-7 text-center border border-white/20 welcome-card">
       <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-sky-500/20 border border-sky-400/40 flex items-center justify-center">
         <svg class="w-7 h-7 text-sky-300" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/>
@@ -700,6 +738,7 @@
         <button type="button" id="mode-split-btn" class="mode-btn">
           Grand Tour — 2P Split-Screen
           <span class="mode-sub">Two planes, two viewports · each Xbox pad drives one</span>
+          <span class="touch-only-note">Needs 2 controllers or keyboard</span>
         </button>
         <button type="button" id="mode-turns-btn" class="mode-btn">
           Grand Tour — 2P Take Turns
@@ -721,8 +760,8 @@
         <button type="button" class="set-btn sens-btn" data-sens="high">High</button>
         <button type="button" class="set-btn" id="reduce-motion-btn">Reduce Motion</button>
       </div>
-      <p class="text-[11px] text-slate-400 mt-1">v5.1 · Offline · Six events · About 12 minutes</p>
-      <p class="howto text-[10px] text-slate-400 mt-2 leading-relaxed">P1: WASD steer &amp; altitude, Space bomb. P2: arrows + Enter bomb. Xbox: left stick fly, LT/RT climb &amp; dive, X bomb, A confirm. Touch: left stick + bomb button (1P or take-turns). Easy includes auto-level assist.</p>
+      <p class="text-[11px] text-slate-400 mt-1">v5.1.1 · Offline · Six events · About 12 minutes</p>
+      <p class="howto text-[10px] text-slate-400 mt-2 leading-relaxed">P1: WASD steer &amp; altitude, Space bomb. P2: arrows + Enter bomb. Xbox: left stick fly, LT/RT climb &amp; dive, X bomb, A confirm. Touch: left stick + bomb button (Scenic Tour, 1P, or take-turns). Easy includes auto-level assist.</p>
     </div>
   </div>
 
@@ -804,12 +843,13 @@
       <div class="rb-label" id="gt-restart-label">Hold to restart event</div>
       <div id="gt-restart-track"><div id="gt-restart-fill"></div></div>
     </div>
+  </div>
+
     <div id="gt-stick-wrap" class="hidden">
       <div id="gt-stick-base">
         <div id="gt-stick-knob"></div>
       </div>
     </div>
-  </div>
 
   <!-- Restore HUD button when in Cinema Mode -->
   <button id="cinema-restore-btn" class="glass px-3.5 py-2 rounded-full text-xs font-medium text-white/90 hover:text-white flex items-center gap-1.5 cursor-pointer">
@@ -824,7 +864,7 @@
     <div class="glass rounded-3xl max-w-md w-full p-5 text-left border border-white/20 max-h-[80vh] overflow-y-auto no-scrollbar">
       <div class="flex items-start justify-between gap-2 mb-3">
         <div>
-          <div class="text-[11px] uppercase tracking-wider text-sky-300 font-semibold">AeroVista 3D v5.1</div>
+          <div class="text-[11px] uppercase tracking-wider text-sky-300 font-semibold">AeroVista 3D v5.1.1</div>
           <div class="text-sm font-semibold text-white">Controls &amp; Help</div>
         </div>
         <button id="help-close-btn" type="button" class="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-slate-300 text-sm cursor-pointer shrink-0">&times;</button>
@@ -845,7 +885,7 @@
       <!-- Compact Location & Tour Pill (Opens Tour Drawer) -->
       <button id="drawer-toggle-btn" class="hud-interactive glass slim-dock rounded-full px-2.5 py-1.5 flex items-center gap-1.5 cursor-pointer text-left">
         <span class="w-2 h-2 rounded-full bg-sky-400 shrink-0 pulse-dot"></span>
-        <span id="version-label" class="version-label">v5.1</span>
+        <span id="version-label" class="version-label">v5.1.1</span>
         <span class="text-xs font-medium text-white truncate">
           <span id="banner-region-label">Swiss Alps</span>
           <span class="text-white/40 mx-1">·</span>
@@ -981,7 +1021,7 @@
         </div>
         <canvas id="radar-canvas" width="112" height="112" class="rounded-xl bg-slate-950/70 border border-white/10 cursor-crosshair shrink-0"></canvas>
       </div>
-      <div class="pt-1 border-t border-white/10 text-[10px] text-slate-400 leading-relaxed">v5.1 · Hold R / Backspace / View to restart · Invert Pitch and Reduce Motion in Tour Director</div>
+      <div class="pt-1 border-t border-white/10 text-[10px] text-slate-400 leading-relaxed">v5.1.1 · Hold R / Backspace / View to restart · Invert Pitch and Reduce Motion in Tour Director</div>
     </div>
 
     <!-- Ultra-Slim Centered Bottom Dock -->
@@ -3762,10 +3802,15 @@
         if (state.flightStarted) return;
         state.flightStarted = true;
         const overlay = document.getElementById('welcome-overlay');
-        overlay.style.display = 'none';
-        overlay.style.pointerEvents = 'none';
-        AudioEngine.setEnabled(true);
-        updateBombUI();
+        if (overlay) {
+          overlay.style.display = 'none';
+          overlay.style.pointerEvents = 'none';
+        }
+        try {
+          if (typeof AudioEngine !== 'undefined' && AudioEngine.setEnabled) AudioEngine.setEnabled(true);
+        } catch (err) { /* Safari audio restrictions must not trap the title screen */ }
+        try { if (typeof updateBombUI === 'function') updateBombUI(); } catch (err) {}
+        if (typeof gtShowTouchStick === 'function') gtShowTouchStick();
       }
 
       function setCinemaMode(on) {
@@ -3933,6 +3978,7 @@
         let s = 0;
         if (keysDown.KeyA || keysDown.ArrowLeft) s -= 1;
         if (keysDown.KeyD || keysDown.ArrowRight) s += 1;
+        if (typeof GT !== 'undefined' && GT.touch && GT.touch.active) s += GT.touch.x;
         steerNudge += s;
       }
 
@@ -4183,9 +4229,17 @@
 
         const prevY = flight.pos.y;
         flight.pos.y += (desiredY - flight.pos.y) * Math.min(1, dt * 1.45);
-        const climbRate = (flight.pos.y - prevY) / Math.max(dt, 0.001);
-        const targetPitch = Math.max(-0.22, Math.min(0.24, climbRate * 0.0065));
-        flight.pitch += (targetPitch - flight.pitch) * Math.min(1, dt * 2.5);
+        if (typeof GT !== 'undefined' && !GT.active && GT.touch && GT.touch.active) {
+          const inv = GT.settings && GT.settings.invertPitch && GT.settings.invertPitch[0];
+          const ay = (inv ? 1 : -1) * GT.touch.y;
+          flight.pos.y += ay * 48 * dt;
+          const stickPitch = Math.max(-0.28, Math.min(0.28, ay * 0.28));
+          flight.pitch += (stickPitch - flight.pitch) * Math.min(1, dt * 3);
+        } else {
+          const climbRate = (flight.pos.y - prevY) / Math.max(dt, 0.001);
+          const targetPitch = Math.max(-0.22, Math.min(0.24, climbRate * 0.0065));
+          flight.pitch += (targetPitch - flight.pitch) * Math.min(1, dt * 2.5);
+        }
 
         const minPlaneY = groundAhead + 10;
         if (flight.pos.y < minPlaneY) flight.pos.y = minPlaneY;
@@ -4518,23 +4572,8 @@
         return Math.max(0, Math.min(4, b));
       }
 
-      function gtLoadBests() {
-        try {
-          const raw = localStorage.getItem(GT_STORAGE_KEY);
-          if (!raw) return { totals: {}, events: {}, ghosts: {} };
-          const data = JSON.parse(raw);
-          data.totals = data.totals || {};
-          data.events = data.events || {};
-          data.ghosts = data.ghosts || {};
-          return data;
-        } catch (err) {
-          return { totals: {}, events: {}, ghosts: {} };
-        }
-      }
+      // gtLoadBests / gtSaveBests: single v5.1 implementation later in this file
 
-      function gtSaveBests(data) {
-        try { localStorage.setItem(GT_STORAGE_KEY, JSON.stringify(data)); } catch (err) { /* quota */ }
-      }
 
 
       const GT = {
@@ -4657,13 +4696,16 @@
 
       function gtUnlock() {
         state.flightStarted = true;
-        AudioEngine.setEnabled(true);
-        updateBombUI();
         const overlay = gtEl("welcome-overlay");
         if (overlay) {
           overlay.style.display = "none";
           overlay.style.pointerEvents = "none";
         }
+        try {
+          if (typeof AudioEngine !== "undefined" && AudioEngine.setEnabled) AudioEngine.setEnabled(true);
+        } catch (err) { /* Safari audio restrictions must not trap the title screen */ }
+        try { if (typeof updateBombUI === "function") updateBombUI(); } catch (err) {}
+        if (typeof gtShowTouchStick === "function") gtShowTouchStick();
       }
 
       function gtRefreshBestLine() {
@@ -5066,9 +5108,25 @@
         renderer.setScissorTest(false);
         renderer.setViewport(0, 0, window.innerWidth, window.innerHeight);
       }
+      function gtIsTouchPilot() {
+        if (GT.touchSaw) return true;
+        try {
+          if (window.matchMedia && window.matchMedia("(pointer: coarse)").matches) return true;
+        } catch (err) {}
+        return ("ontouchstart" in window) || ((navigator.maxTouchPoints || 0) > 0);
+      }
+      function gtMarkTouchPilot() {
+        GT.touchSaw = true;
+        try { document.documentElement.classList.add("has-touch"); } catch (err) {}
+        if (typeof gtShowTouchStick === "function") gtShowTouchStick();
+      }
       function gtShowTouchStick() {
-        const isTouch = ("ontouchstart" in window) || (navigator.maxTouchPoints > 0);
-        const ok = isTouch && GT.format !== "split" && (GT.phase === "play" || GT.phase === "countdown");
+        const isTouch = gtIsTouchPilot();
+        let ok = false;
+        if (isTouch && state.flightStarted) {
+          if (GT.active) ok = GT.format !== "split" && (GT.phase === "play" || GT.phase === "countdown");
+          else ok = true;
+        }
         const wrap = gtEl("gt-stick-wrap");
         if (wrap) wrap.classList.toggle("hidden", !ok);
       }
@@ -6071,10 +6129,30 @@
             GT.touch.x = 0; GT.touch.y = 0; GT.touch.active = false;
             if (knob) { knob.style.left = "34px"; knob.style.top = "34px"; }
           };
-          base.addEventListener("pointerdown", (e) => { e.preventDefault(); base.setPointerCapture(e.pointerId); setFrom(e.clientX, e.clientY); });
+          base.addEventListener("pointerdown", (e) => {
+            if (e.pointerType === "touch") gtMarkTouchPilot();
+            e.preventDefault();
+            try { base.setPointerCapture(e.pointerId); } catch (err) {}
+            setFrom(e.clientX, e.clientY);
+          });
           base.addEventListener("pointermove", (e) => { if (GT.touch.active) setFrom(e.clientX, e.clientY); });
           base.addEventListener("pointerup", clear);
           base.addEventListener("pointercancel", clear);
+          base.addEventListener("touchstart", (e) => {
+            gtMarkTouchPilot();
+            e.preventDefault();
+            const t = e.changedTouches[0];
+            if (t) setFrom(t.clientX, t.clientY);
+          }, { passive: false });
+          base.addEventListener("touchmove", (e) => {
+            if (!GT.touch.active) return;
+            e.preventDefault();
+            const t = e.changedTouches[0];
+            if (t) setFrom(t.clientX, t.clientY);
+          }, { passive: false });
+          base.addEventListener("touchend", clear);
+          base.addEventListener("touchcancel", clear);
+          window.addEventListener("touchstart", function avMarkTouch() { gtMarkTouchPilot(); }, { passive: true });
         }
         gtRefreshBestLine();
         if (typeof gtSyncSettingsUI === "function") {
@@ -6185,6 +6263,7 @@
         try { localStorage.setItem(GT_SET_KEY, JSON.stringify(GT.settings)); } catch (err) { /* quota */ }
       }
       GT.settings = gtLoadSettings();
+      GT.touchSaw = false;
       GT.restartHold = [0, 0];
       GT.splitTimes = [[], []];
       GT.ghostSplits = [];
