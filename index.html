@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>AeroVista 3D — Grand Tour v5.1.1</title>
+  <title>AeroVista 3D — Grand Tour v6.0</title>
   <script>
     (function () {
       if (!('serviceWorker' in navigator)) return;
@@ -444,6 +444,23 @@
       cursor: pointer;
     }
     .gt-next-btn:hover, .gt-ready-btn:hover { background: #38bdf8; }
+    /* ===== v6.0 controller menus, pause, home ===== */
+    .gt-back-btn { margin-top: 8px; background: rgba(148,163,184,0.22) !important; border: 1px solid rgba(203,213,225,0.35) !important; }
+    .gt-back-btn:hover { background: rgba(148,163,184,0.36) !important; }
+    #v6-pause { position: fixed; z-index: 46; }
+    #v6-pause .gt-card { max-width: 340px; width: 100%; }
+    #v6-pause .gt-next-btn + .gt-next-btn { margin-top: 8px; }
+    .gt-modal button.gp-focus, #welcome-overlay button.gp-focus, #help-modal button.gp-focus, #v6-pause button.gp-focus {
+      box-shadow: 0 0 0 3px #fde68a, 0 0 18px rgba(251,191,36,0.65) !important;
+      outline: none;
+    }
+    #v6-home-slot { display: inline-block; flex: 0 0 auto; }
+    #v6-home-btn {
+      position: fixed; z-index: 60; width: 32px; height: 32px; left: -100px; top: -100px;
+      display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.92); cursor: pointer;
+    }
+    #v6-home-btn.v6-off { display: none !important; }
+    @media (min-width: 500px) { #v6-home-btn { width: 36px; height: 36px; } }
     #gt-champion .gt-card { position: relative; z-index: 2; }
     #gt-confetti {
       position: absolute;
@@ -516,12 +533,69 @@
     /* ===== v5.1 ===== */
     .gt-chevron {
       position: absolute;
+      left: 0;
+      top: 0;
       width: 0;
       height: 0;
       pointer-events: none;
       z-index: 34;
       margin-left: -14px;
       margin-top: -14px;
+      will-change: transform;
+    }
+    #gt-stick-wrap-2 {
+      position: fixed;
+      right: calc(var(--safe-right, 0px) + 18px);
+      bottom: calc(var(--safe-bottom, 0px) + 86px);
+      width: 116px;
+      height: 116px;
+      pointer-events: auto;
+      z-index: 36;
+    }
+    #gt-stick-base-2 {
+      width: 116px;
+      height: 116px;
+      border-radius: 50%;
+      background: rgba(15,23,42,0.35);
+      border: 2px solid rgba(251,191,36,0.45);
+      position: relative;
+      touch-action: none;
+    }
+    #gt-stick-knob-2 {
+      position: absolute;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: rgba(251,191,36,0.88);
+      left: 34px;
+      top: 34px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    #gt-barn-pill {
+      position: fixed;
+      left: 50%;
+      bottom: calc(var(--safe-bottom, 0px) + 56px);
+      transform: translateX(-50%);
+      z-index: 24;
+      pointer-events: none;
+      padding: 4px 12px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.72);
+      border: 1px solid rgba(251, 191, 36, 0.65);
+      color: #fde68a;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      box-shadow: 0 6px 20px rgba(245, 158, 11, 0.25);
+      white-space: nowrap;
+    }
+    #welcome-overlay .mode-btn.daily-btn {
+      background: rgba(245, 158, 11, 0.20);
+      border-color: rgba(251, 191, 36, 0.55);
+    }
+    #welcome-overlay .mode-btn.daily-btn:hover {
+      background: rgba(245, 158, 11, 0.32);
     }
     .gt-chevron-arrow {
       width: 0;
@@ -738,15 +812,19 @@
         <button type="button" id="mode-split-btn" class="mode-btn">
           Grand Tour — 2P Split-Screen
           <span class="mode-sub">Two planes, two viewports · each Xbox pad drives one</span>
-          <span class="touch-only-note">Needs 2 controllers or keyboard</span>
+          <span class="touch-only-note">Dual touch sticks on tablets · or 2 pads / keyboard</span>
         </button>
         <button type="button" id="mode-turns-btn" class="mode-btn">
           Grand Tour — 2P Take Turns
           <span class="mode-sub">Pass-and-play with a “Player 2, get ready” handoff</span>
         </button>
+        <button type="button" id="mode-daily-btn" class="mode-btn daily-btn">
+          Daily Seeded Challenge
+          <span class="mode-sub" id="gt-daily-sub">Today's deterministic gauntlet · Streak: 0</span>
+        </button>
         <button type="button" id="mode-scenic-btn" class="mode-btn scenic-btn">
           Scenic Tour
-          <span class="mode-sub">Free-flight sightseeing with Sky Rings, bombs, and a cockpit HUD</span>
+          <span class="mode-sub">Free-flight sightseeing with Sky Rings, thermals, bombs, and cockpit HUD</span>
         </button>
       </div>
             <div class="set-row" id="setup-settings">
@@ -760,7 +838,7 @@
         <button type="button" class="set-btn sens-btn" data-sens="high">High</button>
         <button type="button" class="set-btn" id="reduce-motion-btn">Reduce Motion</button>
       </div>
-      <p class="text-[11px] text-slate-400 mt-1">v5.1.1 · Offline · Six events · About 12 minutes</p>
+      <p class="text-[11px] text-slate-400 mt-1">v6.0 · 100% Offline · Six events + Daily Challenge · Thermals &amp; Barnstorming</p>
       <p class="howto text-[10px] text-slate-400 mt-2 leading-relaxed">P1: WASD steer &amp; altitude, Space bomb. P2: arrows + Enter bomb. Xbox: left stick fly, LT/RT climb &amp; dive, X bomb, A confirm. Touch: left stick + bomb button (Scenic Tour, 1P, or take-turns). Easy includes auto-level assist.</p>
     </div>
   </div>
@@ -785,6 +863,7 @@
         <h2 id="gt-brief-title">Matterhorn Circuit</h2>
         <p id="gt-brief-body"></p>
         <button type="button" class="gt-next-btn" id="gt-brief-btn">I'm Ready</button>
+        <button type="button" class="gt-next-btn gt-back-btn" id="gt-brief-menu-btn">Back to Menu</button>
       </div>
     </div>
     <div id="gt-ready" class="gt-modal hidden">
@@ -850,6 +929,12 @@
         <div id="gt-stick-knob"></div>
       </div>
     </div>
+    <div id="gt-stick-wrap-2" class="hidden">
+      <div id="gt-stick-base-2">
+        <div id="gt-stick-knob-2"></div>
+      </div>
+    </div>
+    <div id="gt-barn-pill" class="hidden">BARNSTORM x1.0</div>
 
   <!-- Restore HUD button when in Cinema Mode -->
   <button id="cinema-restore-btn" class="glass px-3.5 py-2 rounded-full text-xs font-medium text-white/90 hover:text-white flex items-center gap-1.5 cursor-pointer">
@@ -860,19 +945,32 @@
     Show Controls
   </button>
 
+  <div id="v6-pause" class="gt-modal hidden" role="dialog" aria-label="Paused">
+    <div class="gt-card hit">
+      <div class="text-[11px] uppercase tracking-wider text-sky-300 font-semibold">AeroVista 3D v6.0</div>
+      <h2>Paused</h2>
+      <p>Press Start, P, or Resume to keep flying.</p>
+      <button type="button" class="gt-next-btn" id="v6-resume-btn">Resume</button>
+      <button type="button" class="gt-next-btn" id="v6-restart-btn">Restart Event</button>
+      <button type="button" class="gt-next-btn gt-back-btn" id="v6-menu-btn">Back to Menu</button>
+    </div>
+  </div>
+  <button id="v6-home-btn" type="button" class="glass slim-dock rounded-full v6-off" title="Main Menu" aria-label="Main Menu">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 11l9-7 9 7M5 10v10h5v-6h4v6h5V10" /></svg>
+  </button>
   <div id="help-modal" class="fixed inset-0 z-40 hidden items-center justify-center p-4 bg-slate-950/65" style="backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);">
     <div class="glass rounded-3xl max-w-md w-full p-5 text-left border border-white/20 max-h-[80vh] overflow-y-auto no-scrollbar">
       <div class="flex items-start justify-between gap-2 mb-3">
         <div>
-          <div class="text-[11px] uppercase tracking-wider text-sky-300 font-semibold">AeroVista 3D v5.1.1</div>
+          <div class="text-[11px] uppercase tracking-wider text-sky-300 font-semibold">AeroVista 3D v6.0 Offline</div>
           <div class="text-sm font-semibold text-white">Controls &amp; Help</div>
         </div>
         <button id="help-close-btn" type="button" class="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-slate-300 text-sm cursor-pointer shrink-0">&times;</button>
       </div>
       <div class="text-[11px] text-slate-300 leading-relaxed flex flex-col gap-2">
         <div><strong class="text-white">Touch / Mouse:</strong> Tap terrain or radar to divert · Drag in Orbit · Pinch or wheel zooms</div>
-        <div><strong class="text-white">Keyboard:</strong> Scenic: WASD or arrows steer · Grand Tour P1 WASD + Space bomb · P2 arrows + Enter · Hold R or Backspace to restart · Q/E altitude · C camera · M menu · H cinema · R Sky Rings in Scenic Tour</div>
-        <div><strong class="text-white">Xbox:</strong> A confirm / start 1P tour · each pad flies one plane in split-screen (any index) · left stick steer · LT/RT or stick Y climb &amp; dive · X bomb · Y menu · Menu cinema</div>
+        <div><strong class="text-white">Keyboard:</strong> Scenic: WASD or arrows steer · Grand Tour P1 WASD + Space bomb · P2 arrows + Enter · Hold R or Backspace to restart · Q/E altitude · C camera · M menu · H cinema · P pause · R Sky Rings in Scenic Tour</div>
+        <div><strong class="text-white">Xbox:</strong> A confirm / start 1P tour · each pad flies one plane in split-screen (any index) · left stick steer · LT/RT or stick Y climb &amp; dive · X bomb · Y menu · Start pause · D-pad/left stick move the menu highlight, A selects, B goes back · Home button returns to the main menu</div>
         <div class="text-slate-400">Grand Tour: 1P, 2P split-screen, or take-turns, plus the Scenic Tour. Easy includes auto-level assist. This game runs fully offline.</div>
       </div>
     </div>
@@ -885,7 +983,7 @@
       <!-- Compact Location & Tour Pill (Opens Tour Drawer) -->
       <button id="drawer-toggle-btn" class="hud-interactive glass slim-dock rounded-full px-2.5 py-1.5 flex items-center gap-1.5 cursor-pointer text-left">
         <span class="w-2 h-2 rounded-full bg-sky-400 shrink-0 pulse-dot"></span>
-        <span id="version-label" class="version-label">v5.1.1</span>
+        <span id="version-label" class="version-label">v6.0</span>
         <span class="text-xs font-medium text-white truncate">
           <span id="banner-region-label">Swiss Alps</span>
           <span class="text-white/40 mx-1">·</span>
@@ -899,6 +997,7 @@
 
       <!-- Menu, audio, help, cinema — must all fit on iPhone 390 -->
       <div id="icon-cluster" class="hud-interactive">
+        <span id="v6-home-slot" class="top-icon" aria-hidden="true"></span>
         <button id="drawer-icon-btn" class="top-icon glass slim-dock rounded-full flex items-center justify-center text-white/90 hover:text-white cursor-pointer" title="Flight Menu &amp; Radar">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h10" />
@@ -1021,7 +1120,7 @@
         </div>
         <canvas id="radar-canvas" width="112" height="112" class="rounded-xl bg-slate-950/70 border border-white/10 cursor-crosshair shrink-0"></canvas>
       </div>
-      <div class="pt-1 border-t border-white/10 text-[10px] text-slate-400 leading-relaxed">v5.1.1 · Hold R / Backspace / View to restart · Invert Pitch and Reduce Motion in Tour Director</div>
+      <div class="pt-1 border-t border-white/10 text-[10px] text-slate-400 leading-relaxed">v6.0 Offline · Hold R / Backspace / View to restart · Invert Pitch and Reduce Motion in Tour Director</div>
     </div>
 
     <!-- Ultra-Slim Centered Bottom Dock -->
@@ -2708,7 +2807,7 @@
         if (typeof GT !== 'undefined' && GT.active && GT.isPlaying && GT.isPlaying() && GT.dropBomb) {
           return GT.dropBomb(GT.format === 'split' ? 0 : GT.activeSeat);
         }
-        if (!state.flightStarted || !state.bombsEnabled) return false;
+        if (!state.flightStarted || !state.bombsEnabled || state.v6Paused) return false;
         if (state.bombAmmo <= 0 || state.bombCooldown > 0) return false;
         let slot = null;
         for (let i = 0; i < inFlight.length; i++) {
@@ -3403,6 +3502,7 @@
         bakeRadarTerrain(regionKey);
         rebuildSkyRings();
         clearBombFX();
+        if (typeof v6RebuildThermals === "function") v6RebuildThermals(regionKey);
       }
 
       function applyTimeOfDay(timeKey) {
@@ -3919,6 +4019,7 @@
           if (pads[i]) { gp = pads[i]; break; }
         }
         if (!gp) return;
+        if (typeof v6PadMenus === 'function' && v6PadMenus(dt)) return;
 
         const aDown = padButtonValue(gp, 0) >= 0.5;
         if (!state.flightStarted) {
@@ -4161,7 +4262,7 @@
       function animate() {
         requestAnimationFrame(animate);
         const rawDt = clock.getDelta();
-        const dt = Math.min(rawDt, 0.05);
+        const dt = state.v6Paused ? 0 : Math.min(rawDt, 0.05);
         const elapsed = clock.getElapsedTime();
         terrainUniforms.uTime.value = elapsed;
         if (state.contextLost) return;
@@ -4261,6 +4362,7 @@
         updateContrail(leftTrail, tmpTipL, tmpSide, trailOp);
         updateContrail(rightTrail, tmpTipR, tmpSide, trailOp);
         updateSkyRings(dt);
+        if (typeof v6TickFeatures === "function") v6TickFeatures(dt, elapsed);
 
         // Update real-time ground shadow projected from sun direction onto terrain
         const agl = Math.max(2, flight.pos.y - groundHere);
@@ -4416,11 +4518,22 @@
         if (elapsed - lastTelemetryUpdate > 0.2) {
           lastTelemetryUpdate = elapsed;
           const altFt = Math.round((reg.baseAltFt + flight.pos.y * 18) / 10) * 10;
-          const spdKts = Math.round(195 * state.speedMult);
+          const spdKts = Math.round(195 * state.speedMult * (window._v6ThermalSpeed || 1));
           const hdgDeg = (Math.round((-THREE.MathUtils.radToDeg(flight.yaw) + 360) % 360)).toString().padStart(3, '0');
-          document.getElementById('tel-alt').textContent = altFt.toLocaleString();
-          document.getElementById('tel-spd').textContent = spdKts;
-          document.getElementById('tel-hdg').textContent = hdgDeg;
+          if (!window._telEls) {
+            window._telEls = {
+              alt: document.getElementById('tel-alt'),
+              spd: document.getElementById('tel-spd'),
+              hdg: document.getElementById('tel-hdg'),
+              lAlt: '', lSpd: '', lHdg: ''
+            };
+          }
+          const te = window._telEls;
+          const sAlt = altFt.toLocaleString();
+          const sSpd = String(spdKts);
+          if (te.alt && te.lAlt !== sAlt) { te.alt.textContent = sAlt; te.lAlt = sAlt; }
+          if (te.spd && te.lSpd !== sSpd) { te.spd.textContent = sSpd; te.lSpd = sSpd; }
+          if (te.hdg && te.lHdg !== hdgDeg) { te.hdg.textContent = hdgDeg; te.lHdg = hdgDeg; }
           drawRadar();
         }
         const altNow = Math.round((reg.baseAltFt + flight.pos.y * 18) / 10) * 10;
@@ -4599,7 +4712,10 @@
         clock: 0,
         duration: 120,
         inputs: [{ yaw: 0, alt: 0, bomb: false }, { yaw: 0, alt: 0, bomb: false }],
-        touch: { x: 0, y: 0, active: false },
+        touch: { x: 0, y: 0, active: false, pid: null },
+        touch2: { x: 0, y: 0, active: false, pid: null },
+        dailyMode: false,
+        dailyEvent: null,
         flights: [null, null],
         world: null,
         rings: [],
@@ -4631,7 +4747,7 @@
       let lastBombOwner = 0;
 
       function gtDiff() { return GT_DIFF[GT.difficulty] || GT_DIFF.easy; }
-      function gtEvent() { return GT_EVENTS[GT.eventIndex]; }
+      function gtEvent() { return GT.dailyMode ? (GT.eventIndex === 0 ? GT.dailyEvent : null) : GT_EVENTS[GT.eventIndex]; }
       function gtSolo() { return GT.format === "1p"; }
       function gtIsSplit() { return GT.active && GT.format === "split"; }
       function gtPlaying() { return GT.active && GT.phase === "play"; }
@@ -4721,6 +4837,9 @@
       function gtShowMenu() {
         GT.active = false;
         GT.phase = "idle";
+        state.flightStarted = false;
+        state.v6Paused = false;
+        gtShow("v6-pause", false);
         const overlay = gtEl("welcome-overlay");
         if (overlay) {
           overlay.style.display = "";
@@ -4731,7 +4850,7 @@
         gtShow("gt-goal", false);
         gtShow("gt-play-hud", false);
         gtShow("gt-split-labels", false);
-        gtShow("gt-stick-wrap", false);
+        gtShow("gt-stick-wrap", false); gtShow("gt-stick-wrap-2", false);
         if (GT.plane2) GT.plane2.visible = false;
         if (GT.ghostGroup) GT.ghostGroup.visible = false;
         if (GT.drone) GT.drone.visible = false;
@@ -5122,13 +5241,21 @@
       }
       function gtShowTouchStick() {
         const isTouch = gtIsTouchPilot();
-        let ok = false;
+        let ok1 = false;
+        let ok2 = false;
         if (isTouch && state.flightStarted) {
-          if (GT.active) ok = GT.format !== "split" && (GT.phase === "play" || GT.phase === "countdown");
-          else ok = true;
+          if (GT.active) {
+            const live = (GT.phase === "play" || GT.phase === "countdown");
+            ok1 = live;
+            ok2 = live && GT.format === "split";
+          } else {
+            ok1 = true;
+          }
         }
-        const wrap = gtEl("gt-stick-wrap");
-        if (wrap) wrap.classList.toggle("hidden", !ok);
+        const wrap1 = gtEl("gt-stick-wrap");
+        const wrap2 = gtEl("gt-stick-wrap-2");
+        if (wrap1) wrap1.classList.toggle("hidden", !ok1);
+        if (wrap2) wrap2.classList.toggle("hidden", !ok2);
       }
       function gtPosePlane(group, fl) {
         if (!group || !fl) return;
@@ -5150,6 +5277,8 @@
         GT.eventDurationOverride = opts.eventDuration != null ? opts.eventDuration : null;
         GT.instantResolve = !!opts.instantResolve;
         GT.scriptedResults = opts.scriptedResults || null;
+        GT.dailyMode = !!opts.dailyMode;
+        GT.dailyEvent = opts.dailyEvent || null;
         GT.eventIndex = opts.eventIndex || 0;
         GT.players = GT.format === "1p" ? 1 : 2;
         GT.totals = [0, 0];
@@ -5337,9 +5466,18 @@
             fl.bank = 0;
             GT.stats[seat].crashes += 1;
             GT.clock = Math.max(0, GT.clock - d.crashPen);
-            gtRumbleSeat(seat, 280, 0.5, 0.8);
+            gtRumbleSeat(seat, 320, 0.75, 1.0);
             showToast("Recovered from terrain — +" + d.crashPen + "s");
           } else {
+            if (minY - fl.pos.y > 0.25) {
+              if (!GT.v6HitAt) GT.v6HitAt = [0, 0];
+              const nowMs = performance.now();
+              if (nowMs - (GT.v6HitAt[seat] || 0) > 900) {
+                GT.v6HitAt[seat] = nowMs;
+                gtRumbleSeat(seat, 260, 0.7, 1.0);
+                if (typeof gtBumpShake === "function") gtBumpShake(0.6);
+              }
+            }
             fl.pos.y = minY;
           }
         }
@@ -5384,7 +5522,16 @@
           keySeat(seat, "KeyA", "KeyD", "KeyW", "KeyS", "Space");
           if (seat === 1) keySeat(1, "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Enter");
         }
-        if (GT.touch.active && GT.format !== "split") {
+        if (GT.format === "split") {
+          if (GT.touch.active) {
+            GT.inputs[0].yaw += GT.touch.x;
+            GT.inputs[0].alt += (inv(0) ? 1 : -1) * GT.touch.y;
+          }
+          if (GT.touch2 && GT.touch2.active) {
+            GT.inputs[1].yaw += GT.touch2.x;
+            GT.inputs[1].alt += (inv(1) ? 1 : -1) * GT.touch2.y;
+          }
+        } else if (GT.touch.active) {
           const seat = GT.activeSeat;
           GT.inputs[seat].yaw += GT.touch.x;
           GT.inputs[seat].alt += (inv(seat) ? 1 : -1) * GT.touch.y;
@@ -5727,7 +5874,7 @@
           GT.phaseT = 0;
           gtShow("gt-play-hud", false);
           gtShow("gt-goal", false);
-          gtShow("gt-stick-wrap", false);
+          gtShow("gt-stick-wrap", false); gtShow("gt-stick-wrap-2", false);
           gtShow("gt-ready", true);
           return;
         }
@@ -5838,7 +5985,7 @@
         gtHideAllModals();
         gtShow("gt-play-hud", false);
         gtShow("gt-goal", false);
-        gtShow("gt-stick-wrap", false);
+        gtShow("gt-stick-wrap", false); gtShow("gt-stick-wrap-2", false);
         gtShow("gt-split-labels", false);
         const last = GT.eventLog[GT.eventLog.length - 1];
         const title = gtEl("gt-standings-title");
@@ -5877,7 +6024,7 @@
         gtHideAllModals();
         gtShow("gt-play-hud", false);
         gtShow("gt-goal", false);
-        gtShow("gt-stick-wrap", false);
+        gtShow("gt-stick-wrap", false); gtShow("gt-stick-wrap-2", false);
         const names = gtSolo() ? ["You"] : ["Player 1", "Player 2"];
         let title = names[0];
         if (!gtSolo()) {
@@ -5898,7 +6045,14 @@
         if (isBest) bests.totals[d] = GT.totals[0];
         gtSaveBests(bests);
         const bl = gtEl("gt-champ-best");
-        if (bl) bl.textContent = isBest ? ("New " + gtDiff().label + " best total: " + GT.totals[0]) : (gtDiff().label + " best remains " + prev);
+        if (GT.dailyMode && typeof v6RecordDailyResult === "function") {
+          const rawScore = Math.round((GT.eventLog[0] && GT.eventLog[0].raw && GT.eventLog[0].raw[0]) || 0);
+          const dInfo = v6RecordDailyResult(rawScore);
+          if (gtEl("gt-champ-name")) gtEl("gt-champ-name").textContent = "Daily Score: " + rawScore;
+          if (bl) bl.textContent = "Daily Best: " + dInfo.best + " · Streak: " + dInfo.streak + " day" + (dInfo.streak === 1 ? "" : "s");
+        } else {
+          if (bl) bl.textContent = isBest ? ("New " + gtDiff().label + " best total: " + GT.totals[0]) : (gtDiff().label + " best remains " + prev);
+        }
         gtShow("gt-champion", true);
         gtStartConfetti();
         gtPlayFanfare();
@@ -5983,6 +6137,7 @@
 
       function gtConsumeFlightTick(dt) {
         if (!GT.active) return false;
+        if (state.v6Paused) return true;
         const scaled = dt * (GT.timeScale || 1);
         GT.phaseT += scaled;
         if (GT.phase === "countdown") {
@@ -6482,18 +6637,18 @@
         return null;
       }
 
+      const _gtChevVec = new THREE.Vector3();
       function gtPlaceChevron(el, cam, world, viewport) {
         if (!el || !cam || !world) { if (el) el.classList.add("hidden"); return { visible: false }; }
-        const v = new THREE.Vector3(world.x, world.y, world.z).project(cam);
-        let x = v.x, y = v.y;
-        const behind = v.z > 1;
+        _gtChevVec.set(world.x, world.y, world.z).project(cam);
+        let x = _gtChevVec.x, y = _gtChevVec.y;
+        const behind = _gtChevVec.z > 1;
         if (behind) { x = -x; y = -y; }
         const onScreen = !behind && x >= -0.92 && x <= 0.92 && y >= -0.88 && y <= 0.88;
         if (onScreen) {
           el.classList.add("hidden");
           return { visible: false, x: x, y: y, ndc: true };
         }
-        // clamp to edge
         const ax = Math.abs(x), ay = Math.abs(y);
         const limitX = 0.9, limitY = 0.82;
         let nx = x, ny = y;
@@ -6507,17 +6662,15 @@
         }
         const px = viewport.x + (nx * 0.5 + 0.5) * viewport.w;
         const py = viewport.y + (-ny * 0.5 + 0.5) * viewport.h;
-        const ang = Math.atan2(-ny, nx); // screen y up in ndc, down in css
-        // arrow points up by default; rotate so it points outward toward target
         const rot = Math.atan2(ny, nx) - Math.PI / 2;
         el.classList.remove("hidden");
-        el.style.left = px + "px";
-        el.style.top = py + "px";
-        el.style.transform = "rotate(" + rot + "rad)";
-        const lab = el.querySelector(".gt-chevron-label");
+        el.style.transform = "translate3d(" + px.toFixed(1) + "px," + py.toFixed(1) + "px,0) rotate(" + rot.toFixed(3) + "rad)";
+        if (!el._labEl) el._labEl = el.querySelector(".gt-chevron-label");
+        const lab = el._labEl;
         if (lab) {
-          lab.style.transform = "translateX(-50%) rotate(" + (-rot) + "rad)";
-          lab.textContent = world.label || "Next";
+          lab.style.transform = "translateX(-50%) rotate(" + (-rot).toFixed(3) + "rad)";
+          const txt = world.label || "Next";
+          if (el._lastLab !== txt) { lab.textContent = txt; el._lastLab = txt; }
         }
         return { visible: true, x: px, y: py, rot: rot, label: world.label };
       }
@@ -6553,25 +6706,38 @@
         }
       }
 
+      let _lastMiniLayoutKey = "";
+      const _miniCache = [{}, {}];
       function gtLayoutMiniHuds() {
         const split = gtIsSplit() && (GT.phase === "play" || GT.phase === "countdown");
+        const wide = gtWideSplit();
+        const key = (split ? "1" : "0") + "_" + (wide ? "W" : "S");
+        if (key === _lastMiniLayoutKey) return;
+        _lastMiniLayoutKey = key;
         const m0 = gtEl("gt-mini-0");
         const m1 = gtEl("gt-mini-1");
         if (m0) m0.classList.toggle("hidden", !split);
         if (m1) m1.classList.toggle("hidden", !split);
         if (!split) return;
-        const wide = gtWideSplit();
-        const top = 36;
         if (m0) {
           m0.style.left = "12px";
-          m0.style.top = top + "px";
           m0.style.right = "auto";
+          m0.style.top = "auto";
+          m0.style.bottom = wide ? "calc(var(--safe-bottom, 0px) + 14px)" : "calc(50% + 10px)";
         }
         if (m1) {
-          if (wide) { m1.style.left = "calc(50% + 12px)"; m1.style.top = top + "px"; }
-          else { m1.style.left = "12px"; m1.style.top = "calc(50% + 32px)"; }
+          if (wide) {
+            m1.style.left = "auto";
+            m1.style.right = "12px";
+            m1.style.top = "auto";
+            m1.style.bottom = "calc(var(--safe-bottom, 0px) + 14px)";
+          } else {
+            m1.style.left = "12px";
+            m1.style.right = "auto";
+            m1.style.top = "auto";
+            m1.style.bottom = "calc(var(--safe-bottom, 0px) + 14px)";
+          }
         }
-        // hide shared score in split; keep timer
         const sc = gtEl("gt-event-score");
         if (sc) sc.style.display = "none";
       }
@@ -6580,22 +6746,28 @@
         const ev = gtEvent();
         if (!ev) return;
         if (!gtIsSplit()) {
-          const sc = gtEl("gt-event-score");
-          if (sc) sc.style.display = "";
-          const m0 = gtEl("gt-mini-0"); const m1 = gtEl("gt-mini-1");
-          if (m0) m0.classList.add("hidden");
-          if (m1) m1.classList.add("hidden");
+          if (_lastMiniLayoutKey !== "off") {
+            _lastMiniLayoutKey = "off";
+            const sc = gtEl("gt-event-score");
+            if (sc) sc.style.display = "";
+            const m0 = gtEl("gt-mini-0"); const m1 = gtEl("gt-mini-1");
+            if (m0) m0.classList.add("hidden");
+            if (m1) m1.classList.add("hidden");
+          }
           return;
         }
         gtLayoutMiniHuds();
-        [0, 1].forEach((seat) => {
+        for (let seat = 0; seat < 2; seat++) {
           const st = GT.stats[seat];
-          if (!st) return;
-          const score = gtEl("gt-mini-" + seat + "-score");
-          const combo = gtEl("gt-mini-" + seat + "-combo");
-          const metric = gtEl("gt-mini-" + seat + "-metric");
-          if (score) score.textContent = String(Math.round(st.raw));
-          if (combo) combo.textContent = (GT.combo[seat] > 1) ? ("x" + GT.combo[seat]) : "";
+          if (!st) continue;
+          const cache = _miniCache[seat];
+          if (!cache.scoreEl) {
+            cache.scoreEl = gtEl("gt-mini-" + seat + "-score");
+            cache.comboEl = gtEl("gt-mini-" + seat + "-combo");
+            cache.metricEl = gtEl("gt-mini-" + seat + "-metric");
+          }
+          const sScore = String(Math.round(st.raw));
+          const sCombo = (GT.combo[seat] > 1) ? ("x" + GT.combo[seat]) : "";
           let line = "";
           if (ev.type === "rings") {
             const n = GT.format === "split" ? (GT.ringProgress[seat] || 0) : st.collected;
@@ -6609,8 +6781,10 @@
             line = "Tags " + st.tags + " · Surv " + Math.floor(st.survival) + "s";
           }
           if (GT.stuntMul[seat] > 1.01 && GT.difficulty !== "easy") line += " · ×" + GT.stuntMul[seat].toFixed(2);
-          if (metric) metric.textContent = line;
-        });
+          if (cache.scoreEl && cache.lScore !== sScore) { cache.scoreEl.textContent = sScore; cache.lScore = sScore; }
+          if (cache.comboEl && cache.lCombo !== sCombo) { cache.comboEl.textContent = sCombo; cache.lCombo = sCombo; }
+          if (cache.metricEl && cache.lMetric !== line) { cache.metricEl.textContent = line; cache.lMetric = line; }
+        }
       }
 
       function gtRestartWanted(seat) {
@@ -6903,6 +7077,451 @@
 
       gtBindUI();
 
+
+      // =========================================================================
+      // v6.0 OFFLINE UPGRADES — POOLED THERMALS, BARNSTORMING, DAILY CHALLENGE, P2 TOUCH STICK
+      // =========================================================================
+      const V6_DAILY_KEY = "aerovista.v6.daily";
+      const V6_THERMAL_COUNT = 8;
+      const v6ThermalGroup = new THREE.Group();
+      scene.add(v6ThermalGroup);
+      const v6Thermals = [];
+      let v6ThermalBoostScenic = 0;
+      let v6BarnLevel = 1.0;
+      let v6BarnLastText = "";
+      let v6BarnVisible = false;
+      const v6BarnEl = document.getElementById("gt-barn-pill");
+      window._v6ThermalSpeed = 1;
+
+      (function initV6Thermals() {
+        const ringGeo = new THREE.TorusGeometry(13, 0.55, 8, 24);
+        ringGeo.rotateX(Math.PI / 2);
+        const coreGeo = new THREE.CylinderGeometry(8, 12, 72, 12, 1, true);
+        const ringMat = new THREE.MeshBasicMaterial({ color: 0x7dd3fc, transparent: true, opacity: 0.42, depthWrite: false });
+        const coreMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.09, side: THREE.DoubleSide, depthWrite: false });
+        for (let i = 0; i < V6_THERMAL_COUNT; i++) {
+          const g = new THREE.Group();
+          const core = new THREE.Mesh(coreGeo, coreMat);
+          core.position.y = 36;
+          g.add(core);
+          const rings = [];
+          for (let r = 0; r < 3; r++) {
+            const rm = new THREE.Mesh(ringGeo, ringMat);
+            rm.position.y = r * 24;
+            g.add(rm);
+            rings.push(rm);
+          }
+          g.visible = false;
+          v6ThermalGroup.add(g);
+          v6Thermals.push({ group: g, rings: rings, x: 0, z: 0, baseY: 0, radius: 18, height: 85, cd: [0, 0] });
+        }
+      })();
+
+      function v6RebuildThermals(regionKey) {
+        const reg = REGIONS[regionKey];
+        if (!reg) return;
+        let seed = 1337;
+        for (let i = 0; i < regionKey.length; i++) seed = (seed * 31 + regionKey.charCodeAt(i)) % 2147483647;
+        for (let i = 0; i < V6_THERMAL_COUNT; i++) {
+          const ang = (i / V6_THERMAL_COUNT) * Math.PI * 2 + (THREE.MathUtils.seededRandom(seed + i * 17) - 0.5) * 0.4;
+          const dist = 140 + THREE.MathUtils.seededRandom(seed + i * 31) * 260;
+          const x = Math.cos(ang) * dist;
+          const z = Math.sin(ang) * dist;
+          const baseY = Math.max(reg.heightFn(x, z), reg.waterLevel);
+          const th = v6Thermals[i];
+          th.x = x; th.z = z; th.baseY = baseY;
+          th.cd[0] = 0; th.cd[1] = 0;
+          th.group.position.set(x, baseY, z);
+          th.group.visible = true;
+        }
+      }
+
+      function v6TickFeatures(dt, elapsed) {
+        if (state.v6Paused) return;
+        const reg = REGIONS[state.regionKey];
+        if (!reg) return;
+        const activePlanes = [];
+        if (typeof GT !== "undefined" && GT.active && GT.phase === "play") {
+          const seats = gtSeatsThisPhase();
+          for (let i = 0; i < seats.length; i++) {
+            const s = seats[i];
+            if (GT.flights[s]) activePlanes.push({ fl: GT.flights[s], seat: s, isGT: true });
+          }
+        } else if (state.flightStarted) {
+          activePlanes.push({ fl: flight, seat: 0, isGT: false });
+        }
+
+        for (let i = 0; i < v6Thermals.length; i++) {
+          const th = v6Thermals[i];
+          if (!th.group.visible) continue;
+          if (th.cd[0] > 0) th.cd[0] -= dt;
+          if (th.cd[1] > 0) th.cd[1] -= dt;
+          for (let r = 0; r < th.rings.length; r++) {
+            const phase = ((elapsed * 0.55 + r / 3 + i * 0.13) % 1);
+            const rm = th.rings[r];
+            rm.position.y = phase * 72;
+            const sc = 0.72 + Math.sin(phase * Math.PI) * 0.35;
+            rm.scale.set(sc, sc, sc);
+          }
+          for (let p = 0; p < activePlanes.length; p++) {
+            const ap = activePlanes[p];
+            const dx = ap.fl.pos.x - th.x;
+            const dz = ap.fl.pos.z - th.z;
+            if (dx * dx + dz * dz < th.radius * th.radius) {
+              const dy = ap.fl.pos.y - th.baseY;
+              if (dy >= -5 && dy <= th.height) {
+                ap.fl.pos.y += 28 * dt;
+                if (th.cd[ap.seat] <= 0) {
+                  th.cd[ap.seat] = 4.0;
+                  if (ap.isGT) {
+                    GT.boostT[ap.seat] = Math.max(GT.boostT[ap.seat], 2.6);
+                    if (GT.stats[ap.seat]) {
+                      GT.stats[ap.seat].raw += 25;
+                      if (gtEvent() && gtEvent().type === "bomb" && GT.stats[ap.seat].bombsLeft < gtDiff().bombs) {
+                        GT.stats[ap.seat].bombsLeft += 1;
+                        if (ap.seat === 0 || GT.format !== "split") { state.bombAmmo = GT.stats[ap.seat].bombsLeft; updateBombUI(); }
+                      }
+                    }
+                  } else {
+                    v6ThermalBoostScenic = 2.6;
+                    if (state.bombsEnabled && state.bombAmmo < 6) { state.bombAmmo += 1; updateBombUI(); }
+                  }
+                  if (typeof AudioEngine !== "undefined" && AudioEngine.playChime) AudioEngine.playChime();
+                  showToast("Thermal Updraft! +Lift & Speed");
+                }
+              }
+            }
+          }
+        }
+        if (v6ThermalBoostScenic > 0) {
+          v6ThermalBoostScenic = Math.max(0, v6ThermalBoostScenic - dt);
+          window._v6ThermalSpeed = 1 + (v6ThermalBoostScenic / 2.6) * 0.32;
+          if (!GT.active) {
+            const fwdX = -Math.sin(flight.yaw);
+            const fwdZ = -Math.cos(flight.yaw);
+            flight.pos.x += fwdX * 22 * dt * (v6ThermalBoostScenic / 2.6);
+            flight.pos.z += fwdZ * 22 * dt * (v6ThermalBoostScenic / 2.6);
+          }
+        } else {
+          window._v6ThermalSpeed = 1;
+        }
+
+        const mainFl = (typeof GT !== "undefined" && GT.active && GT.phase === "play") ? GT.flights[GT.activeSeat] : flight;
+        const showBarn = state.flightStarted && (!GT.active || GT.phase === "play") && !gtIsSplit();
+        if (showBarn && mainFl) {
+          const gnd = Math.max(reg.heightFn(mainFl.pos.x, mainFl.pos.z), reg.waterLevel);
+          const agl = mainFl.pos.y - gnd;
+          if (agl > 5 && agl < 30) {
+            v6BarnLevel = Math.min(3.0, v6BarnLevel + dt * 0.45);
+            if (GT.active && GT.phase === "play" && GT.stats[GT.activeSeat]) {
+              GT.stats[GT.activeSeat].raw += dt * 10 * (v6BarnLevel - 1);
+            }
+          } else {
+            v6BarnLevel = Math.max(1.0, v6BarnLevel - dt * 0.65);
+          }
+        } else {
+          v6BarnLevel = 1.0;
+        }
+        const wantVis = showBarn && v6BarnLevel >= 1.15;
+        if (v6BarnEl) {
+          if (wantVis !== v6BarnVisible) {
+            v6BarnVisible = wantVis;
+            v6BarnEl.classList.toggle("hidden", !wantVis);
+          }
+          if (wantVis) {
+            const txt = "BARNSTORM ×" + v6BarnLevel.toFixed(1);
+            if (txt !== v6BarnLastText) {
+              v6BarnLastText = txt;
+              v6BarnEl.textContent = txt;
+            }
+          }
+        }
+      }
+
+      function v6TodayKey() {
+        const d = new Date();
+        return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+      }
+      function v6LoadDaily() {
+        try {
+          const raw = localStorage.getItem(V6_DAILY_KEY);
+          if (raw) return JSON.parse(raw);
+        } catch (e) {}
+        return { lastDate: "", streak: 0, bestByDate: {} };
+      }
+      function v6SaveDaily(d) {
+        try { localStorage.setItem(V6_DAILY_KEY, JSON.stringify(d)); } catch (e) {}
+      }
+      function v6BuildDailyEvent() {
+        const today = v6TodayKey();
+        let seed = 0;
+        for (let i = 0; i < today.length; i++) seed = (seed * 37 + today.charCodeAt(i)) % 2147483647;
+        const regKeys = Object.keys(REGIONS);
+        const regKey = regKeys[Math.floor(THREE.MathUtils.seededRandom(seed + 11) * regKeys.length)];
+        const timeKeys = Object.keys(TIMES);
+        const timeKey = timeKeys[Math.floor(THREE.MathUtils.seededRandom(seed + 29) * timeKeys.length)];
+        const evTypes = ["rings", "canyon", "bomb"];
+        const evType = evTypes[Math.floor(THREE.MathUtils.seededRandom(seed + 53) * evTypes.length)];
+        const regName = REGIONS[regKey] ? REGIONS[regKey].name : regKey;
+        return {
+          id: "daily_" + today,
+          type: evType,
+          region: regKey,
+          timeKey: timeKey,
+          name: "Daily · " + regName,
+          goal: "Seeded " + today + " gauntlet in " + regName + " (" + evType.toUpperCase() + "). Beat par and extend your daily streak!",
+          duration: 90,
+          par: 750,
+          rings: 10,
+          gates: 8,
+          targets: 8
+        };
+      }
+      function v6RecordDailyResult(score) {
+        const today = v6TodayKey();
+        const data = v6LoadDaily();
+        const prevBest = data.bestByDate[today] || 0;
+        if (score > prevBest) data.bestByDate[today] = score;
+        if (data.lastDate !== today) {
+          const yest = new Date();
+          yest.setDate(yest.getDate() - 1);
+          const yKey = yest.getFullYear() + "-" + String(yest.getMonth() + 1).padStart(2, "0") + "-" + String(yest.getDate()).padStart(2, "0");
+          data.streak = (data.lastDate === yKey) ? (data.streak + 1) : 1;
+          data.lastDate = today;
+        }
+        v6SaveDaily(data);
+        v6RefreshDailyButton();
+        return { best: data.bestByDate[today] || score, streak: data.streak };
+      }
+      function v6RefreshDailyButton() {
+        const sub = document.getElementById("gt-daily-sub");
+        if (!sub) return;
+        const today = v6TodayKey();
+        const ev = v6BuildDailyEvent();
+        const data = v6LoadDaily();
+        const best = data.bestByDate[today] || 0;
+        sub.textContent = today + " · " + ev.name.replace("Daily · ", "") + " · Best: " + (best || "—") + " · Streak: " + (data.streak || 0);
+      }
+      v6RefreshDailyButton();
+
+      const dailyBtn = document.getElementById("mode-daily-btn");
+      if (dailyBtn) {
+        dailyBtn.addEventListener("click", () => {
+          const ev = v6BuildDailyEvent();
+          if (ev.timeKey && typeof applyTimeOfDay === "function") {
+            state.timeKey = ev.timeKey;
+            applyTimeOfDay(ev.timeKey);
+          }
+          gtStart({ format: "1p", difficulty: GT.difficulty, dailyMode: true, dailyEvent: ev });
+        });
+      }
+
+      (function wireP2Stick() {
+        const base2 = document.getElementById("gt-stick-base-2");
+        if (!base2) return;
+        const knob2 = document.getElementById("gt-stick-knob-2");
+        const setFrom = (cx, cy) => {
+          const rect = base2.getBoundingClientRect();
+          const x = (cx - (rect.left + rect.width / 2)) / (rect.width / 2);
+          const y = (cy - (rect.top + rect.height / 2)) / (rect.height / 2);
+          const m = Math.hypot(x, y);
+          const s = m > 1 ? 1 / m : 1;
+          GT.touch2.x = x * s;
+          GT.touch2.y = y * s;
+          GT.touch2.active = true;
+          if (knob2) {
+            knob2.style.left = (34 + GT.touch2.x * 28) + "px";
+            knob2.style.top = (34 + GT.touch2.y * 28) + "px";
+          }
+        };
+        const clear = () => {
+          GT.touch2.x = 0; GT.touch2.y = 0; GT.touch2.active = false; GT.touch2.pid = null;
+          if (knob2) { knob2.style.left = "34px"; knob2.style.top = "34px"; }
+        };
+        base2.addEventListener("pointerdown", (e) => {
+          if (e.pointerType === "touch") gtMarkTouchPilot();
+          e.preventDefault();
+          GT.touch2.pid = e.pointerId;
+          try { base2.setPointerCapture(e.pointerId); } catch (err) {}
+          setFrom(e.clientX, e.clientY);
+        });
+        base2.addEventListener("pointermove", (e) => {
+          if (GT.touch2.active && (GT.touch2.pid === null || e.pointerId === GT.touch2.pid)) setFrom(e.clientX, e.clientY);
+        });
+        base2.addEventListener("pointerup", (e) => { if (GT.touch2.pid === null || e.pointerId === GT.touch2.pid) clear(); });
+        base2.addEventListener("pointercancel", clear);
+      })();
+
+      // =========================================================================
+      // v6.0 CONTROLLER MENUS, PAUSE, HOME BUTTON
+      // =========================================================================
+      state.v6Paused = false;
+      const V6_LAYERS = ["v6-pause", "help-modal", "gt-champion", "gt-standings", "gt-ready", "gt-brief", "welcome-overlay"];
+      const v6Focus = { layer: null, idx: 0 };
+      let v6StickHold = 0;
+      let v6StickDir = 0;
+
+      function v6Shown(el) {
+        if (!el || !el.getClientRects().length) return false;
+        const cs = getComputedStyle(el);
+        return cs.display !== "none" && cs.visibility !== "hidden" && parseFloat(cs.opacity || "1") > 0.05;
+      }
+      function v6ActiveLayer() {
+        for (let i = 0; i < V6_LAYERS.length; i++) {
+          const el = gtEl(V6_LAYERS[i]);
+          if (v6Shown(el)) return el;
+        }
+        return null;
+      }
+      function v6Buttons(layer) {
+        return Array.from(layer.querySelectorAll("button")).filter((b) => !b.disabled && v6Shown(b));
+      }
+      function v6ClearFocus() {
+        document.querySelectorAll("button.gp-focus").forEach((b) => { if (!b.closest("#tour-drawer")) b.classList.remove("gp-focus"); });
+      }
+      function v6DefaultIdx(btns) {
+        const pref = ["v6-resume-btn", "mode-1p-btn", "gt-brief-btn", "gt-ready-btn", "gt-standings-btn", "gt-champ-btn", "help-close-btn"];
+        for (let i = 0; i < pref.length; i++) {
+          const k = btns.findIndex((b) => b.id === pref[i]);
+          if (k >= 0) return k;
+        }
+        return 0;
+      }
+      function v6SetFocus(layer, idx) {
+        const btns = v6Buttons(layer);
+        v6ClearFocus();
+        if (!btns.length) { v6Focus.layer = layer.id; v6Focus.idx = 0; return; }
+        const n = ((idx % btns.length) + btns.length) % btns.length;
+        v6Focus.layer = layer.id;
+        v6Focus.idx = n;
+        btns[n].classList.add("gp-focus");
+        try { btns[n].scrollIntoView({ block: "nearest" }); } catch (err) {}
+      }
+      function v6InFlight() {
+        if (GT.active) return GT.phase === "play" || GT.phase === "countdown";
+        return !!state.flightStarted;
+      }
+      function v6SetPause(on) {
+        const want = !!on && v6InFlight();
+        state.v6Paused = want;
+        gtShow("v6-pause", want);
+        gtShow("v6-restart-btn", want && GT.active);
+        v6Focus.layer = null;
+        if (want) { toggleDrawer(false); if (state.cinemaMode) setCinemaMode(false); }
+        try {
+          if (typeof AudioEngine !== "undefined" && AudioEngine.ctx) {
+            if (want) AudioEngine.ctx.suspend();
+            else if (state.audioEnabled) AudioEngine.ctx.resume();
+          }
+        } catch (err) { /* audio optional */ }
+      }
+      function v6GoHome() {
+        state.v6Paused = false;
+        gtShow("v6-pause", false);
+        try { if (typeof AudioEngine !== "undefined" && AudioEngine.ctx && state.audioEnabled) AudioEngine.ctx.resume(); } catch (err) {}
+        const hm = gtEl("help-modal");
+        if (hm) { hm.classList.add("hidden"); hm.classList.remove("flex"); }
+        toggleDrawer(false);
+        if (state.cinemaMode) setCinemaMode(false);
+        if (GT.active) {
+          gtShowMenu();
+        } else {
+          const o = gtEl("welcome-overlay");
+          if (o) { o.style.display = ""; o.style.pointerEvents = ""; }
+          state.flightStarted = false;
+        }
+        v6Focus.layer = null;
+        v6PlaceHome();
+      }
+      function v6Back(layer) {
+        if (!layer) return false;
+        if (layer.id === "v6-pause") { v6SetPause(false); return true; }
+        if (layer.id === "help-modal") { layer.classList.add("hidden"); layer.classList.remove("flex"); v6Focus.layer = null; return true; }
+        if (layer.id === "gt-brief") { v6GoHome(); return true; }
+        return false;
+      }
+      // Called first from pollGamepad. Returns true when a menu/overlay consumed the pad this frame.
+      function v6PadMenus(dt) {
+        const pads = gtConnectedPads();
+        if (!pads.length) return false;
+        const layer = v6ActiveLayer();
+        if (!layer) {
+          v6ClearFocus();
+          v6Focus.layer = null;
+          let start = false;
+          pads.forEach((gp) => { if (padEdge(gp, 9)) start = true; });
+          if (start && v6InFlight()) { v6SetPause(true); return true; }
+          return false;
+        }
+        if (v6Focus.layer !== layer.id) v6SetFocus(layer, v6DefaultIdx(v6Buttons(layer)));
+        let move = 0, a = false, b = false, start = false;
+        let sx = 0, sy = 0;
+        pads.forEach((gp) => {
+          if (padEdge(gp, 12) || padEdge(gp, 14)) move = -1;
+          if (padEdge(gp, 13) || padEdge(gp, 15)) move = 1;
+          if (padEdge(gp, 0)) a = true;
+          if (padEdge(gp, 1)) b = true;
+          if (padEdge(gp, 9)) start = true;
+          const ax = gp.axes && gp.axes.length > 1 ? gp.axes : [0, 0];
+          if (Math.abs(ax[0]) > Math.abs(sx)) sx = ax[0];
+          if (Math.abs(ax[1]) > Math.abs(sy)) sy = ax[1];
+        });
+        const stickMag = Math.max(Math.abs(sx), Math.abs(sy));
+        const sdir = stickMag > 0.6 ? ((Math.abs(sy) >= Math.abs(sx) ? sy : sx) > 0 ? 1 : -1) : 0;
+        if (sdir === 0) { v6StickHold = 0; v6StickDir = 0; }
+        else if (sdir !== v6StickDir) { v6StickDir = sdir; v6StickHold = 0; if (!move) move = sdir; }
+        else { v6StickHold += (dt || 0.016); if (v6StickHold > 0.32) { v6StickHold = 0.1; if (!move) move = sdir; } }
+        if (move) v6SetFocus(layer, v6Focus.idx + move);
+        if (b) { v6Back(layer); return true; }
+        if (start && layer.id === "v6-pause") { v6SetPause(false); return true; }
+        if (a) {
+          const btns = v6Buttons(layer);
+          const el = btns[v6Focus.idx];
+          v6ClearFocus();
+          v6Focus.layer = null;
+          if (el) el.click();
+        }
+        return true;
+      }
+      function v6PlaceHome() {
+        const btn = gtEl("v6-home-btn");
+        const slot = gtEl("v6-home-slot");
+        if (!btn || !slot) return;
+        const welcome = gtEl("welcome-overlay");
+        const off = v6Shown(welcome) || state.cinemaMode || !slot.getClientRects().length;
+        btn.classList.toggle("v6-off", off);
+        if (off) return;
+        const r = slot.getBoundingClientRect();
+        btn.style.left = Math.round(r.left) + "px";
+        btn.style.top = Math.round(r.top) + "px";
+        btn.style.width = Math.round(r.width) + "px";
+        btn.style.height = Math.round(r.height) + "px";
+      }
+      (function wireV6Controls() {
+        const home = gtEl("v6-home-btn");
+        if (home) home.addEventListener("click", (e) => { e.preventDefault(); e.stopPropagation(); v6GoHome(); });
+        const bm = gtEl("gt-brief-menu-btn");
+        if (bm) bm.addEventListener("click", (e) => { e.preventDefault(); e.stopPropagation(); v6GoHome(); });
+        const rs = gtEl("v6-resume-btn");
+        if (rs) rs.addEventListener("click", (e) => { e.preventDefault(); v6SetPause(false); });
+        const rr = gtEl("v6-restart-btn");
+        if (rr) rr.addEventListener("click", (e) => { e.preventDefault(); v6SetPause(false); if (GT.active && GT.restartEvent) GT.restartEvent(); });
+        const mm = gtEl("v6-menu-btn");
+        if (mm) mm.addEventListener("click", (e) => { e.preventDefault(); v6GoHome(); });
+        window.addEventListener("keydown", (e) => {
+          if (e.repeat) return;
+          if (e.code === "KeyP" || (e.code === "Escape" && state.v6Paused)) {
+            if (state.v6Paused) v6SetPause(false);
+            else if (v6InFlight() && !v6ActiveLayer()) v6SetPause(true);
+          }
+        });
+        window.addEventListener("resize", v6PlaceHome);
+        window.addEventListener("orientationchange", () => setTimeout(v6PlaceHome, 250));
+        setInterval(v6PlaceHome, 400);
+        v6PlaceHome();
+      })();
+      GT.v6 = { setPause: v6SetPause, goHome: v6GoHome, activeLayer: () => { const l = v6ActiveLayer(); return l ? l.id : null; }, focus: v6Focus };
+
       window.addEventListener('load', () => {
         document.querySelectorAll('.quality-btn').forEach((b) => {
           b.classList.toggle('active', b.dataset.quality === state.quality);
@@ -6915,3 +7534,5 @@
       });
     })();
   </script>
+</body>
+</html>

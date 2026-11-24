@@ -45,9 +45,13 @@ The original free-flight sightseeing mode is still on the menu: autopilot landma
 - **Stick sensitivity:** Low, Normal, or High, with a fixed deadzone.
 - **Reduce Motion:** turns off speed/dive FOV widening and the micro camera shake on bomb blasts and near-misses.
 
-The version mark **v5.1.1** is visible on the title screen and in the location pill. Pull to refresh if you still see an older version.
+The version mark **v6.0** is visible on the title screen and in the location pill. Pull to refresh if you still see an older version.
 
 ## Version history
+
+### v6.0
+
+Thermal updrafts, Barnstorming low-altitude multiplier, a Daily Challenge with a saved best and streak, and dual touch sticks for split-screen on iPad. Fixes text encoding (·, ×, °, —, − now display correctly). Xbox controller (any pad index): the D-pad or left stick moves a highlight through the menu and every dialog, A selects the highlighted item, B backs out, Start pauses and resumes with a navigable pause menu, and crashes or terrain hits give a strong rumble. The Event Brief has a Back to Menu button, and the Home button sits above every overlay. Keyboard: P pauses. Still a single offline file.
 
 ### v5.1.1
 
